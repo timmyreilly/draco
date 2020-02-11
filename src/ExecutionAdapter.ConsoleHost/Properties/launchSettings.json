@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "CloudEms.ExecutionAdapter.ConsoleHost": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "EXHUB_CONFIG_BLOB_STORAGE_BLOB_NAME": "appsettings-execconsole.json",
+        "EXHUB_CONFIG_BLOB_STORAGE_CONNECTION_STRING": "",
+        "EXHUB_CONFIG_BLOB_STORAGE_CONTAINER_NAME": "configuration"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

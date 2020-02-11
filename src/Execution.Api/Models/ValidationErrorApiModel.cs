@@ -1,0 +1,20 @@
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace Draco.Execution.Api.Models
+{
+    public class ValidationErrorApiModel
+    {
+        [JsonProperty("errorId")]
+        public string ErrorId { get; set; }
+
+        [JsonProperty("errorCode")]
+        public string ErrorCode { get; set; }
+
+        [JsonProperty("errorMessage")]
+        public string ErrorMessage { get; set; }
+
+        [JsonProperty("errorData")]
+        public JObject ErrorData { get; set; }
+    }
+}

@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Execution.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Draco.Execution.Api.Controllers.ExecutionController.CreateNewExecutionAsync(Draco.Execution.Api.Models.ExecutionRequestApiModel)">
+            <summary>
+            Creates a new execution
+            </summary>
+            <param name="apiExecRequest">The execution request</param>
+            <response code="200">Either the execution has completed synchronously or, in the case of direct execution, an execution token has been returned. Details included in response.</response>
+            <response code="202">The execution is queued or input objects (specified in the response) are required before continuing. Details included in response.</response>
+            <response code="400">Details included in response.</response>
+        </member>
+        <member name="M:Draco.Execution.Api.Controllers.ExecutionController.ContinueExecutionAsync(System.String,Draco.Execution.Api.Models.ContinueExecutionApiModel)">
+            <summary>
+            Continues existing execution after input object(s) have been provided
+            </summary>
+            <param name="executionId">The execution ID</param>
+            <param name="continueApiModel">A list of input object(s) that have been provided</param>
+            <response code="200">The execution has completed synchronously. Details included in response.</response>
+            <response code="202">The execution has been queued. Details included in response.</response>
+            <response code="400">Details included in response.</response>
+            <response code="404">The specified execution was not found.</response>
+        </member>
+        <member name="M:Draco.Execution.Api.Controllers.ExecutionController.GetExecutionStatusAsync(System.String)">
+            <summary>
+            Gets the status of an existing execution
+            </summary>
+            <param name="executionId">The execution ID</param>
+            <returns></returns>
+            <status code="200">Current execution status provided.</status>
+            <status code="404">Specified execution not found.</status>
+        </member>
+        <member name="M:Draco.Execution.Api.Controllers.ExecutionController.UpdateExecutionStatusAsync(System.String,Draco.Execution.Api.Models.UpdateExecutionStatusApiModel)">
+            <summary>
+            Updates the status of an existing execution
+            </summary>
+            <param name="executionId">The execution ID</param>
+            <param name="updateApiModel">The execution status update</param>
+            <returns></returns>
+            <status code="200">Execution status successfully updated. Current status provided.</status>
+            <status code="400">Details included in response.</status>
+            <status code="403">The provided status update key is invalid.</status>
+            <status code="404">Specified execution not found.</status>
+        </member>
+    </members>
+</doc>

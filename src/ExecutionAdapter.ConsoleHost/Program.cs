@@ -1,0 +1,79 @@
+﻿using Draco.Core.Hosting.Extensions;
+using Draco.ExecutionAdapter.ConsoleHost.Modules;
+using Draco.ExecutionAdapter.ConsoleHost.Modules.Azure;
+using Draco.ExecutionAdapter.ConsoleHost.Modules.ExecutionServices;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
+namespace Draco.ExecutionAdapter.ConsoleHost
+{
+    public class Program
+    {
+        public static async Task Main(string[] args)
+        {
+            var host = new HostBuilder()
+                .UseEnvironment(Environments.Development)
+                .ConfigureAppConfiguration((hostContext, configApp) =>
+                {
+                    var blobStorageAccount = CloudStorageAccount.Parse(BlobStorageConnectionString);
+                    var blobClient = blobStorageAccount.CreateCloudBlobClient();
+                    var blobContainer = blobClient.GetContainerReference(ContainerName);
+                    var blob = blobContainer.GetBlockBlobReference(BlobName);
+                    var configStream = new MemoryStream();
+
+                    blob.DownloadToStream(configStream);
+
+                    configStream.Position = 0;
+
+                    configApp.AddJsonStream(configStream);
+                })
+                .ConfigureServices((hostContext, services) =>
+                {
+                    services.AddHostedService<SubscriberHostedService>();
+
+                    services.ConfigureServices<CoreExecutionPipelineModule>(hostContext.Configuration)
+                            .ConfigureServices<CoreObjectStorageModule>(hostContext.Configuration)
+                            .ConfigureServices<ExecutionProcessorFactoryModule>(hostContext.Configuration)
+                            .ConfigureServices<ExecutionServiceProviderFactoryModule>(hostContext.Configuration)
+                            .ConfigureServices<ObjectAccessorProviderFactoryModule>(hostContext.Configuration)
+                            .ConfigureServices<SignerModule>(hostContext.Configuration);
+
+                    // Change these modules to re-platform...
+
+                    services.ConfigureServices<AzureExecutionPipelineModule>(hostContext.Configuration)
+                            .ConfigureServices<AzureObjectStorageModule>(hostContext.Configuration);
+
+                    // Register execution adapters...
+
+                    services.ConfigureServices<JsonHttpExecutionAdapterModule>(hostContext.Configuration);
+
+                    // Register execution services...
+
+                    services.ConfigureServices<HowdyExecutionServiceModule>(hostContext.Configuration);
+                })
+                .ConfigureLogging((hostContext, logConfig) =>
+                {
+                    logConfig.AddConsole();
+                })
+                .Build();
+
+            await host.RunAsync();
+        }
+
+        private static string BlobStorageConnectionString { get; } =
+           Environment.GetEnvironmentVariable("EXHUB_CONFIG_BLOB_STORAGE_CONNECTION_STRING");
+
+        private static string ContainerName { get; } =
+            Environment.GetEnvironmentVariable("EXHUB_CONFIG_BLOB_STORAGE_CONTAINER_NAME");
+
+        private static string BlobName { get; } =
+            Environment.GetEnvironmentVariable("EXHUB_CONFIG_BLOB_STORAGE_BLOB_NAME");
+    }
+}

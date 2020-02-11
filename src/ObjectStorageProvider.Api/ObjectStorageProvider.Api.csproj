@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>d5e8d93d-8ce6-4d91-848e-5bc06ac5b5f1</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Repos\CloudEms\ObjectStorageProvider.Api\ObjectStorageProvider.Api.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Api.InternalModels\Api.InternalModels.csproj" />
+    <ProjectReference Include="..\Api.Modules\Api.Modules.csproj" />
+    <ProjectReference Include="..\Azure.ObjectStorage\Azure.ObjectStorage.csproj" />
+    <ProjectReference Include="..\Core.Hosting\Core.Hosting.csproj" />
+  </ItemGroup>
+
+
+</Project>

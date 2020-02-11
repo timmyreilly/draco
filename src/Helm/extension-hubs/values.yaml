@@ -1,0 +1,27 @@
+# Default values for extension-hubs.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+images:
+  repository: ""
+  pullPolicy: Always
+  catalogApi:
+    imageName: "xhub-catalogapi:latest"
+  executionApi:
+    imageName: "xhub-executionapi:latest"
+  extensionMgmtApi:
+    imageName: "xhub-extensionmgmtapi:latest"
+  executionConsole:
+    imageName: "xhub-executionconsole:latest"
+
+configuration:
+  storageConnectionString: ""
+  containerName: "configuration"
+  catalogApi:
+    blobName: "appsettings-catalogapi.json"
+  executionApi:
+    blobName: "appsettings-execapi.json"
+  extensionMgmtApi:
+    blobName: "appsettings-extensionmgmtapi.json"
+  executionConsole:
+    blobName: "appsettings-execconsole.json"

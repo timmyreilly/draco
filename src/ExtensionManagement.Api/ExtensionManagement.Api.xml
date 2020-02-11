@@ -1,0 +1,250 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ExtensionManagement.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.CreateExtensionAsync(Draco.ExtensionManagement.Api.Models.ExtensionApiModel)">
+            <summary>
+            Creates a new extension
+            </summary>
+            <param name="extensionApiModel">The new extension definition</param>
+            <returns></returns>
+            <response code="201">Extension created.</response>
+            <response code="400">Details included in response.</response>
+        </member>
+        <member name="M:CloDracoudEms.ExtensionManagement.Api.Controllers.ExtensionController.GetExtensionAsync(System.String)">
+            <summary>
+            Gets the specified extension
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <returns></returns>
+            <response code="200">Extension returned.</response>
+            <response code="404">Extension not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.DeleteExtensionAsync(System.String)">
+            <summary>
+            Deletes the specified extension
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <returns></returns>
+            <response code="200"></response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.CreateExtensionVersionAsync(System.String,Draco.ExtensionManagement.Api.Models.ExtensionVersionApiModel)">
+            <summary>
+            Creates a new extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionApiModel">The new extension version definition</param>
+            <returns></returns>
+            <response code="201">Extension version created.</response>
+            <response code="400">Details included in response.</response>
+            <response code="404">Extension not found.</response>
+            <response code="409">Extension version already exists.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.DeleteExtensionVersionAsync(System.String,System.String)">
+            <summary>
+            Deletes the specified extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <returns></returns>
+            <response code="200"></response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetExtensionVersionsAsync(System.String)">
+            <summary>
+            Gets all versions of the specified extension
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <returns></returns>
+            <response code="200">Extension version(s) returned.</response>
+            <response code="404">Extension not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetExtensionVersionAsync(System.String,System.String)">
+            <summary>
+            Gets the specified extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <returns></returns>
+            <response code="200">Extension version returned.</response>
+            <response code="404">Extension or extension version not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.CreateInputObjectAsync(System.String,System.String,Draco.ExtensionManagement.Api.Models.InputObjectApiModel)">
+            <summary>
+            Creates a new extension version input object
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="inputObjectApiModel">The input object definition</param>
+            <returns></returns>
+            <response code="201">Input object created.</response>
+            <response code="400">Details included in response.</response>
+            <response code="404">Extension or extension version not found.</response>
+            <response code="409">Input object already exists.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.DeleteInputObjectAsync(System.String,System.String,System.String)">
+            <summary>
+            Deletes the specified input object
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="objectName">The input object name</param>
+            <returns></returns>
+            <response code="200"></response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetInputObjectsAsync(System.String,System.String)">
+            <summary>
+            Gets all input objects associated with the specified extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <returns></returns>
+            <response code="200">Input object(s) returned.</response>
+            <response code="404">Extension or extension version not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetInputObjectAsync(System.String,System.String,System.String)">
+            <summary>
+            Gets the specified input object
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="objectName">The input object name</param>
+            <returns></returns>
+            <response code="200">Input object returned.</response>
+            <response code="404">Extension, extension version, or input object not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.CreateOutputObjectAsync(System.String,System.String,Draco.ExtensionManagement.Api.Models.OutputObjectApiModel)">
+            <summary>
+            Creates a new extension version output object
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="outputObjectApiModel">The output object definition</param>
+            <returns></returns>
+            <response code="201">Output object created.</response>
+            <response code="400">Details included in response.</response>
+            <response code="404">Extension or extension version not found.</response>
+            <response code="409">Output object already exists.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.DeleteOutputObjectAsync(System.String,System.String,System.String)">
+            <summary>
+            Deletes the specified output object
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="objectName">The output object name</param>
+            <returns></returns>
+            <response code="200"></response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetOutputObjectsAsync(System.String,System.String)">
+            <summary>
+            Gets all output objects associated with the specified extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <returns></returns>
+            <response code="200">Output object(s) returned.</response>
+            <response code="404">Extension or extension version not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetOutputObjectAsync(System.String,System.String,System.String)">
+            <summary>
+            Gets the specified output object
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="objectName">The output object name</param>
+            <returns></returns>
+            <response code="200">Output object returned.</response>
+            <response code="404">Extension, extension version, or output object not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.CreateExecutionProfileAsync(System.String,System.String,Draco.ExtensionManagement.Api.Models.ExecutionProfileApiModel)">
+            <summary>
+            Creates a new execution profile
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="execProfileApiModel">The execution profile definition</param>
+            <returns></returns>
+            <response code="201">Execution profile created.</response>
+            <response code="400">Details included in response.</response>
+            <response code="404">Extension or extension version not found.</response>
+            <response code="409">Execution profile already exists.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.DeleteExecutionProfileAsync(System.String,System.String,System.String)">
+            <summary>
+            Deletes the specified execution profile
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="profileName">The execution profile name</param>
+            <returns></returns>
+            <response code="200"></response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetExecutionProfilesAsync(System.String,System.String)">
+            <summary>
+            Gets all execution profile(s) associated with the specified extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <returns></returns>
+            <response code="200">Execution profile(s) returned.</response>
+            <response code="404">Extension or extension version not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetExecutionProfileAsync(System.String,System.String,System.String)">
+            <summary>
+            Gets the specified execution profile
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="profileName">The execution profile name</param>
+            <returns></returns>
+            <response code="200">Execution profile returned.</response>
+            <response code="404">Extension, extension version, or execution profile not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.CreateExtensionServiceAsync(System.String,System.String,Draco.ExtensionManagement.Api.Models.ExtensionServiceApiModel)">
+            <summary>
+            Creates a new extension service
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="serviceApiModel">The extension service definition</param>
+            <returns></returns>
+            <response code="201">Extension service created.</response>
+            <response code="400">Details included in response.</response>
+            <response code="404">Extension or extension version not found.</response>
+            <response code="409">Extension service already exists.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetAllServicesAsync(System.String,System.String)">
+            <summary>
+            Gets all services associated with the specified extension version
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <returns></returns>
+            <response code="200">Extension service(s) returned.</response>
+            <response code="404">Extension or extension version not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.GetServiceAsync(System.String,System.String,System.String)">
+            <summary>
+            Gets the specified extension service
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="serviceName">The extension service name</param>
+            <returns></returns>
+            <response code="200">Extension service returned.</response>
+            <response code="404">Extension, extension version, or extension service not found.</response>
+        </member>
+        <member name="M:Draco.ExtensionManagement.Api.Controllers.ExtensionController.DeleteServiceAsync(System.String,System.String,System.String)">
+            <summary>
+            Deletes the specified extension service
+            </summary>
+            <param name="extensionId">The extension ID</param>
+            <param name="exVersionId">The extension version ID</param>
+            <param name="serviceName">The extension service name</param>
+            <returns></returns>
+            <response code="200"></response>
+        </member>
+    </members>
+</doc>
