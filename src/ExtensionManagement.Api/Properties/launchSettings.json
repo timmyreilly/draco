@@ -1,0 +1,45 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:52948",
+      "sslPort": 44301
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "extensions",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "CloudEms.ExtensionManagement.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "extensions",
+      "environmentVariables": {
+        "EXHUB_CONFIG_BLOB_STORAGE_BLOB_NAME": "appsettings-extensionmgmtapi.json",
+        "EXHUB_CONFIG_BLOB_STORAGE_CONNECTION_STRING": "",
+        "EXHUB_CONFIG_BLOB_STORAGE_CONTAINER_NAME": "configuration",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/extensions",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "https://+:443;http://+:80",
+        "ASPNETCORE_HTTPS_PORT": "44302"
+      },
+      "httpPort": 52956,
+      "useSSL": true,
+      "sslPort": 44302
+    }
+  }
+}

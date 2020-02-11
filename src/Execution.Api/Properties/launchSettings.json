@@ -1,0 +1,49 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:59825",
+      "sslPort": 44389
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "execution",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "CloudEms.Execution.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "execution",
+      "environmentVariables": {
+        "EXHUB_CONFIG_BLOB_STORAGE_BLOB_NAME": "appsettings-execapi.json",
+        "EXHUB_CONFIG_BLOB_STORAGE_CONNECTION_STRING": "",
+        "EXHUB_CONFIG_BLOB_STORAGE_CONTAINER_NAME": "configuration",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/execution",
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "https://+:443;http://+:80",
+        "ASPNETCORE_HTTPS_PORT": "44390"
+      },
+      "httpPort": 59826,
+      "useSSL": true,
+      "sslPort": 44390
+    },
+    "Azure Dev Spaces": {
+      "commandName": "AzureDevSpaces",
+      "launchBrowser": true
+    }
+  }
+}

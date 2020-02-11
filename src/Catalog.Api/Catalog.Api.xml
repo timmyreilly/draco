@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Catalog.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Draco.Catalog.Api.Controllers.CatalogController.SearchAsync(System.String,System.Int32,System.Int32)">
+            <summary>
+            Gets available extensions based on the provided full-text search criteria
+            </summary>
+            <param name="q">The full-text search criteria</param>
+            <param name="pageIndex">The search results page index (first page is 0)</param>
+            <param name="pageSize">The search results page size</param>
+            <response code="200">Search results returned.</response>
+            <response code="400">See error text for more details.</response>
+        </member>
+        <member name="M:Draco.Catalog.Api.Controllers.CatalogController.SearchAsync(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Gets available extensions based on the provided extension category and full-text search criteria
+            </summary>
+            <param name="category">The extension category name</param>
+            <param name="q">The full-text search criteria</param>
+            <param name="pageIndex">The search results page index (first page is 0)</param>
+            <param name="pageSize">The search results page size</param>
+            <response code="200">Search results returned.</response>
+            <response code="400">See error text for more details.</response>
+        </member>
+        <member name="M:Draco.Catalog.Api.Controllers.CatalogController.SearchAsync(System.String,System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Gets available extensions based on the provided extension category, subcategory, and full-text search criteria
+            </summary>
+            <param name="category">The extension category name</param>
+            <param name="subcategory">The extension subcategory name</param>
+            <param name="q">The full-text search criteria</param>
+            <param name="pageIndex">The search results page index (first page is 0)</param>
+            <param name="pageSize">The search results page size</param>
+            <response code="200">Search results returned.</response>
+            <response code="400">See error text for more details.</response>
+        </member>
+        <member name="M:Draco.Catalog.Api.Controllers.CatalogController.GetExtensionAsync(System.String,System.String,System.String)">
+            <summary>
+            Gets extension details including available versions and related links
+            </summary>
+            <param name="extensionId">The unique extension ID</param>
+            <param name="searchId">The unique search ID (returned in search results)</param>
+            <param name="actionId">The unique search result ID (returned in search results)</param>
+            <response code="200">Extension detail returned.</response>
+            <response code="404">Extension not found.</response>
+        </member>
+        <member name="M:Draco.Catalog.Api.Controllers.CatalogController.GetExtensionVersionAsync(System.String,System.String)">
+            <summary>
+            Gets extension version details including supported execution profiles, input objects, and output objects, and related links
+            </summary>
+            <param name="extensionId">The unique extension ID</param>
+            <param name="exVersionId">The unique extension version ID</param>
+            <response code="200">Extension version detail returned.</response>
+            <response code="404">Extension or extension version not found.</response>
+        </member>
+    </members>
+</doc>

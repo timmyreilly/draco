@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ExecutionAdapter.Api</name>
+    </assembly>
+    <members>
+        <member name="M:Draco.ExecutionAdapter.Api.Controllers.ExecutionAdapterController.ExecuteAsync(Draco.Api.InternalModels.ExecutionRequestApiModel)">
+            <summary>
+            Posts an internal execution request to a back-end execution adapter.
+            </summary>
+            <param name="execRequestApiModel">The internal execution request</param>
+            <returns></returns>
+            <response code="200">Internal execution request has been successfully posted to a back-end execution adapter.</response>
+            <response code="400">See response contents for additional information.</response>
+        </member>
+    </members>
+</doc>

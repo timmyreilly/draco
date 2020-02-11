@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CloudEms.ObjectStorageProvider.Api</name>
+    </assembly>
+    <members>
+        <member name="M:CloudEms.ObjectStorageProvider.Api.Controllers.ObjectStorageController.GetReadableInputObjectAccessorAsync(CloudEms.Api.InternalModels.InputObjectAccessorRequestApiModel)">
+            <summary>
+            Calculates a readable input object accessor
+            </summary>
+            <param name="requestApiModel">The input object accessor request</param>
+            <returns></returns>
+            <response code="200">Readable input object acccessor returned.</response>
+            <response code="400">See response content for further details.</response>
+        </member>
+        <member name="M:CloudEms.ObjectStorageProvider.Api.Controllers.ObjectStorageController.CalculateWriteableInputObjectAccessorAsync(CloudEms.Api.InternalModels.InputObjectAccessorRequestApiModel)">
+            <summary>
+            Calculates a writable input object accessor
+            </summary>
+            <param name="requestApiModel">The input object accessor request</param>
+            <returns></returns>
+            <response code="200">Writable input object acccessor returned.</response>
+            <response code="400">See response content for further details.</response>
+        </member>
+        <member name="M:CloudEms.ObjectStorageProvider.Api.Controllers.ObjectStorageController.CalculateReadableOutputObjectAccessorAsync(CloudEms.Api.InternalModels.OutputObjectAccessorRequestApiModel)">
+            <summary>
+            Calculates a readable output object accessor
+            </summary>
+            <param name="requestApiModel">The output object accessor request</param>
+            <returns></returns>
+            <response code="200">Readable output object acccessor returned.</response>
+            <response code="400">See response content for further details.</response>
+        </member>
+        <member name="M:CloudEms.ObjectStorageProvider.Api.Controllers.ObjectStorageController.CalculateWritableOutputObjectAccessorAsync(CloudEms.Api.InternalModels.OutputObjectAccessorRequestApiModel)">
+            <summary>
+            Calculates a writable output object accessor
+            </summary>
+            <param name="requestApiModel">The output object accessor request</param>
+            <returns></returns>
+            <response code="200">Writable output object acccessor returned.</response>
+            <response code="400">See response content for further details.</response>
+        </member>
+    </members>
+</doc>

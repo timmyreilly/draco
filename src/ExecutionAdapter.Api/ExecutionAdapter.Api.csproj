@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <UserSecretsId>dbcd1e9f-424f-4c20-b65b-e3cb8fba998e</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Repos\CloudEms\ExecutionAdapter.Api\ExecutionAdapter.Api.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Modules\ExecutionServices\" />
+    <Folder Include="Modules\ExecutionAdapters\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Api.InternalModels\Api.InternalModels.csproj" />
+    <ProjectReference Include="..\Api.Modules\Api.Modules.csproj" />
+    <ProjectReference Include="..\Azure.Execution\Azure.Execution.csproj" />
+    <ProjectReference Include="..\Core.Execution\Core.Execution.csproj" />
+    <ProjectReference Include="..\Core.Hosting\Core.Hosting.csproj" />
+    <ProjectReference Include="..\IntegrationTests.HowdyService\IntegrationTests.HowdyService.csproj" />
+  </ItemGroup>
+
+
+</Project>
