@@ -1,0 +1,1 @@
+> **NOTE:** Pull request must target the `develop` branch.  Otherwise, it will be rejected.  The only exception to this is for project administrators merging changes from `develop` into `master` as part of the project's release cadence.  
