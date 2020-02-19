@@ -10,7 +10,7 @@
       "acrSku": "Basic",
       "akvSku": "Standard"
     },
-    "resources": [
+      "resources": [
       {
         "name": "[variables('acrName')]",
         "type": "Microsoft.ContainerRegistry/registries",
@@ -45,6 +45,10 @@
       "acrResourceId": {
         "type": "string",
         "value": "[resourceId('Microsoft.ContainerRegistry/registries', variables('acrName'))]"
+      },
+      "acrName": {
+        "type": "string",
+        "value": "[variables('acrName')]"
       },
       "kvName": {
         "type": "string",
