@@ -1,4 +1,7 @@
-﻿using Draco.Core.Factories;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Factories;
 using Draco.Core.Hosting.Interfaces;
 using Draco.Core.Interfaces;
 using Draco.Core.Services.Interfaces;

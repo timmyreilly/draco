@@ -1,4 +1,7 @@
-﻿using Polly;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Polly;
 using Polly.Retry;
 using System;
 

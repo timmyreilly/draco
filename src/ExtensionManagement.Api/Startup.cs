@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using Draco.Core.Hosting.Extensions;
 using Draco.ExtensionManagement.Api.Modules.Azure;
 using Microsoft.AspNetCore.Builder;

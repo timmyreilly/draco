@@ -1,4 +1,7 @@
-﻿using Draco.Core.Interfaces;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Interfaces;
 using System;
 using System.Security.Cryptography;
 using System.Text;

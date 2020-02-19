@@ -1,4 +1,7 @@
-﻿namespace Draco.Azure.Models.Cosmos
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Azure.Models.Cosmos
 {
     public static class ModelTypes
     {

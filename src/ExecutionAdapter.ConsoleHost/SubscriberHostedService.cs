@@ -1,4 +1,7 @@
-﻿using Draco.Core.Execution.Interfaces;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Threading;

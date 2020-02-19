@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using Draco.Catalog.Api.Models;
 using Draco.Core.Catalog.Interfaces;
 using Draco.Core.Catalog.Models;

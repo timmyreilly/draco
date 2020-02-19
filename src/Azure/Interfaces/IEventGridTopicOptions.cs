@@ -1,4 +1,7 @@
-﻿namespace Draco.Azure.Interfaces
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Azure.Interfaces
 {
     public interface IEventGridTopicOptions
     {

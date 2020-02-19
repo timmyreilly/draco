@@ -1,4 +1,7 @@
-﻿namespace Draco.Azure.ObjectStorage.Constants
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Azure.ObjectStorage.Constants
 {
     public static class AzureObjectStorageProviders
     {

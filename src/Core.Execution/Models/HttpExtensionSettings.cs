@@ -1,4 +1,7 @@
-﻿namespace Draco.Core.Execution.Models
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Core.Execution.Models
 {
     public class HttpExtensionSettings
     {

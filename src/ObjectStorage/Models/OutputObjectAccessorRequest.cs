@@ -1,4 +1,7 @@
-﻿using Draco.Core.Models;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Models;
 using Draco.Core.Models.Interfaces;
 using System;
 

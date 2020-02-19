@@ -1,4 +1,7 @@
-﻿using Draco.Core.Hosting.Extensions;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Hosting.Extensions;
 using Draco.ExecutionAdapter.ConsoleHost.Modules;
 using Draco.ExecutionAdapter.ConsoleHost.Modules.Azure;
 using Draco.ExecutionAdapter.ConsoleHost.Modules.ExecutionServices;

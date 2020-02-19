@@ -1,4 +1,7 @@
-﻿namespace Draco.Azure.Models.Cosmos.Extensions
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Azure.Models.Cosmos.Extensions
 {
     public static class ExecutionProfileExtensions
     {

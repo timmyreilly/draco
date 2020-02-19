@@ -1,4 +1,7 @@
-﻿using Draco.Core.Execution.Models;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Models;
 using Draco.Core.Models;
 
 namespace Draco.Core.Execution.Extensions

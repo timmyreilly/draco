@@ -1,4 +1,7 @@
-﻿using Draco.Core.Services;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Services;
 using FluentAssertions;
 using System;
 using System.Security.Cryptography;

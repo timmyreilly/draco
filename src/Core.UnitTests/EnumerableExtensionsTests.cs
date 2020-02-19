@@ -1,4 +1,7 @@
-﻿using Draco.Core.Extensions;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Extensions;
 using FluentAssertions;
 using System.Collections.Generic;
 using Xunit;

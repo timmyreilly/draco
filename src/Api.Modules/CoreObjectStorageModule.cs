@@ -1,4 +1,7 @@
-﻿using Draco.Core.Hosting.Interfaces;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Hosting.Interfaces;
 using Draco.Core.ObjectStorage.Interfaces;
 using Draco.Core.ObjectStorage.Providers;
 using Microsoft.Extensions.Configuration;
