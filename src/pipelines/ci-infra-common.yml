@@ -1,0 +1,51 @@
+trigger: 
+    branches: 
+      include: 
+      - master
+      - develop
+    paths:
+      include:
+      - src/ArmTemplate/common/*
+  pr:
+    branches:
+      include:
+      - master
+      - develop
+    paths:
+      include:
+      - src/ArmTemplate/common/*
+  
+resources:
+- repo: self
+  
+variables:
+  tag: '$(Build.BuildId)'
+  'rgName': 'common-use2-rg-test'
+  'location': 'eastus2'
+  
+stages:
+- stage: Test
+  displayName: Test Infra-as-Code
+  jobs:  
+  - job: Test
+    displayName: Test
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Azure-Subscription'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(rgName)
+        location: $(location)
+        templateLocation: 'Linked artifact'
+        csmFile: 'src/ArmTemplate/common/common-deploy.json'
+        deploymentMode: 'Validation'
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        action: 'DeleteRG'
+        resourceGroupName: $(rgName)
+        azureResourceManagerConnection: 'Azure-Subscription'
+        location: $(location)

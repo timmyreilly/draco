@@ -1,0 +1,53 @@
+trigger: 
+    branches: 
+      include: 
+      - master
+      - develop
+    paths:
+      include:
+      - src/ArmTemplate/exthub/*
+  pr:
+    branches:
+      include:
+      - master
+      - develop
+    paths:
+      include:
+      - src/ArmTemplate/exthub/*
+    
+resources:
+- repo: self
+    
+variables:
+  tag: '$(Build.BuildId)'
+  'rgName': 'exthub-use2-rg-test'
+  'location': 'eastus2'
+  'aksDeployContainerInfra': 'true'
+    
+stages:
+- stage: Test
+  displayName: Test Infra-as-Code
+  jobs:  
+  - job: Test
+    displayName: Test
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Azure-Subscription'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(rgName)
+        location: $(location)
+        templateLocation: 'Linked artifact'
+        csmFile: 'src/ArmTemplate/exthub/exthub-deploy.json'
+        overrideParameters: '-deployContainerInfrastructure $(aksDeployContainerInfra) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
+        deploymentMode: 'Validation'
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        action: 'DeleteRG'
+        resourceGroupName: $(rgName)
+        azureResourceManagerConnection: 'Azure-Subscription'
+        location: $(location)
