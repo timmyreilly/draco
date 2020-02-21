@@ -1,4 +1,7 @@
-﻿using Draco.Azure.Catalog.Models;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Azure.Catalog.Models;
 using Draco.Azure.Options;
 using Draco.Core.Catalog.Interfaces;
 using Draco.Core.Catalog.Models;
@@ -7,7 +10,6 @@ using Microsoft.Azure.Search.Models;
 using Microsoft.Extensions.Options;
 using System;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 

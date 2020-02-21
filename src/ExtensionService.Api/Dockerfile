@@ -1,11 +1,12 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY ["ExtensionService.Api/ExtensionService.Api.csproj", "ExtensionService.Api/"]
 RUN dotnet restore "ExtensionService.Api/ExtensionService.Api.csproj"

@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using FluentAssertions;
 using System;
 
 namespace Draco.Core.Models.UnitTests

@@ -1,4 +1,7 @@
-﻿using Draco.Core.ObjectStorage.Models;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.ObjectStorage.Models;
 using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels.Extensions

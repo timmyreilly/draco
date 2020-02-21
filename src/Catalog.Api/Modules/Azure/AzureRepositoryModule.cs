@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using Draco.Azure.Models.Cosmos.Repositories;
 using Draco.Azure.Options;
 using Draco.Core.Hosting.Interfaces;

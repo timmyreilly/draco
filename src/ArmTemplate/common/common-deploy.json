@@ -10,7 +10,7 @@
       "acrSku": "Basic",
       "akvSku": "Standard"
     },
-      "resources": [
+    "resources": [
       {
         "name": "[variables('acrName')]",
         "type": "Microsoft.ContainerRegistry/registries",

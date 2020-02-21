@@ -1,4 +1,7 @@
-﻿using Draco.Core.Execution.Constants;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Constants;
 using Draco.Core.Models.Enumerations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

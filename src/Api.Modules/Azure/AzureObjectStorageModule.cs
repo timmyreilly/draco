@@ -1,4 +1,7 @@
-﻿using Draco.Azure.ObjectStorage.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Azure.ObjectStorage.Interfaces;
 using Draco.Azure.ObjectStorage.Providers;
 using Draco.Azure.Options;
 using Draco.Core.Hosting.Interfaces;

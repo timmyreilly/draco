@@ -1,4 +1,7 @@
-﻿using Draco.Azure.Catalog.Services;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Azure.Catalog.Services;
 using Draco.Azure.Options;
 using Draco.Core.Catalog.Interfaces;
 using Draco.Core.Hosting.Interfaces;

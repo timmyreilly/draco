@@ -1,4 +1,6 @@
-﻿using Castle.Core.Logging;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using Draco.Core.Execution.Adapters;
 using Draco.Core.Execution.Models;
 using Draco.Core.Interfaces;

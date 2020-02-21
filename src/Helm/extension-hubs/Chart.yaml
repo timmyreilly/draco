@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 apiVersion: v2
 name: extension-hubs
 description: This chart will provision all of the Kubernetes resources and services needed to start working with extension hubs.

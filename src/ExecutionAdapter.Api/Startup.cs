@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 using Draco.Api.Modules;
 using Draco.Api.Modules.Azure;
 using Draco.Api.Modules.ExtensionServices;
@@ -12,13 +10,11 @@ using Draco.ExecutionAdapter.Api.Modules.Azure;
 using Draco.ExecutionAdapter.Api.Modules.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using System.IO;
 
 namespace Draco.ExecutionAdapter.Api
 {

@@ -1,4 +1,7 @@
-﻿using Draco.Api.InternalModels;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Api.InternalModels;
 using Draco.Api.InternalModels.Extensions;
 using Draco.Core.Execution.Interfaces;
 using Microsoft.AspNetCore.Mvc;

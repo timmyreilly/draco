@@ -1,4 +1,7 @@
-﻿namespace Draco.Core.Models.Extensions
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Core.Models.Extensions
 {
     public static class ExecutionExtensions
     {

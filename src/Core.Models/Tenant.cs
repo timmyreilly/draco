@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 namespace Draco.Core.Models
 {

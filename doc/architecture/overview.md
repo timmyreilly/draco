@@ -2,9 +2,7 @@
 
 Draco was designed from the ground up for extensibility, scalability, and security.
 
-Although Draco includes built-in support for [hosting hubs completely in Azure](azure-architecture.md), it can easily be forked and modified to run on any other container-enabled platform – on-premises, at the intelligent edge, or even another cloud.
-
-Before diving in, we recommend that you take a moment to familiarize yourself with [some basic Draco terminology](definitions.md).
+Although Draco includes built-in support for hosting hubs  completely in Azure, it can easily be forked and modified to run on any other container-enabled platform – on-premises, at the intelligent edge, or even another cloud. 
 
 ![Architecture overview](/doc/images/arch-overview.JPG)
 
@@ -22,14 +20,13 @@ Leveraging Draco's novel **[execution model-based](execution-models.md)** design
 
 Regardless of how they are executed or where they are hosted, all extensions share a centrally-managed Draco control plane that, itself, is designed to scale globally with zero downtime. This decoupling of extensions from the underlying control plane carries a wide range of additional benefits including the ability to leverage **[execution objects](execution-objects.md)** to efficiently and securely exchange files directly between clients and extensions regardless of the underlying storage platform.
 
-The complexities of how and where extensions are executed is managed by the execution API. The execution API is itself extensible allowing hosts to plug in their own custom **[execution adapters](execution-models.md)**, **[extension services](extension-services.md)**, and **[object providers](execution-objects.md)** with little to no downtime.
+The complexities of how and where extensions are executed is managed by the execution API. The execution API is itself extensible allowing hosts to plug in their own custom **[execution adapters](execution-models.md)** and **[object storage providers](execution-objects.md)** with little to no downtime.
 
 ## Execution events
 
 Any time that an execution changes state (an execution request has been queued, is in progress, has succeeded or failed, etc.), an event is published that contains a wealth of information including –
 
 - The execution ID
-- The execution model, priority, and profile
 - The extension and extension version ID
 - The user and tenant ID
 - An immutable, host-defined property bag associated with the execution

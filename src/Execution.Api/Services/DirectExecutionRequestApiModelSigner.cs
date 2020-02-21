@@ -1,4 +1,7 @@
-﻿using Draco.Core.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Interfaces;
 using Draco.Execution.Api.Models;
 using System;
 using System.Threading.Tasks;

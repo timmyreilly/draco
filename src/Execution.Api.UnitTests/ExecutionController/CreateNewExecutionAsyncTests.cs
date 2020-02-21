@@ -1,4 +1,7 @@
-﻿using Draco.Core.Execution.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Interfaces;
 using Draco.Core.Interfaces;
 using Draco.Core.Models;
 using Draco.Core.Models.Enumerations;

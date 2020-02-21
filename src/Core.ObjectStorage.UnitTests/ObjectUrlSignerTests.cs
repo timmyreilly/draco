@@ -1,4 +1,7 @@
-﻿using Draco.Core.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Interfaces;
 using Draco.Core.ObjectStorage.Models;
 using Draco.Core.ObjectStorage.Services;
 using FluentAssertions;

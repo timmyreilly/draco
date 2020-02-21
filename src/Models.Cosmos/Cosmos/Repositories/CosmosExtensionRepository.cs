@@ -1,4 +1,7 @@
-﻿using Draco.Azure.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Azure.Interfaces;
 using Draco.Azure.Models.Cosmos.Extensions;
 using Draco.Azure.Options;
 using Draco.Core.Models.Interfaces;

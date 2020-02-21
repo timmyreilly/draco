@@ -1,4 +1,7 @@
-﻿using Draco.Core.Execution.Constants;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Constants;
 using Draco.Core.Execution.Extensions;
 using Draco.Core.Models;
 using FluentAssertions;

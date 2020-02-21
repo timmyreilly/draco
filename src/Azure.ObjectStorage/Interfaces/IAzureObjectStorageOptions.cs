@@ -1,4 +1,7 @@
-﻿namespace Draco.Azure.ObjectStorage.Interfaces
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+namespace Draco.Azure.ObjectStorage.Interfaces
 {
     public interface IAzureObjectStorageOptions
     {

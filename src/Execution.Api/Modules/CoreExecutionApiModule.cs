@@ -1,4 +1,7 @@
-﻿using Draco.Core.Hosting.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Hosting.Interfaces;
 using Draco.Core.Models.Interfaces;
 using Draco.Execution.Api.Interfaces;
 using Draco.Execution.Api.Services;

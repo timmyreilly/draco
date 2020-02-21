@@ -1,4 +1,7 @@
-﻿using Draco.Core.Models.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Models.Interfaces;
 using System;
 
 namespace Draco.Core.ObjectStorage.Models

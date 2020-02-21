@@ -1,4 +1,7 @@
-﻿using Draco.Core.ObjectStorage.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.ObjectStorage.Interfaces;
 using System;
 
 namespace Draco.Core.ObjectStorage.Options

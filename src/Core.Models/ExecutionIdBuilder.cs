@@ -1,5 +1,7 @@
-﻿using System;
-using System.Linq;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System;
 
 namespace Draco.Core.Models
 {

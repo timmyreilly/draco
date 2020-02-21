@@ -1,4 +1,7 @@
-﻿using Draco.Execution.Api.Interfaces;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Execution.Api.Interfaces;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Threading.Tasks;

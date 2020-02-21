@@ -1,5 +1,7 @@
-﻿using Draco.Core.Models;
-using System.Collections;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Models;
 using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels.Extensions

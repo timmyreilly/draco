@@ -1,4 +1,7 @@
-﻿using Draco.Azure.ObjectStorage.Models;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Azure.ObjectStorage.Models;
 using Draco.Core.ObjectStorage.Models;
 using System.Threading.Tasks;
 

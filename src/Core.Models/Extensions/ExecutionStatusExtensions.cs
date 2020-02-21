@@ -1,5 +1,7 @@
-﻿using Draco.Core.Models.Enumerations;
-using System.Runtime.CompilerServices;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Models.Enumerations;
 
 namespace Draco.Core.Models.Extensions
 {

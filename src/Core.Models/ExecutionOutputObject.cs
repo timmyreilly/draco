@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Newtonsoft.Json.Linq;
 
 namespace Draco.Core.Models
 {

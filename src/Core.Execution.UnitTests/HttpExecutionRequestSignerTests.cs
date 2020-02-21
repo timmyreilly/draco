@@ -1,11 +1,12 @@
-﻿using Draco.Core.Execution.Models;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Models;
 using Draco.Core.Execution.Services;
 using Draco.Core.Interfaces;
 using FluentAssertions;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 

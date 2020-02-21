@@ -1,4 +1,7 @@
-﻿using Draco.Core.ObjectStorage.Enumerations;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.ObjectStorage.Enumerations;
 using System;
 
 namespace Draco.Azure.ObjectStorage.Models

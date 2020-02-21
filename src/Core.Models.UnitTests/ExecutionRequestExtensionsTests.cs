@@ -1,10 +1,12 @@
-﻿using Draco.Core.Models.Enumerations;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Models.Enumerations;
 using Draco.Core.Models.Extensions;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace Draco.Core.Models.UnitTests

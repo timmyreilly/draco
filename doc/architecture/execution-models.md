@@ -8,8 +8,6 @@ An **execution model** describes *how* an extension is executed.
 
 The **execution model** is the core architectural concept that enables the nearly unlimited flexibility of *how* extensions are executed. As you can see in the above diagram, **execution models** are both uniquely identifable and independently versioned (e.g., **http/v1** and **other/v1**). 
 
-The **execution model** that is used for any given execution is determined by the chosen **execution profile** and the **execution models** that the extension supports. This relationship creates the flexibility needed to use different execution models based on customer scenario.
-
 Each **execution model** has a corresponding **execution adapter** that decouples the underlying Draco control plane from the extensions themselves. **Execution adapters** can be registered [directly through the execution API](/src/Execution.Api/Modules/Factories/ExecutionProcessorFactoryModule.cs) to enable synchronous execution or [through the stand-alone execution agent](/src/ExecutionAdapter.ConsoleHost/Modules/ExecutionProcessorFactoryModule.cs) to enable asynchonous execution.
 
 > **Best practice**: To enable even looser coupling and frictionless, zero-downtime updates, Draco provides a [standardized mechanism for wrapping **execution adapters** in their own APIs](/src/ExecutionAdapter.Api) which can then be deployed independently of the execution API and/or execution console. This also makes it easier to create **execution adapters** in cases where C# is not the preferred programming language.

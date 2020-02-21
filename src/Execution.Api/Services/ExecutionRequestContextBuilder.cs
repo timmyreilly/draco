@@ -1,4 +1,7 @@
-﻿using Draco.Core.Models.Enumerations;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Models.Enumerations;
 using Draco.Core.Models.Extensions;
 using Draco.Core.Models.Interfaces;
 using Draco.Execution.Api.Constants;

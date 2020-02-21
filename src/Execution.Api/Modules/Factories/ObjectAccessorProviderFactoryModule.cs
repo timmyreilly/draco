@@ -1,4 +1,7 @@
-﻿using Draco.Azure.ObjectStorage.Constants;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Azure.ObjectStorage.Constants;
 using Draco.Core.Factories;
 using Draco.Core.Hosting.Interfaces;
 using Draco.Core.Interfaces;

@@ -1,4 +1,7 @@
-﻿using Draco.Core.Execution.Extensions;
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using Draco.Core.Execution.Extensions;
 using Draco.Core.Execution.Interfaces;
 using Draco.Core.Extensions;
 using Draco.Core.Interfaces;
