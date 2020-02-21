@@ -12,9 +12,9 @@ COPY ["Catalog.Api/Catalog.Api.csproj", "Catalog.Api/"]
 COPY ["Core.Hosting/Core.Hosting.csproj", "Core.Hosting/"]
 COPY ["Core.Models/Core.Models.csproj", "Core.Models/"]
 COPY ["Azure.Catalog/Azure.Catalog.csproj", "Azure.Catalog/"]
-COPY ["Azure/Azure.csproj", "Azure/"]
 COPY ["Core/Core.csproj", "Core/"]
 COPY ["Core.Catalog/Core.Catalog.csproj", "Core.Catalog/"]
+COPY ["Azure/Azure.csproj", "Azure/"]
 COPY ["Models.Cosmos/Azure.Models.csproj", "Models.Cosmos/"]
 RUN dotnet restore "Catalog.Api/Catalog.Api.csproj"
 COPY . .

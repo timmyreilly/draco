@@ -45,6 +45,14 @@
       "acrResourceId": {
         "type": "string",
         "value": "[resourceId('Microsoft.ContainerRegistry/registries', variables('acrName'))]"
+      },
+      "acrName": {
+        "type": "string",
+        "value": "[variables('acrName')]"
+      },
+      "kvName": {
+        "type": "string",
+        "value": "[variables('akvName')]"
       }
     }
   }

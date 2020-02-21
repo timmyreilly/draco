@@ -9,17 +9,16 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY ["Execution.Api/Execution.Api.csproj", "Execution.Api/"]
+COPY ["Core.Hosting/Core.Hosting.csproj", "Core.Hosting/"]
+COPY ["Azure.ObjectStorage/Azure.ObjectStorage.csproj", "Azure.ObjectStorage/"]
 COPY ["ObjectStorage/Core.ObjectStorage.csproj", "ObjectStorage/"]
 COPY ["Core.Models/Core.Models.csproj", "Core.Models/"]
 COPY ["Services/Core.Services.csproj", "Services/"]
 COPY ["Core/Core.csproj", "Core/"]
-COPY ["Core.Hosting/Core.Hosting.csproj", "Core.Hosting/"]
-COPY ["IntegrationTests.HowdyService/IntegrationTests.HowdyService.csproj", "IntegrationTests.HowdyService/"]
-COPY ["Api.Modules/Api.Modules.csproj", "Api.Modules/"]
-COPY ["Core.Execution/Core.Execution.csproj", "Core.Execution/"]
-COPY ["Azure.ObjectStorage/Azure.ObjectStorage.csproj", "Azure.ObjectStorage/"]
 COPY ["Azure/Azure.csproj", "Azure/"]
 COPY ["Azure.Execution/Azure.Execution.csproj", "Azure.Execution/"]
+COPY ["Core.Execution/Core.Execution.csproj", "Core.Execution/"]
+COPY ["IntegrationTests.HowdyService/IntegrationTests.HowdyService.csproj", "IntegrationTests.HowdyService/"]
 COPY ["Models.Cosmos/Azure.Models.csproj", "Models.Cosmos/"]
 RUN dotnet restore "Execution.Api/Execution.Api.csproj"
 COPY . .
