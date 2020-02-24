@@ -6,7 +6,7 @@ trigger:
     paths:
       include:
       - src/ArmTemplate/common/*
-  pr:
+pr:
     branches:
       include:
       - master
