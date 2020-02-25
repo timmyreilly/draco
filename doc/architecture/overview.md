@@ -39,4 +39,3 @@ These events can easily be consumed to create additional custom functionality in
 - Internal and external notifications
 - Integration with existing billing systems
 - Integration with existing CRM and marketing platforms
-

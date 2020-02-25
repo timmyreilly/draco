@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\platforms\Azure\Azure.ObjectStorage\Azure.ObjectStorage.csproj" />
+    <ProjectReference Include="..\..\core\Core.Execution\Core.Execution.csproj" />
+    <ProjectReference Include="..\..\core\Core.Hosting\Core.Hosting.csproj" />
+    <ProjectReference Include="..\..\tests\IntegrationTests.HowdyService\IntegrationTests.HowdyService.csproj" />
+    <ProjectReference Include="..\..\core\Core.Models\Core.Models.csproj" />
+    <ProjectReference Include="..\..\core\Services\Core.Services.csproj" />
+  </ItemGroup>
+
+</Project>
