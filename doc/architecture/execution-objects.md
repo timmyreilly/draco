@@ -43,17 +43,17 @@ The [key concepts](#key-concepts) diagram above features the **az-blob/v1 object
 
 The **object provider** that is used for any given execution is determined by the chosen **execution profile** and the **object providers** that the extension supports. This relationship creates the flexibility needed to use different **object providers** based on customer scenario.
 
-**Object providers** can be registered [directly through the execution API](/src/Execution.Api/Modules/Factories/ObjectAccessorProviderFactoryModule.cs) or [through the stand-alone execution agent](/src/ExecutionAdapter.ConsoleHost/Modules/ObjectAccessorProviderFactoryModule.cs).
+**Object providers** can be registered [directly through the execution API](/src/draco/api/Execution.Api/Modules/Factories/ObjectAccessorProviderFactoryModule.cs) or [through the stand-alone execution agent](/src/draco/core/Agent/ExecutionAdapter.ConsoleHost/Modules/ObjectAccessorProviderFactoryModule.cs).
 
 > **Best practice**: You should consider implementing a retention policy that archives or deletes **execution objects** after a predetermined amount of time. [Azure blob storage's lifecycle management feature](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-lifecycle-management-concepts) makes it easy to automate this.
 
 > **Best practice**: Instead of forcing extensions to support specific **object providers**, consider creating an extension [sidecar process](https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar) that implements the needed **object providers** and stages files for extensions in a way that they can more easily access. For instance, if you're working with an extension that expects objects to be available at a specific file system path but you need to implement the **az-blobs/v1 object provider**, you could easily create a process that marshals files back and forth from Azure blob storage. This put the responsibility back on Draco to support different **object providers** while limiting changes to existing extensions.
 
-> **Best practice**: To enable even looser coupling and frictionless, zero-downtime updates, Draco provides [a standardized mechanism for wrapping **object providers** in their own APIs](/src/ObjectStorageProvider.Api) which can then be deployed independently of the execution API and/or execution console. This also makes it easier to create **object providers** in cases where C# is not the preferred programming language.
+> **Best practice**: To enable even looser coupling and frictionless, zero-downtime updates, Draco provides [a standardized mechanism for wrapping **object providers** in their own APIs](/src/draco/api/ObjectStorageProvider.Api) which can then be deployed independently of the execution API and/or execution console. This also makes it easier to create **object providers** in cases where C# is not the preferred programming language.
 
 #### Implementation
 
-Under the hood, **object providers** implement the [IInputObjectAccessorProvider](/src/ObjectStorage/Interfaces/IInputObjectAccessorProvider.cs) and [IOutputObjectAccessorProvider](/src/ObjectStorage/Interfaces/IOutputObjectAccessorProvider.cs) interfaces. If you're creating new object providers in C#, this is the recommended approach even if you're planning on wrapping the **object provider** within its own API as highlighted in the best practice above. Using a common interface gives you greater flexibility in how you deploy **object providers**.
+Under the hood, **object providers** implement the [IInputObjectAccessorProvider](/src/draco/core/ObjectStorage/Interfaces/IInputObjectAccessorProvider.cs) and [IOutputObjectAccessorProvider](/src/draco/core/ObjectStorage/Interfaces/IOutputObjectAccessorProvider.cs) interfaces. If you're creating new object providers in C#, this is the recommended approach even if you're planning on wrapping the **object provider** within its own API as highlighted in the best practice above. Using a common interface gives you greater flexibility in how you deploy **object providers**.
 
 ### Object accessors
 

@@ -1,0 +1,28 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-executionconsole
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-executionconsole
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-executionconsole
+    spec:
+      containers:
+      - name: exhub-executionconsole
+        image: {{ .Values.images.repository }}/{{ .Values.images.executionConsole.imageName }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        env:
+        - name: EXHUB_CONFIG_BLOB_STORAGE_CONNECTION_STRING
+          value: {{ .Values.configuration.storageConnectionString | quote }}
+        - name: EXHUB_CONFIG_BLOB_STORAGE_CONTAINER_NAME
+          value: {{ .Values.configuration.containerName | quote }}
+        - name: EXHUB_CONFIG_BLOB_STORAGE_BLOB_NAME
+          value: {{ .Values.configuration.executionConsole.blobName | quote }}

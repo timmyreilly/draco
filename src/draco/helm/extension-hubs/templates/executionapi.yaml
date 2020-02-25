@@ -1,0 +1,49 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-executionapi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-executionapi
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-executionapi
+    spec:
+      containers:
+      - name: exhub-executionapi
+        image: {{ .Values.images.repository }}/{{ .Values.images.executionApi.imageName }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        env:
+        - name: EXHUB_CONFIG_BLOB_STORAGE_CONNECTION_STRING
+          value: {{ .Values.configuration.storageConnectionString | quote }}
+        - name: EXHUB_CONFIG_BLOB_STORAGE_CONTAINER_NAME
+          value: {{ .Values.configuration.containerName | quote }}
+        - name: EXHUB_CONFIG_BLOB_STORAGE_BLOB_NAME
+          value: {{ .Values.configuration.executionApi.blobName | quote }}
+        ports:
+        - containerPort: 80
+          name: api
+        - containerPort: 443
+          name: apis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-executionapi
+  labels: 
+    app: {{ .Release.Name }}-executionapi
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    name: api
+  - port: 443
+    name: apis
+  selector:
+    app: {{ .Release.Name }}-executionapi

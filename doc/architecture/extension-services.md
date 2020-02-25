@@ -39,15 +39,15 @@ A **service context** is an immutable, execution-specific JSON object that conta
 
 Each **extension service** has a corresponding **service provider**. The **service provider's** job, given an execution request, is to generate an appropriate **[service context](#service-context)** which can then be used by the extension to access the service.
 
-An [example **service provider**](/src/IntegrationTests.HowdyService/HowdyServiceProvider.cs) is included in the Draco source.
+An [example **service provider**](/src/draco/tests/IntegrationTests.HowdyService/HowdyServiceProvider.cs) is included in the Draco source.
 
-**Service providers** can be registered [directly through the execution API](/src/Execution.Api/Modules/Factories/ExecutionServiceProviderFactoryModule.cs) or [through the stand-alone execution agent](/src/ExecutionAdapter.ConsoleHost/Modules/ExecutionServiceProviderFactoryModule.cs).
+**Service providers** can be registered [directly through the execution API](/src/draco/api/Execution.Api/Modules/Factories/ExecutionServiceProviderFactoryModule.cs) or [through the stand-alone execution agent](/src/draco/core/Agent/ExecutionAdapter.ConsoleHost/Modules/ExecutionServiceProviderFactoryModule.cs).
 
-> **Best practice:** To enable even looser coupling and frictionless, zero-downtime updates, Draco provides [a standardized mechanism for wrapping **service providers** in their own APIs](https://github.com/microsoft/draco/tree/master/src/ExtensionService.Api) which can then be deployed independently of the execution API and/or execution console. This also makes it easier to create **service providers** in cases where C# is not the preferred programming language.
+> **Best practice:** To enable even looser coupling and frictionless, zero-downtime updates, Draco provides [a standardized mechanism for wrapping **service providers** in their own APIs](/src/draco/api/ExtensionService.Api) which can then be deployed independently of the execution API and/or execution console. This also makes it easier to create **service providers** in cases where C# is not the preferred programming language.
 
 #### Implementation
 
-Under the hood, **service providers** implement the [IExecutionServiceProvider interface](/src/Services/Interfaces/IExecutionServiceProvider.cs). If you're creating new **service providers** in C#, this is the recommended approach even if you're planning on wrapping the **service provider** within its own API as highlighted in the best practice above. Using a common interface gives you greater flexibility in how you deploy **service providers**.
+Under the hood, **service providers** implement the [IExecutionServiceProvider interface](/src/draco/core/Services/Interfaces/IExecutionServiceProvider.cs). If you're creating new **service providers** in C#, this is the recommended approach even if you're planning on wrapping the **service provider** within its own API as highlighted in the best practice above. Using a common interface gives you greater flexibility in how you deploy **service providers**.
 
 ### Putting it all together
 
