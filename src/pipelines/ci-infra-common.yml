@@ -5,7 +5,7 @@ trigger:
       - develop
     paths:
       include:
-      - src/ArmTemplate/common/*
+      - src/draco/infra/ArmTemplate/common/*
 pr:
     branches:
       include:
@@ -13,7 +13,7 @@ pr:
       - develop
     paths:
       include:
-      - src/ArmTemplate/common/*
+      - src/draco/infra/ArmTemplate/common/*
   
 resources:
 - repo: self
@@ -40,7 +40,7 @@ stages:
         resourceGroupName: $(rgName)
         location: $(location)
         templateLocation: 'Linked artifact'
-        csmFile: 'src/ArmTemplate/common/common-deploy.json'
+        csmFile: 'src/draco/infra/ArmTemplate/common/common-deploy.json'
         deploymentMode: 'Validation'
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:

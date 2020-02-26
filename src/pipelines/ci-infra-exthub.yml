@@ -5,7 +5,7 @@ trigger:
       - develop
     paths:
       include:
-      - src/ArmTemplate/exthub/*
+      - src/draco/infra/ArmTemplate/exthub/*
 pr:
     branches:
       include:
@@ -13,7 +13,7 @@ pr:
       - develop
     paths:
       include:
-      - src/ArmTemplate/exthub/*
+      - src/draco/infra/ArmTemplate/exthub/*
     
 resources:
 - repo: self
@@ -41,7 +41,7 @@ stages:
         resourceGroupName: $(rgName)
         location: $(location)
         templateLocation: 'Linked artifact'
-        csmFile: 'src/ArmTemplate/exthub/exthub-deploy.json'
+        csmFile: 'src/draco/infra/ArmTemplate/exthub/exthub-deploy.json'
         overrideParameters: '-deployContainerInfrastructure $(aksDeployContainerInfra) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
         deploymentMode: 'Validation'
     - task: AzureResourceManagerTemplateDeployment@3
