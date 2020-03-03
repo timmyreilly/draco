@@ -1,23 +1,29 @@
 # Definitions
 
-#### Draco
+## Draco
+
 The platform itself. Draco includes all the components needed to deploy, serve, and manage extensions securely and at scale.
 
-#### Extension
-A uniquely identified, independently versioned, self-contained application feature.
+## Extension
 
-#### Hub
+A uniquely identified, independently versioned, self-contained application feature developed either by first party or third party developers.  Only sample extensions are included in the platform.
+
+## Hub
+
 A logical, uniquely-identified collection of extensions served to a host-defined group of customers. Hosts expose extensions through hubs. Hosts may create multiple hubs depending on business need.
 
-#### Execution
+## Execution
+
 A discrete, immutable execution of an extension hosted within a hub.
 
-#### Host
+## Host
+
 The organization, typically an independent software vendor (ISV), hosting the hub and exposing extensions to their customers. Typically, the host also owns the extended application.
 
-#### Customer
+## Customer
+
 Users of the extended application. Customers use extensions provided by the host through hubs.
 
-#### Publisher
-First (the host) and third-party entities creating and publishing extensions through hubs. Publishers typically include third-party members of the host's partner ecosystem.
+## Publisher
 
+First (the host) and third-party entities creating and publishing extensions through hubs. Publishers typically include third-party members of the host's partner ecosystem.
