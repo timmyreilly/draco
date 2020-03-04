@@ -1,0 +1,107 @@
+trigger: 
+    branches: 
+      include: 
+      - master
+    paths:
+      exclude:
+      - src/draco/infra/ArmTemplate/*
+      - src/extensions/*
+      - src/pipelines/*
+pr:
+    branches:
+      include:
+      - master
+    paths:
+      exclude:
+      - src/draco/infra/ArmTemplate/*
+      - src/extensions/*
+      - src/pipelines/*
+
+resources:
+- repo: self
+    
+stages:
+- stage: Build
+  displayName: Build the Draco Platform (.sln)
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'build'
+        configuration: 'Release'
+        projects: |
+          src/draco/Draco.sln
+        displayName: 'Build Draco Solution'
+
+- stage: Test
+  displayName: Test the Draco Platform (.sln)
+  jobs:  
+  - job: Test
+    displayName: Test
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        configuration: 'Release'
+        projects: |
+          src/draco/Draco.sln
+        displayName: 'Test Draco Solution'
+
+- stage: DockerBuild
+  displayName: Build and Push to ACR
+  jobs:
+  - job: BuildPush
+    displayName: Build and Push
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: Docker@2
+      displayName: 'Build ExtensionManagement.Api'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-extensionmgmtapi'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/api/ExtensionManagement.Api/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest
+    - task: Docker@2
+      displayName: 'Build Execution.Api'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-executionapi'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/api/Execution.Api/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest
+    - task: Docker@2
+      displayName: 'Build Catalog.Api'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-catalogapi'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/api/Catalog.Api/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest
+    - task: Docker@2
+      displayName: 'Build ExecutionAdapter.ConsoleHost'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-executionconsole'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest

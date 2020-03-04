@@ -2,7 +2,6 @@ trigger:
     branches: 
       include: 
       - master
-      - develop
     paths:
       include:
       - src/draco/infra/ArmTemplate/exthub/*
@@ -10,7 +9,6 @@ pr:
     branches:
       include:
       - master
-      - develop
     paths:
       include:
       - src/draco/infra/ArmTemplate/exthub/*
