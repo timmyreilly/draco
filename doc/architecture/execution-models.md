@@ -6,9 +6,9 @@ An **execution model** describes *how* an extension is executed.
 
 ## Overview
 
-The **execution model** is the core architectural concept that enables the nearly unlimited flexibility of *how* extensions are executed. As you can see in the above diagram, **execution models** are both uniquely identifable and independently versioned (e.g., **http/v1** and **other/v1**). 
+The **execution model** is the core architectural concept defining *how* extensions are executed. **Execution models** are both uniquely identifable and independently versioned (e.g., **http/v1** and **other/v1**). 
 
-The **execution model** that is used for any given execution is determined by the chosen **execution profile** and the **execution models** that the extension supports. This relationship creates the flexibility needed to use different execution models based on customer scenario.
+The **execution model** that is used for any given execution is determined by the **execution profile** and the **execution models** that the extension supports. This relationship creates the flexibility needed to use different execution models based on customer scenario.
 
 Each **execution model** has a corresponding **execution adapter** that decouples the underlying Draco control plane from the extensions themselves. **Execution adapters** can be registered [directly through the execution API](/src/draco/api/Execution.Api/Modules/Factories/ExecutionProcessorFactoryModule.cs) to enable synchronous execution or [through the stand-alone execution agent](/src/draco/core/Agent/ExecutionAdapter.ConsoleHost/Modules/ExecutionProcessorFactoryModule.cs) to enable asynchonous execution.
 
@@ -22,7 +22,7 @@ Under the hood, **execution adapters** implement the [IExecutionAdapter interfac
 
 ## Example
 
-Out of the box, Draco provides support for extensions that implement a simple JSON-based REST API via the **http/v1 execution model** supported by [this **execution adapter**](/src/draco/core/Core.Execution/Adapters/JsonHttpExecutionAdapter.cs). The **http/v1 execution model** expects extensions to expose a single HTTP POST endpoint that accepts [this JSON request](/src/draco/core/Core.Execution/Models/HttpExecutionRequest.cs) and returns [this JSON response](/src/draco/core/Core.Execution/Models/HttpExecutionResponse.cs).
+Out of the box, Draco provides support for extensions that implement a simple JSON-based REST API via the **http/v1 execution model** supported by [this **execution adapter**](/src/draco/core/Core.Execution/Adapters/JsonHttpExecutionAdapter.cs). The **http/v1 execution model** expects extensions to expose a single HTTP POST endpoint that accepts [this JSON request](/src/draco/core/Core.Execution/Models/HttpExecutionRequest.cs) and returns [this JSON response](/src/draco/core/Core.Execution/Models/HttpExecutionResponse.cs).  An example extension implementation for this use case is available [here](https://github.com/microsoft/draco/tree/master/src/extensions/samples/csharp/netcore-simple/echo).
 
 For more information on how [the **http/v1 execution adapter**](/src/draco/core/Core.Execution/Adapters/JsonHttpExecutionAdapter.cs) is registered, see –
 

@@ -1,6 +1,6 @@
 # Prioritized execution
 
-Prioritized execution makes it easy to build a flexible sales model around any extension.
+Prioritized execution enables ISVs to build a flexible sales model around any extension.
 
 ![Prioritized execution](/doc/images/arch-execution-priority_LI.jpg)
 
@@ -8,11 +8,11 @@ Prioritized execution makes it easy to build a flexible sales model around any e
 
 When creating a new execution, customers have the ability to select one of three available execution priorities – **low**, **normal** (default), or **high**. For any given extension, supported priorities are defined as part of the **execution profile**.
 
-In the above diagram, the **low**, **normal**, and **high** execution priority paths are all asynchronous. For short-running extensions, you may choose to expose the extension synchronously (the **immediate** path) at a premium for customers that need immediate results.
+The **low**, **normal**, and **high** execution priority paths are all asynchronous. For short-running extensions, you may choose to expose the extension synchronously (the **immediate** path) at a premium for customers that need immediate results.
 
-Typically, the selected priority affects both the amount of time that the execution takes to complete as well as the cost. For example, per the diagram above, a **normal-priority** execution typically takes about 10 minutes and costs $1.00 while a **high-priority** execution of the same extension takes about 5 minutes and costs $2.00.
+Typically, the selected priority affects both the amount of time that the execution takes to complete as well as some cost factor. For example, a **normal-priority** execution may take about 10 minutes and cost $1.00 while a **high-priority** execution of the same extension may take about 5 minutes and cost $2.00.
 
-It's important to note that, in the above diagram, the extension is the same regardless of the execution priority path. This is a great example of how a single extension can be broken down into multiple offerings based on customer need. You can start small by offering only **normal-priority** execution then add additional priorities as customer needs grow and evolve.
+The extension is the same regardless of the execution priority path. This is a great example of how a single extension can be broken down into multiple offerings based on customer need. An ISV can start small by offering only **normal-priority** execution then add additional priorities as customer needs evolve.
 
 > **Best practice:** Use the [execution events emitted by the execution API](overview.md#execution-events) to automatically calculate estimated execution times based on priority. This information can be shared directly with customers and used to dynamically adjust pricing based on demand.
 
