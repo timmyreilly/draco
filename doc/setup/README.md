@@ -100,9 +100,9 @@ az storage blob upload --file ./appsettings-execconsole.json --connection-string
 az storage blob upload --file ./appsettings-extensionmgmtapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-extensionmgmtapi.json
 ```
 
-## [Optional] Ceanup local appsettings*.json files
+## [Optional] Cleanup local appsettings*.json files
 
-You can delete the local copy of these `appsettings-*.json` files after completing the steps to upload them to blob storage in the previous section.
+You can delete the local copy of these `appsettings-*.json` files after uploading them to blob storage in the previous section.
 
 ```bash
 rm ./appsettings-catalogapi.json
