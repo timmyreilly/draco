@@ -348,3 +348,7 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+src/draco/appsettings-catalogapi.json
+src/draco/appsettings-execapi.json
+src/draco/appsettings-execconsole.json
+src/draco/appsettings-extensionmgmtapi.json

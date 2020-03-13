@@ -20,7 +20,7 @@ See [Draco Architecture](../architecture/azure-architecture.md) for more informa
 
 * [Home Brew](https://brew.sh/) to install the following tools:
   * azure-cli (alternative install method to direct download)
-  * docker  (You still need he Docker Desktop install from above)
+  * docker  (You still need Docker Desktop from above)
   * kubernetes-cli
   * helm
 
@@ -94,14 +94,23 @@ az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-de
 
 In this section, the application settings for the Draco service are uploaded to the blob storage account.  These are referenced later in the steps to deploy the container images into AKS.
 
-> NOTE: You can delete the local copy of these `appsettings-*.json` files after completing these steps.
-
 ```bash
 STG_CONN_STR=$(az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
 az storage blob upload --file ./appsettings-catalogapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-catalogapi.json
 az storage blob upload --file ./appsettings-execapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execapi.json
 az storage blob upload --file ./appsettings-execconsole.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execconsole.json
 az storage blob upload --file ./appsettings-extensionmgmtapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-extensionmgmtapi.json
+```
+
+## [Optional] Ceanup local appsettings*.json files
+
+You can delete the local copy of these `appsettings-*.json` files after completing the steps to upload them to blob storage in the previous section.
+
+```bash
+rm ./appsettings-catalogapi.json
+rm ./appsettings-execapi.json
+rm ./appsettings-execconsole.json
+rm ./appsettings-extensionmgmtapi.json
 ```
 
 ## Configure kubectl to manage AKS
