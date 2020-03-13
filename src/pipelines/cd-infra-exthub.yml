@@ -1,0 +1,32 @@
+trigger: none
+pr: none
+
+resources:
+- repo: self
+    
+variables:
+  tag: '$(Build.BuildId)'
+  'rgName': 'exthub-use2-rg-prod'
+  'location': 'eastus2'
+  'aksDeployContainerInfra': 'true'
+    
+stages:
+- stage: Deploy
+  displayName: Deploy Infra-as-Code
+  jobs:  
+  - job: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: AzureResourceManagerTemplateDeployment@3
+      inputs:
+        deploymentScope: 'Resource Group'
+        azureResourceManagerConnection: 'Azure-Subscription'
+        action: 'Create Or Update Resource Group'
+        resourceGroupName: $(rgName)
+        location: $(location)
+        templateLocation: 'Linked artifact'
+        csmFile: 'src/draco/infra/ArmTemplate/exthub/exthub-deploy.json'
+        overrideParameters: '-deployContainerInfrastructure $(deployContainerInfra) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
+        deploymentMode: 'Incremental'
