@@ -17,7 +17,7 @@ namespace Draco.Api.InternalModels
         [JsonProperty("extensionVersionId")]
         public string ExtensionVersionId { get; set; }
 
-        [JsonProperty("extensionProfileName")]
+        [JsonProperty("executionProfileName")]
         public string ExecutionProfileName { get; set; }
 
         [JsonProperty("executor")]

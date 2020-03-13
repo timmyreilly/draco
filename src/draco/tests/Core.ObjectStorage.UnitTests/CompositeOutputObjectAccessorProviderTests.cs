@@ -10,6 +10,7 @@ using FluentAssertions;
 using Moq;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -41,10 +42,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockServiceProvider = new Mock<IServiceProvider>();
             var mockObjectAccessorProvider = new Mock<IOutputObjectAccessorProvider>();
 
-            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>
-            {
-                [expectedProviderName] = sp => mockObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>(
+                new Dictionary<string, Func<IServiceProvider, IOutputObjectAccessorProvider>>
+                {
+                    [expectedProviderName] = sp => mockObjectAccessorProvider.Object
+                });
 
             var accessorRequest = new OutputObjectAccessorRequest
             {
@@ -71,10 +73,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockObjectAccessorProvider = new Mock<IOutputObjectAccessorProvider>();
             var objectMetadata = new ExtensionOutputObject { Name = "OutputObjectA" };
 
-            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>
-            {
-                [providerName] = sp => mockObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>(
+                 new Dictionary<string, Func<IServiceProvider, IOutputObjectAccessorProvider>>
+                 {
+                     [providerName] = sp => mockObjectAccessorProvider.Object
+                 });
 
             var accessorRequest = new OutputObjectAccessorRequest
             {
@@ -126,10 +129,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockServiceProvider = new Mock<IServiceProvider>();
             var mockObjectAccessorProvider = new Mock<IOutputObjectAccessorProvider>();
 
-            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>
-            {
-                [expectedProviderName] = sp => mockObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>(
+                new Dictionary<string, Func<IServiceProvider, IOutputObjectAccessorProvider>>
+                {
+                    [expectedProviderName] = sp => mockObjectAccessorProvider.Object
+                });
 
             var accessorRequest = new OutputObjectAccessorRequest
             {
@@ -156,10 +160,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockObjectAccessorProvider = new Mock<IOutputObjectAccessorProvider>();
             var objectMetadata = new ExtensionOutputObject { Name = "OutputObjectA" };
 
-            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>
-            {
-                [providerName] = sp => mockObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IOutputObjectAccessorProvider>(
+                new Dictionary<string, Func<IServiceProvider, IOutputObjectAccessorProvider>>
+                {
+                    [providerName] = sp => mockObjectAccessorProvider.Object
+                });
 
             var accessorRequest = new OutputObjectAccessorRequest
             {

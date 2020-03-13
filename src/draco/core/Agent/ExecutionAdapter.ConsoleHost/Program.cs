@@ -19,7 +19,7 @@ namespace Draco.ExecutionAdapter.ConsoleHost
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static async Task Main()
         {
             var host = new HostBuilder()
                 .UseEnvironment(Environments.Development)
@@ -45,7 +45,8 @@ namespace Draco.ExecutionAdapter.ConsoleHost
                             .ConfigureServices<CoreObjectStorageModule>(hostContext.Configuration)
                             .ConfigureServices<ExecutionProcessorFactoryModule>(hostContext.Configuration)
                             .ConfigureServices<ExecutionServiceProviderFactoryModule>(hostContext.Configuration)
-                            .ConfigureServices<ObjectAccessorProviderFactoryModule>(hostContext.Configuration)
+                            .ConfigureServices<InputObjectAccessorProviderFactoryModule>(hostContext.Configuration)
+                            .ConfigureServices<OutputObjectAccessorProviderFactoryModule>(hostContext.Configuration)
                             .ConfigureServices<SignerModule>(hostContext.Configuration);
 
                     // Change these modules to re-platform...

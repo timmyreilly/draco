@@ -45,12 +45,12 @@ namespace Draco.Core.ObjectStorage.Providers
                 throw new ArgumentNullException(nameof(accessorRequest));
             }
 
-            if (accessorProviderFactory.ContainsKey(accessorRequest.ObjectProviderName) == false)
+            if (accessorProviderFactory.CanCreateService(accessorRequest.ObjectProviderName) == false)
             {
                 throw new NotSupportedException($"Object provider [{accessorRequest.ObjectProviderName}] not supported.");
             }
 
-            return accessorProviderFactory[accessorRequest.ObjectProviderName](serviceProvider);
+            return accessorProviderFactory.CreateService(accessorRequest.ObjectProviderName, serviceProvider);
         }
     }
 }

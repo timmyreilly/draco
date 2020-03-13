@@ -29,12 +29,12 @@ namespace Draco.Core.Execution.Processors
                 throw new ArgumentNullException(nameof(execRequest));
             }
 
-            if (processorFactory.ContainsKey(execRequest.ExecutionModelName) == false)
+            if (processorFactory.CanCreateService(execRequest.ExecutionModelName) == false)
             {
                 throw new NotSupportedException($"Execution model [{execRequest.ExecutionModelName}] not supported.");
             }
 
-            var processor = processorFactory[execRequest.ExecutionModelName](serviceProvider);
+            var processor = processorFactory.CreateService(execRequest.ExecutionModelName, serviceProvider);
 
             return processor.ProcessRequestAsync(execRequest, cancelToken);
         }

@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>dbcd1e9f-424f-4c20-b65b-e3cb8fba998e</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -12,15 +13,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Modules\ExecutionAdapters\**" />
+    <Compile Remove="Modules\ExecutionServices\**" />
+    <Content Remove="Modules\ExecutionAdapters\**" />
+    <Content Remove="Modules\ExecutionServices\**" />
+    <EmbeddedResource Remove="Modules\ExecutionAdapters\**" />
+    <EmbeddedResource Remove="Modules\ExecutionServices\**" />
+    <None Remove="Modules\ExecutionAdapters\**" />
+    <None Remove="Modules\ExecutionServices\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="ExecutionAdapter.Api.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="ExecutionAdapter.Api.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Modules\ExecutionServices\" />
-    <Folder Include="Modules\ExecutionAdapters\" />
   </ItemGroup>
 
   <ItemGroup>

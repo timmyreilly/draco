@@ -4,14 +4,34 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>07fd7856-4ba5-430d-8d81-d660212c9012</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Repos\draco\src\draco\api\ExtensionService.Api\ExtensionService.Api.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <None Remove="ExtensionService.Api.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <Content Include="ExtensionService.Api.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\core\Core.Hosting\Core.Hosting.csproj" />
+    <ProjectReference Include="..\..\tests\IntegrationTests.HowdyService\IntegrationTests.HowdyService.csproj" />
+    <ProjectReference Include="..\Api.InternalModels\Api.InternalModels.csproj" />
+    <ProjectReference Include="..\Api.Modules\Api.Modules.csproj" />
   </ItemGroup>
 
 

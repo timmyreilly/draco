@@ -42,7 +42,6 @@ namespace Draco.ExtensionManagement.Api
             });
 
             services.AddSwaggerGenNewtonsoftSupport();
-
             services.ConfigureServices<AzureRepositoryModule>(Configuration);
         }
 

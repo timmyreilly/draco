@@ -1,0 +1,43 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+{{ if .Values.deployObjectProviderApi }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-objectproviderapi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-objectproviderapi
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-objectproviderapi
+    spec:
+      containers:
+      - name: exhub-objectproviderapi
+        image: {{ .Values.images.repository }}/{{ .Values.images.objectProviderApi.imageName }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        ports:
+        - containerPort: 80
+          name: api
+        - containerPort: 443
+          name: apis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-objectproviderapi
+  labels: 
+    app: {{ .Release.Name }}-objectproviderapi
+spec:
+  ports:
+  - port: 80
+    name: api
+  - port: 443
+    name: apis
+  selector:
+    app: {{ .Release.Name }}-objectproviderapi
+{{ end }}

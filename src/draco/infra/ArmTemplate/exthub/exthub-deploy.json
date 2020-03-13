@@ -4,7 +4,7 @@
   "parameters": {
     "deployContainerInfrastructure": {
       "metadata": {
-        "description": "Deploy AKS cluster and container registry?"
+        "description": "Deploy AKS cluster"
       },
       "type": "bool"
     },

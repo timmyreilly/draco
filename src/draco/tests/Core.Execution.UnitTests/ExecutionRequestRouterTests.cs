@@ -9,6 +9,7 @@ using Draco.Core.Models.Enumerations;
 using FluentAssertions;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -38,10 +39,11 @@ namespace Draco.Core.Execution.UnitTests
             var mockProcessor = new Mock<IExecutionProcessor>();
             var mockServiceProvider = new Mock<IServiceProvider>();
 
-            var processorFactory = new NamedServiceFactory<IExecutionProcessor>()
-            {
-                [expectedModelName] = sp => mockProcessor.Object
-            };
+            var processorFactory = new NamedServiceFactory<IExecutionProcessor>(
+                new Dictionary<string, Func<IServiceProvider, IExecutionProcessor>>
+                {
+                    [expectedModelName] = sp => mockProcessor.Object
+                });
 
             var execRequest = new ExecutionRequest
             {
@@ -64,10 +66,11 @@ namespace Draco.Core.Execution.UnitTests
             var mockProcessor = new Mock<IExecutionProcessor>();
             var mockServiceProvider = new Mock<IServiceProvider>();
 
-            var processorFactory = new NamedServiceFactory<IExecutionProcessor>()
-            {
-                [modelName] = sp => mockProcessor.Object
-            };
+            var processorFactory = new NamedServiceFactory<IExecutionProcessor>(
+                new Dictionary<string, Func<IServiceProvider, IExecutionProcessor>>
+                {
+                    [modelName] = sp => mockProcessor.Object
+                });
 
             var execRequest = new ExecutionRequest
             {

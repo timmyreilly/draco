@@ -1,0 +1,43 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+{{ if .Values.deployExecutionAdapterApi }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-executionadapterapi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-executionadapterapi
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-executionadapterapi
+    spec:
+      containers:
+      - name: exhub-executionadapterapi
+        image: {{ .Values.images.repository }}/{{ .Values.images.executionAdapterApi.imageName }}
+        imagePullPolicy: {{ .Values.images.pullPolicy }}
+        ports:
+        - containerPort: 80
+          name: api
+        - containerPort: 443
+          name: apis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-executionadapterapi
+  labels: 
+    app: {{ .Release.Name }}-executionadapterapi
+spec:
+  ports:
+  - port: 80
+    name: api
+  - port: 443
+    name: apis
+  selector:
+    app: {{ .Release.Name }}-executionadapterapi
+{{ end }}

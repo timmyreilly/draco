@@ -10,6 +10,7 @@ using FluentAssertions;
 using Moq;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -41,10 +42,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockServiceProvider = new Mock<IServiceProvider>();
             var mockInputObjectAccessorProvider = new Mock<IInputObjectAccessorProvider>();
 
-            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>
-            {
-                [expectedProviderName] = sp => mockInputObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>(
+                new Dictionary<string, Func<IServiceProvider, IInputObjectAccessorProvider>>
+                {
+                    [expectedProviderName] = sp => mockInputObjectAccessorProvider.Object
+                });
 
             var accessorRequest = new InputObjectAccessorRequest
             {
@@ -71,10 +73,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockInputObjectAccessorProvider = new Mock<IInputObjectAccessorProvider>();
             var objectMetadata = new ExtensionInputObject { Name = "InputObjectA" };
 
-            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>
-            {
-                [providerName] = sp => mockInputObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>(
+                 new Dictionary<string, Func<IServiceProvider, IInputObjectAccessorProvider>>
+                 {
+                     [providerName] = sp => mockInputObjectAccessorProvider.Object
+                 });
 
             var accessorRequest = new InputObjectAccessorRequest
             {
@@ -126,10 +129,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockServiceProvider = new Mock<IServiceProvider>();
             var mockInputObjectAccessorProvider = new Mock<IInputObjectAccessorProvider>();
 
-            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>
-            {
-                [expectedProviderName] = sp => mockInputObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>(
+                new Dictionary<string, Func<IServiceProvider, IInputObjectAccessorProvider>>
+                {
+                    [expectedProviderName] = sp => mockInputObjectAccessorProvider.Object
+                });
 
             var accessorRequest = new InputObjectAccessorRequest
             {
@@ -156,10 +160,11 @@ namespace Draco.Core.ObjectStorage.UnitTests
             var mockInputObjectAccessorProvider = new Mock<IInputObjectAccessorProvider>();
             var objectMetadata = new ExtensionInputObject { Name = "InputObjectA" };
 
-            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>
-            {
-                [providerName] = sp => mockInputObjectAccessorProvider.Object
-            };
+            var accessorProviderFactory = new NamedServiceFactory<IInputObjectAccessorProvider>(
+                 new Dictionary<string, Func<IServiceProvider, IInputObjectAccessorProvider>>
+                 {
+                     [providerName] = sp => mockInputObjectAccessorProvider.Object
+                 });
 
             var accessorRequest = new InputObjectAccessorRequest
             {

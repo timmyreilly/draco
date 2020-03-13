@@ -1,12 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Draco.Api.Modules;
-using Draco.Api.Modules.Azure;
-using Draco.Api.Modules.ExtensionServices;
+using Api.Modules;
 using Draco.Core.Hosting.Extensions;
 using Draco.ExecutionAdapter.Api.Modules;
-using Draco.ExecutionAdapter.Api.Modules.Azure;
 using Draco.ExecutionAdapter.Api.Modules.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,23 +45,17 @@ namespace Draco.ExecutionAdapter.Api
             services.AddSwaggerGenNewtonsoftSupport();
 
             ConfigureCoreServices(services);
-            ConfigureAzureServices(services);
         }
 
         private void ConfigureCoreServices(IServiceCollection services) =>
-           services.ConfigureServices<CoreObjectStorageModule>(Configuration)
-                   .ConfigureServices<CoreExecutionPipelineModule>(Configuration)
+           services.ConfigureServices<StubObjectStorageModule>(Configuration) // Stubbed - replace w/ core module in production.
+                   .ConfigureServices<StubExecutionPipelineModule>(Configuration) // Stubbed - replace w/ core module in production.
+                   .ConfigureServices<StubExecutionServiceModule>(Configuration) // Stubbed - replace w/ core module in production.
                    .ConfigureServices<ExecutionProcessorFactoryModule>(Configuration) // Configure additional execution adapters here.
                    .ConfigureServices<ExecutionServiceProviderFactoryModule>(Configuration) // Configure additional service providers here.
-                   .ConfigureServices<ObjectAccessorProviderFactoryModule>(Configuration) // Configure additional object accessor providers here.
-                   .ConfigureServices<JsonHttpExecutionAdapterModule>(Configuration)
-                   .ConfigureServices<HowdyExecutionServiceModule>(Configuration)
+                   .ConfigureServices<InputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional input object accessor providers here.
+                   .ConfigureServices<OutputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional output object accessor providers here.
                    .ConfigureServices<SignerModule>(Configuration);
-
-        // Follow this pattern when adding additional platforms.
-        private void ConfigureAzureServices(IServiceCollection services) =>
-            services.ConfigureServices<AzureExecutionPipelineModule>(Configuration)
-                    .ConfigureServices<AzureObjectStorageModule>(Configuration);
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

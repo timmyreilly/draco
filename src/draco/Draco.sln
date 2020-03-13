@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core\Core", "{19134B2F-0877-413C-9138-1B5CA537B357}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{19134B2F-0877-413C-9138-1B5CA537B357}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{069A144D-70EF-4FB8-8009-0A0BE4BBC7AE}"
 EndProject
@@ -87,6 +87,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.InternalModels", "api\Api.InternalModels\Api.InternalModels.csproj", "{A4C784B3-6813-4776-8143-1B1DAF33054D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Modules", "api\Api.Modules\Api.Modules.csproj", "{FB82564B-342D-4CD9-9B18-D2E0A8E9076C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api.Proxies", "api\Api.Proxies\Api.Proxies.csproj", "{B5E062DF-CA55-4BD4-BDCA-B462BDA0ABEE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -210,6 +212,10 @@ Global
 		{FB82564B-342D-4CD9-9B18-D2E0A8E9076C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB82564B-342D-4CD9-9B18-D2E0A8E9076C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB82564B-342D-4CD9-9B18-D2E0A8E9076C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5E062DF-CA55-4BD4-BDCA-B462BDA0ABEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5E062DF-CA55-4BD4-BDCA-B462BDA0ABEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5E062DF-CA55-4BD4-BDCA-B462BDA0ABEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5E062DF-CA55-4BD4-BDCA-B462BDA0ABEE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -247,6 +253,7 @@ Global
 		{8BE34DA2-D48E-4A41-B8F2-ABF75993C31B} = {891567CC-76A2-4729-8203-D41AE86F6030}
 		{A4C784B3-6813-4776-8143-1B1DAF33054D} = {891567CC-76A2-4729-8203-D41AE86F6030}
 		{FB82564B-342D-4CD9-9B18-D2E0A8E9076C} = {891567CC-76A2-4729-8203-D41AE86F6030}
+		{B5E062DF-CA55-4BD4-BDCA-B462BDA0ABEE} = {891567CC-76A2-4729-8203-D41AE86F6030}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {70CE9609-CCF9-42C7-88BF-5E5BE5EEE2D9}

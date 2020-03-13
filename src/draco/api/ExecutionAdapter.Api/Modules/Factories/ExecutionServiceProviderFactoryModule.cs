@@ -1,27 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Draco.Core.Factories;
-using Draco.Core.Hosting.Interfaces;
-using Draco.Core.Interfaces;
+using Core.Interfaces;
+using Core.Modules;
+using Core.Services.Providers;
 using Draco.Core.Services.Interfaces;
-using Draco.IntegrationTests.HowdyService;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.Api.Modules.Factories
 {
-    public class ExecutionServiceProviderFactoryModule : IServiceModule
+    public class ExecutionServiceProviderFactoryModule : BaseNamedServiceModule<IExecutionServiceProvider>
     {
-        public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        public override void AddNamedServices(IConfiguration configuration, INamedServiceRegistry<IExecutionServiceProvider> serviceRegistry)
         {
-            services.AddSingleton<INamedServiceFactory<IExecutionServiceProvider>>(
-               new NamedServiceFactory<IExecutionServiceProvider>
-               {
-                   ["howdy/v1"] = sp => sp.GetService<HowdyServiceProvider>()
-
-                   // Plug in additional extension services here...
-               });
+            serviceRegistry["stub/v1"] = sp => sp.GetService<StubExecutionServiceProvider>();
         }
     }
 }

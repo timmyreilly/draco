@@ -39,11 +39,12 @@ namespace Draco.Core.Services.Providers
 
             foreach (var serviceName in executionRequest.SupportedServices.Keys.Intersect(execServiceProviderFactory.Keys))
             {
-                var serviceConfig = await execServiceProviderFactory[serviceName](serviceProvider).GetServiceConfigurationAsync(executionRequest);
+                var execServiceProvider = execServiceProviderFactory.CreateService(serviceName, serviceProvider);
+                var execServiceConfig = await execServiceProvider.GetServiceConfigurationAsync(executionRequest);
 
-                if (serviceConfig != null)
+                if (execServiceConfig != null)
                 {
-                    configDictionary.Add(serviceName, serviceConfig);
+                    configDictionary.Add(serviceName, execServiceConfig);
                 }
             }
 
@@ -71,7 +72,7 @@ namespace Draco.Core.Services.Providers
 
             Task.WaitAll(execRequest.SupportedServices.Keys
                                     .Intersect(execServiceProviderFactory.Keys)
-                                    .Select(sn => onFunc(execServiceProviderFactory[sn](serviceProvider), execRequest))
+                                    .Select(sn => onFunc(execServiceProviderFactory.CreateService(sn, serviceProvider), execRequest))
                                     .ToArray());
 
             return Task.CompletedTask;
@@ -86,7 +87,7 @@ namespace Draco.Core.Services.Providers
 
             Task.WaitAll(execContext.SupportedServices.Keys
                                     .Intersect(execServiceProviderFactory.Keys)
-                                    .Select(sn => onFunc(execServiceProviderFactory[sn](serviceProvider), execContext))
+                                    .Select(sn => onFunc(execServiceProviderFactory.CreateService(sn, serviceProvider), execContext))
                                     .ToArray());
 
             return Task.CompletedTask;

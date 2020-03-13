@@ -5,6 +5,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+deployExecutionAdapterApi: false
+deployExtensionServiceApi: false
+deployObjectProviderApi: false
+
 images:
   repository: ""
   pullPolicy: Always
@@ -16,6 +20,12 @@ images:
     imageName: "xhub-extensionmgmtapi:latest"
   executionConsole:
     imageName: "xhub-executionconsole:latest"
+  executionAdapterApi:
+    imageName: "xhub-executionadapterapi:latest"
+  extensionServiceApi:
+    imageName: "xhub-extensionserviceapi:latest"
+  objectProviderApi:
+    imageName: "xhub-objectproviderapi:latest"
 
 configuration:
   storageConnectionString: ""

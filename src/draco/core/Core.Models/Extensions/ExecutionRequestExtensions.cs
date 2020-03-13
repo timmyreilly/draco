@@ -1,7 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace Draco.Core.Models.Extensions
 {
@@ -10,6 +12,7 @@ namespace Draco.Core.Models.Extensions
         public static ExecutionContext ToExecutionContext(this ExecutionRequest execRequest) => new ExecutionContext
         {
             CreatedDateTimeUtc = execRequest.CreatedDateTimeUtc,
+            Executor = execRequest.Executor,
             ExecutionId = execRequest.ExecutionId,
             ExecutionProfileName = execRequest.ExecutionProfileName,
             ExtensionId = execRequest.ExtensionId,
@@ -18,13 +21,13 @@ namespace Draco.Core.Models.Extensions
             Priority = execRequest.Priority,
             StatusUpdateKey = execRequest.StatusUpdateKey,
             ExecutionTimeoutDateTimeUtc = execRequest.ExecutionTimeoutDateTimeUtc,
-            SupportedServices = execRequest.SupportedServices,
+            SupportedServices = execRequest.SupportedServices ?? new Dictionary<string, JObject>(),
             ExecutionModelName = execRequest.ExecutionModelName,
             ObjectProviderName = execRequest.ObjectProviderName,
-            ProvidedInputObjects = execRequest.ProvidedInputObjects,
-            InputObjects = execRequest.InputObjects,
-            OutputObjects = execRequest.OutputObjects,
-            ExecutorProperties = execRequest.ExecutorProperties
+            ProvidedInputObjects = execRequest.ProvidedInputObjects ?? new List<string>(),
+            InputObjects = execRequest.InputObjects ?? new Dictionary<string, ExtensionInputObject>(),
+            OutputObjects = execRequest.OutputObjects ?? new Dictionary<string, ExtensionOutputObject>(),
+            ExecutorProperties = execRequest.ExecutorProperties ?? new Dictionary<string, string>()
         };
 
         public static ExecutionRequest CalculateExecutionTimeoutDateTimeUtc(this ExecutionRequest execRequest, TimeSpan defaultTimeoutPeriod)

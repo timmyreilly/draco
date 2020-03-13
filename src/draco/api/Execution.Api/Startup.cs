@@ -8,6 +8,7 @@ using Draco.Core.Hosting.Extensions;
 using Draco.Execution.Api.Modules;
 using Draco.Execution.Api.Modules.Azure;
 using Draco.Execution.Api.Modules.Factories;
+using Execution.Api.Modules.Factories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -58,7 +59,8 @@ namespace Draco.Execution.Api
                     .ConfigureServices<CoreExecutionPipelineModule>(Configuration)
                     .ConfigureServices<ExecutionProcessorFactoryModule>(Configuration) // Configure additional execution adapters here.
                     .ConfigureServices<ExecutionServiceProviderFactoryModule>(Configuration) // Configure additional service providers here.
-                    .ConfigureServices<ObjectAccessorProviderFactoryModule>(Configuration) // Configure additional object accessor providers here.
+                    .ConfigureServices<InputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional input object accessor providers here.
+                    .ConfigureServices<OutputObjectAccessorProviderFactoryModule>(Configuration)
                     .ConfigureServices<JsonHttpExecutionAdapterModule>(Configuration)
                     .ConfigureServices<HowdyExecutionServiceModule>(Configuration)
                     .ConfigureServices<SignerModule>(Configuration);

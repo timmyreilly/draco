@@ -23,6 +23,7 @@ namespace Draco.ExtensionManagement.Api.Extensions
                 ObjectProviderName = apiModel.ObjectProviderName,
                 ProfileDescription = apiModel.Description,
                 ProfileName = apiModel.Name,
+                IsActive = apiModel.IsActive,
                 SupportedPriorities = Enum.Parse<ExecutionPriority>(string.Join(", ", apiModel.SupportedPriorities), true)
             };
 
@@ -38,6 +39,7 @@ namespace Draco.ExtensionManagement.Api.Extensions
                 ExtensionVersionId = exVersionId,
                 Name = coreModel.ProfileName,
                 ObjectProviderName = coreModel.ObjectProviderName,
+                IsActive = coreModel.IsActive,
                 SupportedPriorities = coreModel.SupportedPriorities.ToString().Split(',').Select(p => p.Trim()).ToList()
             };
     }

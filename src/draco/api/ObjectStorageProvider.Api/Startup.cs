@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Api.Modules;
+using Draco.Api.InternalModels.Extensions;
 using Draco.Api.Modules;
 using Draco.Api.Modules.Azure;
 using Draco.Core.Hosting.Extensions;
@@ -46,17 +48,13 @@ namespace Draco.ObjectStorageProvider.Api
             services.AddSwaggerGenNewtonsoftSupport();
 
             ConfigureCoreServices(services);
-            ConfigureAzureServices(services);
         }
 
         private void ConfigureCoreServices(IServiceCollection services) =>
-           services.ConfigureServices<CoreObjectStorageModule>(Configuration)
-                   .ConfigureServices<ObjectAccessorProviderFactoryModule>(Configuration) // Configure additional object accessor providers here.
+           services.ConfigureServices<StubObjectStorageModule>(Configuration) // Stubbed - replace w/ core storage module in production.
+                   .ConfigureServices<InputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional input object accessor providers here.
+                   .ConfigureServices<OutputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional output object accessor providers here.
                    .ConfigureServices<SignerModule>(Configuration);
-
-        // Follow this pattern when adding additional platforms.
-        private void ConfigureAzureServices(IServiceCollection services) =>
-            services.ConfigureServices<AzureObjectStorageModule>(Configuration);
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

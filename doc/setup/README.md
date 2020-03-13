@@ -44,7 +44,6 @@ DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"
 ```bash
 az login
 ```
-
 ### Ensure correct Azure subscription is in use
 
 If you have more than one Azure subscription make sure you choose the correct subscription before running any of these commands.
@@ -78,7 +77,6 @@ The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB,
 az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
 az group deployment create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters deployContainerInfrastructure=true aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
  ```
-
 ## Retrieve Draco service configuration settings
 
 The Draco platform infrastructure deployment contains confifuration outputs for each of the services running in AKS that make up the Draco platform.  This section saves these configuration outputs to a JSON file (application settings) for each service.
@@ -130,6 +128,9 @@ These steps use the `Dockerfile` for each of the Draco services to build contain
 docker build . --file ./api/Catalog.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-catalogapi:latest"
 docker build . --file ./api/Execution.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionapi:latest"
 docker build . --file ./api/ExtensionManagement.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi:latest"
+docker build . --file ./api/ExecutionAdapter.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionadapterapi:latest"
+docker build . --file ./api/ExtensionService.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionserviceapi:latest"
+docker build . --file ./api/ObjectStorageProvider.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-objectproviderapi:latest"
 docker build . --file ./core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionconsole:latest"
 ```
 
@@ -141,6 +142,9 @@ docker push "$ACR_NAME.azurecr.io/xhub-catalogapi"
 docker push "$ACR_NAME.azurecr.io/xhub-executionapi"
 docker push "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi"
 docker push "$ACR_NAME.azurecr.io/xhub-executionconsole"
+docker push "$ACR_NAME.azurecr.io/xhub-executionadapterapi"
+docker push "$ACR_NAME.azurecr.io/xhub-extensionserviceapi"
+docker push "$ACR_NAME.azurecr.io/xhub-objectproviderapi"
 ```
 
 ## Deploy to AKS

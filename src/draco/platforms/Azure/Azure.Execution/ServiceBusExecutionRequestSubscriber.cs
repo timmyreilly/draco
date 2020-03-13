@@ -40,7 +40,7 @@ namespace Draco.Azure.Execution
 
             this.subscriptionClient = new SubscriptionClient(
                 this.subscriptionOptions.ConnectionString,
-                this.subscriptionOptions.TopicName,
+                this.subscriptionOptions.TopicName, 
                 this.subscriptionOptions.SubscriptionName);
         }
 

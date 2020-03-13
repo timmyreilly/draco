@@ -25,12 +25,15 @@ namespace Draco.ExtensionManagement.Api.Models
 
         [JsonProperty("objectProvider")]
         public string ObjectProviderName { get; set; }
-
+       
         [JsonProperty("executionMode")]
         public string ExecutionMode { get; set; }
 
         [JsonProperty("directExecutionTokenDuration")]
         public string DirectExecutionTokenDuration { get; set; }
+
+        [JsonProperty("isActive")]
+        public bool IsActive { get; set; }
 
         [JsonProperty("supportedPriorities")]
         public List<string> SupportedPriorities { get; set; } = new List<string>();
