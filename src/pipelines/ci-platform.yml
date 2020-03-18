@@ -7,6 +7,7 @@ trigger:
       - src/draco/infra/ArmTemplate/*
       - src/extensions/*
       - src/pipelines/*
+      - doc/*
 pr:
     branches:
       include:
@@ -16,6 +17,7 @@ pr:
       - src/draco/infra/ArmTemplate/*
       - src/extensions/*
       - src/pipelines/*
+      - doc/*
 
 resources:
 - repo: self
