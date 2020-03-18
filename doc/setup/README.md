@@ -44,6 +44,7 @@ DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"
 ```bash
 az login
 ```
+
 ### Ensure correct Azure subscription is in use
 
 If you have more than one Azure subscription make sure you choose the correct subscription before running any of these commands.
@@ -77,9 +78,10 @@ The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB,
 az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
 az group deployment create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters deployContainerInfrastructure=true aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
  ```
+
 ## Retrieve Draco service configuration settings
 
-The Draco platform infrastructure deployment contains confifuration outputs for each of the services running in AKS that make up the Draco platform.  This section saves these configuration outputs to a JSON file (application settings) for each service.
+The Draco platform infrastructure deployment contains configuration outputs for each of the services running in AKS that make up the Draco platform.  This section saves these configuration outputs to a JSON file (application settings) for each service.
 
 ```bash
 az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
@@ -164,12 +166,6 @@ To validate you have the Draco platform running you can query the pods.  You wil
 kubectl get pods  
 ```
 
-## Clean up your environment
+Your Draco platform components are now ready.  You should proceed to the instructions on how to build an extension, or deploy a sample extension.
 
-The commands below will remove the common infrastructure and platform infrastructure resources from your subscription.  This also will remove the SPN from your Azure AD tenant.
-
-```bash
-az ad sp delete --id $SPN_APP_ID
-az group delete --name $DRACO_COMMON_RG_NAME --yes --no-wait
-az group delete --name $DRACO_EXTHUB_RG_NAME --yes --no-wait
-```
+> When ready to remove the Draco platform components please see the [Uninstall](UNINSTALL.md) document.
