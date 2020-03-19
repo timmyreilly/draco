@@ -34,7 +34,8 @@ The variable values are used in the following setup commands.  You can change th
 DRACO_COMMON_RG_NAME="draco-common-rg"
 DRACO_EXTHUB_RG_NAME="draco-exthub-rg"
 DRACO_REGION="eastus2"
-DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"  
+DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***" 
+DRACO_SPN_KEY_NAME="draco-aks-spn" 
 ```
 
 ## Login to Azure Subscription
@@ -68,7 +69,17 @@ AKV_NAME=$(az group deployment show --resource-group $DRACO_COMMON_RG_NAME --nam
 
 SPN_PASSWORD=$(az ad sp create-for-rbac --name $DRACO_SPN_K8S --scopes $ACR_RESOURCE_ID --role acrpull --query password --output tsv)
 SPN_APP_ID=$(az ad sp show --id $DRACO_SPN_K8S --query appId --output tsv)
+
+UPN=$(az account show --query user.name --output tsv)
+az keyvault set-policy --name $AKV_NAME --upn $UPN --secret-permissions get list set
+az keyvault secret set --vault-name $AKV_NAME --name $DRACO_SPN_KEY_NAME --value $SPN_PASSWORD
 ```
+
+> NOTE: To show the secret stored in keyvault, you can use:
+```bash
+az keyvault secret show --name $DRACO_SPN_KEY_NAME --vault-name $AKV_NAME --query value --output tsv
+```
+
 
 ## Setup Draco platform infrastructure
 
