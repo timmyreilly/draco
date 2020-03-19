@@ -107,3 +107,36 @@ stages:
         tags: |
           $(Build.BuildId)
           latest
+    - task: Docker@2
+      displayName: 'Build ExecutionAdapter.Api'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-executionadapterapi'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/api/ExecutionAdapter.Api/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest
+    - task: Docker@2
+      displayName: 'Build ExtensionService.Api'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-extensionserviceapi'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/api/ExtensionService.Api/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest
+    - task: Docker@2
+      displayName: 'Build ObjectStorageProvider.Api'
+      inputs:
+        containerRegistry: 'ACR'
+        repository: 'xhub-objectproviderapi'
+        command: 'buildAndPush'
+        buildContext: 'src/draco'
+        Dockerfile: '**/draco/api/ObjectStorageProvider.Api/Dockerfile'
+        tags: |
+          $(Build.BuildId)
+          latest
