@@ -6,8 +6,17 @@ using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels.Extensions
 {
+    /// <summary>
+    /// Extension methods for validating output object definition API models and
+    /// converting to/from output object definition API/core models
+    /// </summary>
     public static class OutputObjectExtensions
     {
+        /// <summary>
+        /// Converts an output object definition core model to an API model
+        /// </summary>
+        /// <param name="coreModel"></param>
+        /// <returns></returns>
         public static OutputObjectApiModel ToApiModel(this ExtensionOutputObject coreModel) =>
             new OutputObjectApiModel
             {
@@ -16,6 +25,12 @@ namespace Draco.Api.InternalModels.Extensions
                 ObjectTypeUrl = coreModel.ObjectTypeUrl
             };
 
+        /// <summary>
+        /// Converts an output object definition API model to a core model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <param name="objectName"></param>
+        /// <returns></returns>
         public static ExtensionOutputObject ToCoreModel(this OutputObjectApiModel apiModel, string objectName) =>
             new ExtensionOutputObject
             {
@@ -25,6 +40,12 @@ namespace Draco.Api.InternalModels.Extensions
                 ObjectTypeUrl = apiModel.ObjectTypeUrl
             };
 
+        /// <summary>
+        /// Validates an output object definition API model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <param name="objectName"></param>
+        /// <returns></returns>
         public static IEnumerable<string> ValidateApiModel(this OutputObjectApiModel apiModel, string objectName)
         {
             if (string.IsNullOrEmpty(objectName))

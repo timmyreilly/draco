@@ -7,8 +7,17 @@ using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels.Extensions
 {
+    /// <summary>
+    /// Extension methods for validating execution metadata API models and
+    /// converting to/from execution metadata API/core models
+    /// </summary>
     public static class ExecutionMetadataExtensions
     {
+        /// <summary>
+        /// Converts an execution model core model to an API model
+        /// </summary>
+        /// <param name="coreModel"></param>
+        /// <returns></returns>
         public static ExecutionMetadataApiModel ToApiModel(this IExecutionMetadata coreModel) =>
             new ExecutionMetadataApiModel
             {
@@ -20,6 +29,11 @@ namespace Draco.Api.InternalModels.Extensions
                 Priority = coreModel.Priority
             };
 
+        /// <summary>
+        /// Converts an execution metadata API model to a core model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <returns></returns>
         public static IExecutionMetadata ToCoreModel(this ExecutionMetadataApiModel apiModel) =>
             new ExecutionMetadata
             {
@@ -31,6 +45,11 @@ namespace Draco.Api.InternalModels.Extensions
                 Priority = apiModel.Priority
             };
 
+        /// <summary>
+        /// Validates an execution metadata API model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <returns></returns>
         public static IEnumerable<string> ValidateApiModel(this ExecutionMetadataApiModel apiModel)
         {
             if (string.IsNullOrEmpty(apiModel.ExecutionId))

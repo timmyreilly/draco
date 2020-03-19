@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core execution metadata -- src/draco/core/Core.Models/Interfaces/IExecutionMetadata.cs
+    /// </summary>
     public class ExecutionMetadataApiModel
     {
         [JsonProperty("executionId")]

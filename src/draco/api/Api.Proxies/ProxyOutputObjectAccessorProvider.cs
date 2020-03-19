@@ -13,6 +13,10 @@ using System.Threading.Tasks;
 
 namespace Draco.Api.Proxies
 {
+    /// <summary>
+    /// This provider acts as a proxy to (output) object provider API (/src/draco/api/ObjectStorageProvider.Api) endpoints.
+    /// For more information on object providers, see /doc/architecture/execution-objects.md#object-providers.
+    /// </summary>
     public class ProxyOutputObjectAccessorProvider : IOutputObjectAccessorProvider
     {
         private readonly IJsonHttpClient jsonHttpClient;

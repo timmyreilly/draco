@@ -6,6 +6,9 @@ using System;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core input object accessor request -- /src/draco/core/ObjectStorage/Models/InputObjectAccessorRequest.cs
+    /// </summary>
     public class InputObjectAccessorRequestApiModel
     {
         [JsonProperty("objectName")]

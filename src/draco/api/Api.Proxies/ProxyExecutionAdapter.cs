@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 
 namespace Draco.Api.Proxies
 {
+    /// <summary>
+    /// This adapter acts as a proxy to an execution adapter API (/src/draco/api/ExecutionAdapter.Api) endpoint.
+    /// For more information on execution adapters, see /doc/architecture/execution-models.md.
+    /// </summary>
     public class ProxyExecutionAdapter : IExecutionAdapter
     {
         private readonly IJsonHttpClient jsonHttpClient;

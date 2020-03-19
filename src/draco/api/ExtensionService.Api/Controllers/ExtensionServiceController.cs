@@ -16,7 +16,7 @@ namespace ExtensionService.Api.Controllers
     public class ExtensionServiceController : ControllerBase
     {
         private readonly IExecutionServiceProvider execServiceProvider;
-        
+
         public ExtensionServiceController(IExecutionServiceProvider execServiceProvider)
         {
             this.execServiceProvider = execServiceProvider;

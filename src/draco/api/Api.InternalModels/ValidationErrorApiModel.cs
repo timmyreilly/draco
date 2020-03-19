@@ -6,6 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core validation error -- /src/draco/core/Core.Models/ExecutionValidationError.cs
+    /// </summary>
     public class ValidationErrorApiModel
     {
         [JsonProperty("errorId")]

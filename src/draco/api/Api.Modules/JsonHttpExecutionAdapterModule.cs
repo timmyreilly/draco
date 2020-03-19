@@ -11,6 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.Api.Modules
 {
+    /// <summary>
+    /// This service module wires up all the configuration/dependencies needed to support
+    /// the "http-json/async/v1" and "http-json/sync/v1" execution models.
+    /// </summary>
     public class JsonHttpExecutionAdapterModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

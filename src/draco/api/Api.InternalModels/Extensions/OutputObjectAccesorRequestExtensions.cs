@@ -6,8 +6,18 @@ using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels.Extensions
 {
+    /// <summary>
+    /// Extension methods for validating output object accessor request API models and
+    /// converting to/from output object accessor request API/core models
+    /// </summary>
     public static class OutputObjectAccesorRequestExtensions
     {
+        /// <summary>
+        /// Converts an output object accessor request API model to a core model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <param name="objectName"></param>
+        /// <returns></returns>
         public static OutputObjectAccessorRequest ToCoreModel(this OutputObjectAccessorRequestApiModel apiModel, string objectName) =>
             new OutputObjectAccessorRequest
             {
@@ -18,6 +28,11 @@ namespace Draco.Api.InternalModels.Extensions
                 SignatureRsaKeyXml = apiModel.SignatureRsaKeyXml
             };
 
+        /// <summary>
+        /// Converts an output object accessor request core model to an API model
+        /// </summary>
+        /// <param name="coreModel"></param>
+        /// <returns></returns>
         public static OutputObjectAccessorRequestApiModel ToApiModel(this OutputObjectAccessorRequest coreModel) =>
             new OutputObjectAccessorRequestApiModel
             {
@@ -28,6 +43,11 @@ namespace Draco.Api.InternalModels.Extensions
                 SignatureRsaKeyXml = coreModel.SignatureRsaKeyXml
             };
 
+        /// <summary>
+        /// Validates an output object accessor request API model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <returns></returns>
         public static IEnumerable<string> ValidateApiModel(this OutputObjectAccessorRequestApiModel apiModel)
         {
             if (string.IsNullOrEmpty(apiModel.ObjectName))

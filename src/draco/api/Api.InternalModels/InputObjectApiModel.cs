@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core input object definition -- /src/draco/core/Core.Models/ExtensionInputObject.cs
+    /// </summary>
     public class InputObjectApiModel
     {
         [JsonProperty("description")]

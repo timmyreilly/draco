@@ -10,8 +10,17 @@ using System;
 
 namespace Draco.Api.Proxies.Extensions
 {
+    /// <summary>
+    /// Extension methods for creating internal API proxies
+    /// </summary>
     public static class ServiceProviderExtensions
     {
+        /// <summary>
+        /// Creates an internal execution service provider API proxy
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="baseUrl"></param>
+        /// <returns></returns>
         public static IExecutionServiceProvider GetProxyExecutionServiceProvider(this IServiceProvider serviceProvider, string baseUrl)
         {
             ValidateArguments(serviceProvider, baseUrl);
@@ -19,6 +28,12 @@ namespace Draco.Api.Proxies.Extensions
             return new ProxyExecutionServiceProvider(serviceProvider.GetService<IJsonHttpClient>(), new ProxyConfiguration(baseUrl));
         }
 
+        /// <summary>
+        /// Creates an internal execution adapter API proxy
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="baseUrl"></param>
+        /// <returns></returns>
         public static IExecutionAdapter GetProxyExecutionAdapter(this IServiceProvider serviceProvider, string baseUrl)
         {
             ValidateArguments(serviceProvider, baseUrl);
@@ -26,6 +41,12 @@ namespace Draco.Api.Proxies.Extensions
             return new ProxyExecutionAdapter(serviceProvider.GetService<IJsonHttpClient>(), new ProxyConfiguration(baseUrl));
         }
 
+        /// <summary>
+        /// Creates an internal input object accessor provider API proxy
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="baseUrl"></param>
+        /// <returns></returns>
         public static IInputObjectAccessorProvider GetProxyInputObjectAccessorProvider(this IServiceProvider serviceProvider, string baseUrl)
         {
             ValidateArguments(serviceProvider, baseUrl);
@@ -33,6 +54,12 @@ namespace Draco.Api.Proxies.Extensions
             return new ProxyInputObjectAccessorProvider(serviceProvider.GetService<IJsonHttpClient>(), new ProxyConfiguration(baseUrl));
         }
 
+        /// <summary>
+        /// Creates an internal output object accessor provider API proxy
+        /// </summary>
+        /// <param name="serviceProvider"></param>
+        /// <param name="baseUrl"></param>
+        /// <returns></returns>
         public static IOutputObjectAccessorProvider GetProxyOutputObjectAccessorProvider(this IServiceProvider serviceProvider, string baseUrl)
         {
             ValidateArguments(serviceProvider, baseUrl);

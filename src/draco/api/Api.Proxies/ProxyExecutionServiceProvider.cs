@@ -14,6 +14,10 @@ using System.Threading.Tasks;
 
 namespace Draco.Api.Proxies
 {
+    /// <summary>
+    /// This provider acts a proxy to an extension service provider API (/src/draco/api/ExtensionService.Api) endpoint.
+    /// For more information on extension services, see /doc/architecture/extension-services.md.
+    /// </summary>
     public class ProxyExecutionServiceProvider : BaseExecutionServiceProvider, IExecutionServiceProvider
     {
         private readonly IJsonHttpClient jsonHttpClient;

@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core executor context -- src/draco/core/Core.Models/ExecutorContext.cs
+    /// </summary>
     public class ExecutorContextApiModel
     {
         [JsonProperty("tenantId")]

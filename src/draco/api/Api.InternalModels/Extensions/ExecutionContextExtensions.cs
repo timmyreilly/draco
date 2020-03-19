@@ -6,8 +6,16 @@ using System.Linq;
 
 namespace Draco.Api.InternalModels.Extensions
 {
+    /// <summary>
+    /// Extension methods for converting to/from execution context API/core models
+    /// </summary>
     public static class ExecutionContextExtensions
     {
+        /// <summary>
+        /// Converts an execution context core model to an API model
+        /// </summary>
+        /// <param name="coreModel"></param>
+        /// <returns></returns>
         public static ExecutionContextApiModel ToApiModel(this ExecutionContext coreModel) =>
             new ExecutionContextApiModel
             {
@@ -34,6 +42,11 @@ namespace Draco.Api.InternalModels.Extensions
                 ValidationErrors = coreModel.ValidationErrors.Select(ve => ve.ToApiModel()).ToList()
             };
 
+        /// <summary>
+        /// Converts an execution context API model to a core model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <returns></returns>
         public static ExecutionContext ToCoreModel(this ExecutionContextApiModel apiModel) =>
             new ExecutionContext
             {

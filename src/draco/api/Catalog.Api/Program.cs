@@ -22,6 +22,8 @@ namespace Draco.Catalog.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(cb =>
                 {
+                    // Pull API configuration from Azure blob storage...
+
                     var blobStorageAccount = CloudStorageAccount.Parse(BlobStorageConnectionString);
                     var blobClient = blobStorageAccount.CreateCloudBlobClient();
                     var blobContainer = blobClient.GetContainerReference(ContainerName);

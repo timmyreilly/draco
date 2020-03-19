@@ -42,12 +42,18 @@ namespace Draco.Catalog.Api.Controllers
         [ProducesResponseType(typeof(CatalogSearchResultsApiModel), 200)]
         public async Task<IActionResult> SearchAsync([Required] string q, int pageIndex = 0, int pageSize = 10)
         {
+            // Check to make sure that paging parameters make sense...
+
             var errors = ValidatePaging(pageIndex, pageSize).ToList();
+
+            // Check to make sure search criteria was provided...
 
             if (string.IsNullOrEmpty(q))
             {
                 errors.Add($"[q] is required.");
             }
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
@@ -61,7 +67,11 @@ namespace Draco.Catalog.Api.Controllers
                 Query = q
             };
 
+            // Run the search...
+
             var searchResults = await catalogSearchService.SearchAsync(searchRequest);
+
+            // Always respond with [200 OK] even if there aren't any results...
 
             return Ok(ToDetailApiModel(searchResults));
         }
@@ -79,7 +89,11 @@ namespace Draco.Catalog.Api.Controllers
         [ProducesResponseType(typeof(CatalogSearchResultsApiModel), 200)]
         public async Task<IActionResult> SearchAsync([Required] string category, string q = null, int pageIndex = 0, int pageSize = 10)
         {
+            // Check to make sure that the paging parameters make sense...
+
             var errors = ValidatePaging(pageIndex, pageSize).ToList();
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
@@ -94,7 +108,11 @@ namespace Draco.Catalog.Api.Controllers
                 Query = q
             };
 
+            // Run the search...
+
             var searchResults = await catalogSearchService.SearchAsync(searchRequest);
+
+            // Always respond with [200 OK] even if there are no results...
 
             return Ok(ToDetailApiModel(searchResults));
         }
@@ -114,7 +132,11 @@ namespace Draco.Catalog.Api.Controllers
         public async Task<IActionResult> SearchAsync([Required] string category, [Required] string subcategory, 
                                                      string q = null, int pageIndex = 0, int pageSize = 10)
         {
+            // Check to make sure that the paging parameters make sense...
+
             var errors = ValidatePaging(pageIndex, pageSize).ToList();
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
@@ -130,7 +152,11 @@ namespace Draco.Catalog.Api.Controllers
                 Query = q
             };
 
+            // Run the search...
+
             var searchResults = await catalogSearchService.SearchAsync(searchRequest);
+
+            // Always return with [200 OK] if there aren't any results...
 
             return Ok(ToDetailApiModel(searchResults));
         }
@@ -147,12 +173,18 @@ namespace Draco.Catalog.Api.Controllers
         [ProducesResponseType(typeof(ExtensionDetailApiModel), 200)]
         public async Task<IActionResult> GetExtensionAsync([Required] string extensionId, string searchId = null, string actionId = null)
         {
+            // Try to get the extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
+
+            // Otherwise, respond with [200 OK] + extension detail...
 
             return Ok(ToDetailApiModel(extension));
         }
@@ -168,8 +200,12 @@ namespace Draco.Catalog.Api.Controllers
         [ProducesResponseType(typeof(ExtensionVersionDetailApiModel), 200)]
         public async Task<IActionResult> GetExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to get the extension + extension version...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
             var extensionVersion = extension?.GetExtensionVersion(exVersionId);
+
+            // If we can't find either, respond with [404 Not Found] + specific error description...
 
             if (extension == null)
             {
@@ -180,6 +216,8 @@ namespace Draco.Catalog.Api.Controllers
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
+
+            // Otherwise, respond with [200 OK] + extension version detail...
 
             return Ok(ToDetailApiModel(extensionVersion));
         }

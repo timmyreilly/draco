@@ -10,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.Catalog.Api.Modules.Azure
 {
+    /// <summary>
+    /// This service module wires up all the configuration/dependencies needed to use Azure Search for the extension catalog.
+    /// </summary>
     public class AzureSearchModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

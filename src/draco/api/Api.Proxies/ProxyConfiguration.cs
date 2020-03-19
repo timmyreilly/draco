@@ -3,6 +3,9 @@
 
 namespace Draco.Api.Proxies
 {
+    /// <summary>
+    /// Shared configuration object needed to create internal API proxies.
+    /// </summary>
     public class ProxyConfiguration
     {
         public ProxyConfiguration() { }
@@ -12,6 +15,10 @@ namespace Draco.Api.Proxies
             BaseUrl = baseUrl;
         }
 
+        /// <summary>
+        /// Base URL of internal API endpoint. Trailing URL slash optional.
+        /// </summary>
+        /// <value></value>
         public string BaseUrl { get; set; }
     }
 }

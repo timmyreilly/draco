@@ -12,6 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.Api.Modules.Azure
 {
+    /// <summary>
+    /// Default service module for wiring up all the configuration/dependencies needed for using
+    /// the Azure blobs (az-blobs/v1) object storage provider
+    /// </summary>
     public class AzureObjectStorageModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

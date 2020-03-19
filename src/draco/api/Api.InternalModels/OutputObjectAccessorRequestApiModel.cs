@@ -6,6 +6,9 @@ using System;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core output object accessor request -- /src/draco/core/ObjectStorage/Models/OutputObjectAccessorRequest.cs
+    /// </summary>
     public class OutputObjectAccessorRequestApiModel
     {
         [JsonProperty("objectName")]

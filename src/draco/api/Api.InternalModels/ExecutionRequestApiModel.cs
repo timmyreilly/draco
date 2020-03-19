@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core execution request -- /src/draco/core/Core.Models/ExecutionRequest.cs 
+    /// </summary>
     public class ExecutionRequestApiModel
     {
         [JsonProperty("executionId")]

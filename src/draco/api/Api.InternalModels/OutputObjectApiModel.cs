@@ -5,6 +5,9 @@ using Newtonsoft.Json;
 
 namespace Draco.Api.InternalModels
 {
+    /// <summary>
+    /// Internal API model for core output object definition -- /src/draco/core/Core.Models/ExtensionOutputObject.cs
+    /// </summary>
     public class OutputObjectApiModel
     {
         [JsonProperty("description")]

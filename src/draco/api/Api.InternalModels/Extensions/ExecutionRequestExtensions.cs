@@ -7,8 +7,17 @@ using System.Collections.Generic;
 
 namespace Draco.Api.InternalModels.Extensions
 {
+    /// <summary>
+    /// Extension methods for validating execution request API models and
+    /// converting to/from execution request API/core models
+    /// </summary>
     public static class ExecutionRequestExtensions
     {
+        /// <summary>
+        /// Converts an execution request API model to a core model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <returns></returns>
         public static ExecutionRequest ToCoreModel(this ExecutionRequestApiModel apiModel)
         {
             var coreModel = new ExecutionRequest
@@ -43,6 +52,11 @@ namespace Draco.Api.InternalModels.Extensions
             return coreModel;
         }
 
+        /// <summary>
+        /// Converts an execution request core model to an API model
+        /// </summary>
+        /// <param name="coreModel"></param>
+        /// <returns></returns>
         public static ExecutionRequestApiModel ToApiModel(this ExecutionRequest coreModel)
         {
             var apiModel = new ExecutionRequestApiModel
@@ -77,6 +91,11 @@ namespace Draco.Api.InternalModels.Extensions
             return apiModel;
         }
 
+        /// <summary>
+        /// Validates an execution request API model
+        /// </summary>
+        /// <param name="apiModel"></param>
+        /// <returns></returns>
         public static IEnumerable<string> ValidateApiModel(this ExecutionRequestApiModel apiModel)
         {
             if (string.IsNullOrEmpty(apiModel.ExecutionId))

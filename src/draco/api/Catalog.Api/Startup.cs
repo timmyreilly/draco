@@ -47,8 +47,8 @@ namespace Draco.Catalog.Api
 
         // Follow this pattern when adding additional platforms.
         private void ConfigureAzureServices(IServiceCollection services) =>
-            services.ConfigureServices<AzureRepositoryModule>(Configuration)
-                    .ConfigureServices<AzureSearchModule>(Configuration);
+            services.ConfigureServices<AzureRepositoryModule>(Configuration) // Use Azure/Cosmos extension repository.
+                    .ConfigureServices<AzureSearchModule>(Configuration); // Use Azure Search.
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
