@@ -86,8 +86,11 @@ az keyvault secret show --name $DRACO_SPN_KEY_NAME --vault-name $AKV_NAME --quer
 The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB, Storage, and other resources specific to running the Draco platform.  This section deployes the Azure resources for the Draco platform and configures the AKS cluster with minimum permissions to pull container images from ACR.
 
 ```bash
+# Get the latest stable version of AKS available in the region.
+AKSK8SVERSION=$(az aks get-versions --location $DRACO_REGION --query "orchestrators[?orchestratorType=='Kubernetes'].orchestratorVersion | sort(@) | [-2:-1:]" --output tsv)
+
 az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
-az group deployment create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters deployContainerInfrastructure=true aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
+az group deployment create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
  ```
 
 ## Retrieve Draco service configuration settings

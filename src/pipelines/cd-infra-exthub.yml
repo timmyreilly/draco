@@ -8,7 +8,7 @@ variables:
   tag: '$(Build.BuildId)'
   'rgName': 'exthub-use2-rg-prod'
   'location': 'eastus2'
-  'aksDeployContainerInfra': 'true'
+  'aksK8sVersion': '1.16.7'
     
 stages:
 - stage: Deploy
@@ -28,5 +28,5 @@ stages:
         location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: 'src/draco/infra/ArmTemplate/exthub/exthub-deploy.json'
-        overrideParameters: '-deployContainerInfrastructure $(deployContainerInfra) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
+        overrideParameters: '-aksK8sVersion $(aksK8sVersion) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
         deploymentMode: 'Incremental'

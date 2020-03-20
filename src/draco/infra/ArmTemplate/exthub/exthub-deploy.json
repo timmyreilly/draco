@@ -2,49 +2,47 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.1",
   "parameters": {
-    "deployContainerInfrastructure": {
+    "aksK8sVersion": {
       "metadata": {
-        "description": "Deploy AKS cluster"
+        "description": "The AKS orchestrator version to use. See https://aka.ms/supported-version-list for more details."
       },
-      "type": "bool"
+      "type": "string"
     },
     "aksServicePrincipalClientId": {
       "metadata": {
-        "description": "The AKS cluster service principal client ID. Required only if [deployContainerInfrastructure] is true. See https://docs.microsoft.com/en-us/azure/aks/kubernetes-service-principal#manually-create-a-service-principal for more details."
+        "description": "The AKS cluster service principal client ID. See https://docs.microsoft.com/en-us/azure/aks/kubernetes-service-principal#manually-create-a-service-principal for more details."
       },
       "type": "securestring"
     },
     "aksServicePrincipalClientSecret": {
       "metadata": {
-        "description": "The AKS cluster service principal client secret. Required only if [deployContainerInfrastructure] is true. See https://docs.microsoft.com/en-us/azure/aks/kubernetes-service-principal#manually-create-a-service-principal for more details."
+        "description": "The AKS cluster service principal client secret. See https://docs.microsoft.com/en-us/azure/aks/kubernetes-service-principal#manually-create-a-service-principal for more details."
       },
       "type": "securestring"
     }
   },
   "variables": {
-    "prefix": "[concat('xhub', uniqueString(resourceGroup().id))]",
-    "acrName": "[take(concat(variables('prefix'), 'registry'), 50)]",
+    "uniqueId": "[uniqueString(concat(subscription().id, resourceGroup().name, resourceGroup().location))]",
+    "prefix": "[concat('xhub', variables('uniqueId'))]",
     "aksClusterName": "[take(concat(variables('prefix'), 'aks'), 50)]",
     "aksClusterDnsPrefix": "[take(concat(variables('prefix'), 'aks'), 50)]",
-    "cosmosAccountName": "[take(concat(variables('prefix'), 'cosmos'), 50)]",
+    "cosmosAccountName": "[take(concat(variables('prefix'), 'cos'), 50)]",
     "eventGridTopicName": "[take(concat(variables('prefix'), 'execevents'), 50)]",
-    "storageAccountName": "[take(concat(variables('prefix'), 'storage'), 24)]",
-    "searchServiceName": "[take(concat(variables('prefix'), 'search'), 50)]",
-    "searchServiceSku": "Standard",
+    "storageAccountName": "[take(concat(variables('prefix'), 'stg'), 24)]",
+    "searchServiceName": "[take(concat(variables('prefix'), 'srch'), 50)]",
+    "searchServiceSku": "Basic",
     "searchServiceReplicaCount": 2,
     "searchServicePartitionCount": 1,
     "searchServiceHostingMode": "Default",
-    "acrSku": "Basic",
     "aksAgentVmSize": "Standard_DS2_v2",
     "aksOsType": "Linux",
-    "aksK8sVersion": "1.15.5",
     "aksAgentCount": 3,
     "aksAgentOsDiskSizeGb": 0,
     "storageAccountType": "Standard_LRS",
     "configurationStorageContainerName": "configuration",
     "resourcesStorageContainerName": "resources",
     "extensionObjectsStorageContainerName": "extensionobjects",
-    "sbNamespaceName": "[take(concat(variables('prefix'), 'bus'), 50)]",
+    "sbNamespaceName": "[take(concat(variables('prefix'), 'sb'), 50)]",
     "sbRequestTopicName": "execution-requests",
     "sbHttpSubscriptionName": "http-v1",
     "sbRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('sbNamespaceName'), 'RootManageSharedAccessKey')]",
@@ -61,9 +59,8 @@
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[variables('aksClusterName')]",
-      "condition": "[parameters('deployContainerInfrastructure')]",
       "properties": {
-        "kubernetesVersion": "[variables('aksK8sVersion')]",
+        "kubernetesVersion": "[parameters('aksK8sVersion')]",
         "dnsPrefix": "[variables('aksClusterDnsPrefix')]",
         "agentPoolProfiles": [
           {

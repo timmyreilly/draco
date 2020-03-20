@@ -20,7 +20,7 @@ variables:
   tag: '$(Build.BuildId)'
   'rgName': 'exthub-use2-rg-test'
   'location': 'eastus2'
-  'aksDeployContainerInfra': 'true'
+  'aksK8sVersion': '1.16.7'
     
 stages:
 - stage: Test
@@ -40,7 +40,7 @@ stages:
         location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: 'src/draco/infra/ArmTemplate/exthub/exthub-deploy.json'
-        overrideParameters: '-deployContainerInfrastructure $(aksDeployContainerInfra) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
+        overrideParameters: '-aksK8sVersion $(aksK8sVersion) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
         deploymentMode: 'Validation'
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:
