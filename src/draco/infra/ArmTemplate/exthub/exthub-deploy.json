@@ -279,6 +279,156 @@
     }
   ],
   "outputs": {
+    "azureSearchServiceName": {
+      "type": "string",
+      "value": "[variables('searchServiceName')]"
+    },
+    "azureSearchIndexConfiguration": {
+      "type": "object",
+      "value": {
+        "name": "[concat(variables('extensionsCosmosContainerName'), '-index')]",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "key": false
+        },
+        {
+            "name": "extensionId",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": false,
+            "key": false
+        },
+        {
+            "name": "name",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": false,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+        },
+        {
+            "name": "category",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+        },
+        {
+            "name": "subcategory",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+        },
+        {
+            "name": "publisherName",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+        },
+        {
+            "name": "copyrightNotice",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "key": false
+        },
+        {
+            "name": "description",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "analyzer": "standard.lucene",
+            "key": false
+        },
+        {
+            "name": "isActive",
+            "type": "Edm.Boolean",
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true
+        },
+        {
+            "name": "tags",
+            "type": "Collection(Edm.String)",
+            "searchable": false,
+            "facetable": false,
+            "filterable": true,
+            "retrievable": true,
+            "key": false
+        },
+        {
+            "name": "rid",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "key": true
+        }
+        ]
+      }
+    },
+    "azureSearchDataSourceConfiguration": {
+      "type": "object",
+      "value": {
+        "name": "[variables('extensionsCosmosContainerName')]",
+        "type": "cosmosdb",
+        "credentials": {
+          "connectionString": "[concat('AccountEndpoint=https://', variables('cosmosAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('cosmosAccountResourceId'), '2016-03-31').primaryMasterKey, ';Database=', variables('cosmosDatabaseName') )]"
+        },
+        "container": {
+          "name": "[variables('extensionsCosmosContainerName')]",
+          "query": "SELECT * FROM c WHERE c._ts > @HighWaterMark AND c.modelType = 'Extension/v1' ORDER BY c._ts"
+        },
+        "dataChangeDetectionPolicy": {
+          "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+          "highWaterMarkColumnName": "_ts"
+        }
+      }
+    },
+    "azureSearchIndexerConfiguration": {
+      "type": "object",
+      "value": {
+        "name": "[concat(variables('extensionsCosmosContainerName'), '-indexer')]",
+        "dataSourceName": "[variables('extensionsCosmosContainerName')]",
+        "targetIndexName": "[concat(variables('extensionsCosmosContainerName'), '-index')]"
+      }
+    },
     "executionApiConfiguration": {
       "type": "object",
       "value": {

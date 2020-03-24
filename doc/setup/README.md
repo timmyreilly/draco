@@ -127,6 +127,34 @@ rm ./appsettings-execconsole.json
 rm ./appsettings-extensionmgmtapi.json
 ```
 
+## Configure Azure Cosmos DB
+
+In this section, the Azure Search resource is configured with necessary index and data source definitions to provide Draco's catalog search capabilities.
+
+```bash
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchDataSourceConfiguration.value > azure-search-datasource-config.json
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexConfiguration.value > azure-search-index-config.json
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexerConfiguration.value > azure-search-indexer-config.json
+
+# Get the admin-key for subsequent Azure Search REST API calls
+SEARCH_SERVICE_NAME=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchServiceName.value --output tsv)
+COSMOS_ADMIN_KEY=$(az search admin-key show --resource-group $DRACO_EXTHUB_RG_NAME --service-name $SEARCH_SERVICE_NAME --query primaryKey --output tsv)
+
+# Create Azure Search data source
+curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/datasources\?api-version=2019-05-06 -d @azure-search-datasource-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
+
+# Create Azure Search index
+curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/indexes\?api-version=2019-05-06 -d @azure-search-index-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
+
+# Create Azure Search indexer
+curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/indexers\?api-version=2019-05-06 -d @azure-search-indexer-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
+
+# Clean up local files
+rm ./azure-search-datasource-config.json
+rm ./azure-search-index-config.json
+rm ./azure-search-indexer-config.json
+```
+
 ## Configure kubectl to manage AKS
 
 Configure your `kubectl` command-line tool so you can access and manage your AKS instance.
