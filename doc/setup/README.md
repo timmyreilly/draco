@@ -62,10 +62,10 @@ Draco leverages Azure resources that generally should be managed in a separate r
 ```bash
 cd src/draco
 az group create --location $DRACO_REGION --name $DRACO_COMMON_RG_NAME
-ACR_RESOURCE_ID=$(az group deployment create --resource-group $DRACO_COMMON_RG_NAME --template-file ./infra/ArmTemplate/common/common-deploy.json --query properties.outputs.acrResourceId.value --out tsv)
+ACR_RESOURCE_ID=$(az deployment group create --resource-group $DRACO_COMMON_RG_NAME --template-file ./infra/ArmTemplate/common/common-deploy.json --query properties.outputs.acrResourceId.value --out tsv)
 
-ACR_NAME=$(az group deployment show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
-AKV_NAME=$(az group deployment show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.kvName.value --output tsv)
+ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
+AKV_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.kvName.value --output tsv)
 
 SPN_PASSWORD=$(az ad sp create-for-rbac --name $DRACO_SPN_K8S --scopes $ACR_RESOURCE_ID --role acrpull --query password --output tsv)
 SPN_APP_ID=$(az ad sp show --id $DRACO_SPN_K8S --query appId --output tsv)
@@ -90,7 +90,7 @@ The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB,
 AKSK8SVERSION=$(az aks get-versions --location $DRACO_REGION --query "orchestrators[?orchestratorType=='Kubernetes'].orchestratorVersion | sort(@) | [-2:-1:]" --output tsv)
 
 az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
-az group deployment create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
+az deployment group create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
  ```
 
 ## Retrieve Draco service configuration settings
@@ -98,10 +98,10 @@ az group deployment create --resource-group $DRACO_EXTHUB_RG_NAME --template-fil
 The Draco platform infrastructure deployment contains configuration outputs for each of the services running in AKS that make up the Draco platform.  This section saves these configuration outputs to a JSON file (application settings) for each service.
 
 ```bash
-az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
-az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.extensionMgmtApiConfiguration.value > appsettings-extensionmgmtapi.json
-az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionConsoleConfiguration.value > appsettings-execconsole.json
-az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value > appsettings-execapi.json
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.extensionMgmtApiConfiguration.value > appsettings-extensionmgmtapi.json
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionConsoleConfiguration.value > appsettings-execconsole.json
+az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value > appsettings-execapi.json
 ```
 
 ## Upload Draco service configuration settings to blob storage
@@ -109,7 +109,7 @@ az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-de
 In this section, the application settings for the Draco service are uploaded to the blob storage account.  These are referenced later in the steps to deploy the container images into AKS.
 
 ```bash
-STG_CONN_STR=$(az group deployment show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
+STG_CONN_STR=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
 az storage blob upload --file ./appsettings-catalogapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-catalogapi.json
 az storage blob upload --file ./appsettings-execapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execapi.json
 az storage blob upload --file ./appsettings-execconsole.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execconsole.json
