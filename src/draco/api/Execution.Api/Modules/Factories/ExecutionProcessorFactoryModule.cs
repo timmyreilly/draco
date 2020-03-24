@@ -16,8 +16,8 @@ namespace Draco.Execution.Api.Modules.Factories
     {
         public override void AddNamedServices(IConfiguration configuration, INamedServiceRegistry<IExecutionProcessor> serviceRegistry)
         {
-            serviceRegistry[ExecutionModels.Async.Http.Json.V1] = sp => sp.GetService<ExecutionProcessor<IAsyncExecutionDispatcher>>();
-            serviceRegistry[ExecutionModels.Sync.Http.Json.V1] = sp => sp.GetService<ExecutionProcessor<JsonHttpExecutionAdapter>>();
+            serviceRegistry[ExecutionModels.Async.Http.Json.V1] = sp => sp.GetService<ExecutionProcessor<IAsyncExecutionDispatcher>>(); // http-json/async/v1
+            serviceRegistry[ExecutionModels.Sync.Http.Json.V1] = sp => sp.GetService<ExecutionProcessor<JsonHttpExecutionAdapter>>(); // http-json/sync/v1
         }
     }
 }

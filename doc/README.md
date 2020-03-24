@@ -18,11 +18,15 @@ Additional guidance and/or samples are on the roadmap.
 
 ## Extensions
 
+> Extensions are uniquely identifiable, independently versioned, self-contained application features.
+
+Every design decision and Draco component ultimately revolves around this definition of what an extension is.
+
 Leveraging Draco's novel **[execution model-based](architecture/execution-models.md)** design, extensions can take nearly any shape or form including REST APIs, AI/ML models, third-party services, and shell scripts. Execution can be asynchronous, synchronous, or even **[direct](architecture/direct-execution.md)**. Draco also supports both short and long-running execution enabling both lightweight extensions that take advantage of shared, "always on" infrastructure and heavier extensions that rely on "just-in-time" infrastructure or even direct human intervention and workflows. Furthermore, these same extensions can be hosted anywhere – on Azure, on-premises, at the intelligent edge, or even on another cloud – with little to no modification.
 
 Regardless of how they are executed or where they are hosted, all extensions share a centrally-managed Draco control plane that, itself, is designed to scale globally with zero downtime. This decoupling of extensions from the underlying control plane carries a wide range of additional benefits including the ability to leverage **[execution objects](architecture/execution-objects.md)** to efficiently and securely exchange files directly between clients and extensions regardless of the underlying storage platform.
 
-The complexities of how and where extensions are executed is managed by the execution API. The execution API is itself extensible allowing hosts to plug in their own custom **[execution adapters](architecture/execution-models.md)**, **[extension services](architecture/extension-services.md)**, and **[object providers](architecture/execution-objects.md)**.
+The complexities of how and where extensions are executed is managed by the execution API and supported by an [incredibly flexible **execution pipeline**](/doc/architecture/execution-pipeline.md). The execution API is itself extensible allowing hosts to plug in their own custom **[execution adapters](architecture/execution-models.md)**, **[extension services](architecture/extension-services.md)**, and **[object providers](architecture/execution-objects.md)**.
 
 ## Execution events
 
