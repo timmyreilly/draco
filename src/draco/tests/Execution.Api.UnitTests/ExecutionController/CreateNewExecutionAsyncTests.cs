@@ -67,7 +67,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -80,7 +79,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -120,7 +118,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -133,7 +130,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -191,7 +187,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -204,7 +199,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -273,7 +267,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -286,7 +279,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -355,7 +347,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -368,7 +359,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -406,9 +396,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -439,7 +426,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -452,7 +438,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -490,9 +475,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -526,7 +508,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -539,7 +520,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -577,9 +557,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -616,7 +593,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -629,7 +605,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -666,9 +641,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -718,7 +690,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -731,7 +702,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -768,9 +738,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -819,7 +786,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -832,7 +798,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -869,9 +834,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -923,7 +885,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -936,7 +897,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -973,9 +933,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -1032,7 +989,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -1045,7 +1001,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -1082,9 +1037,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -1149,7 +1101,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             var mockExtensionRepository = new Mock<IExtensionRepository>();
             var mockExtensionObjectApiModelService = new Mock<IExtensionObjectApiModelService>();
             var mockExtensionRsaKeyProvider = new Mock<IExtensionRsaKeyProvider>();
-            var mockExtensionSettingsBuilder = new Mock<IExtensionSettingsBuilder>();
             var mockExecRequestRouter = new Mock<IExecutionRequestRouter>();
             var mockExecServiceProvider = new Mock<IExecutionServiceProvider>();
             var mockExecUpdatePublisher = new Mock<IExecutionUpdatePublisher>();
@@ -1162,7 +1113,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 mockExtensionRepository.Object,
                 mockExtensionObjectApiModelService.Object,
                 mockExtensionRsaKeyProvider.Object,
-                mockExtensionSettingsBuilder.Object,
                 mockExecRequestRouter.Object,
                 mockExecUpdatePublisher.Object,
                 mockExecServiceProvider.Object,
@@ -1199,9 +1149,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-            mockExtensionSettingsBuilder
-                .Setup(b => b.BuildExtensionSettingsAsync(erContext))
-                .Returns(Task.FromResult(erContext.ExecutionProfile.ExtensionSettings));
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))

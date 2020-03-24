@@ -35,7 +35,6 @@ namespace Draco.Execution.Api.Controllers
         private readonly IExtensionRepository extensionRepository;
         private readonly IExtensionObjectApiModelService extensionObjectApiModelService;
         private readonly IExtensionRsaKeyProvider extensionRsaKeyProvider;
-        private readonly IExtensionSettingsBuilder extensionSettingsBuilder;
         private readonly IExecutionRequestRouter execRequestRouter;
         private readonly IExecutionServiceProvider execServiceProvider;
         private readonly IExecutionUpdatePublisher execUpdatePublisher;
@@ -48,7 +47,6 @@ namespace Draco.Execution.Api.Controllers
             IExtensionRepository extensionRepository,
             IExtensionObjectApiModelService extensionObjectApiModelService,
             IExtensionRsaKeyProvider extensionRsaKeyProvider,
-            IExtensionSettingsBuilder extensionSettingsBuilder,
             IExecutionRequestRouter execRequestRouter,
             IExecutionUpdatePublisher execUpdatePublisher,
             IExecutionServiceProvider execServiceProvider,
@@ -60,7 +58,6 @@ namespace Draco.Execution.Api.Controllers
             this.extensionRepository = extensionRepository;
             this.extensionObjectApiModelService = extensionObjectApiModelService;
             this.extensionRsaKeyProvider = extensionRsaKeyProvider;
-            this.extensionSettingsBuilder = extensionSettingsBuilder;
             this.execRequestRouter = execRequestRouter;
             this.execUpdatePublisher = execUpdatePublisher;
             this.userContext = userContext;
@@ -322,7 +319,7 @@ namespace Draco.Execution.Api.Controllers
         {
             // Convert the API request context to a core execution request...
 
-            var execRequest = await ToExecutionRequestAsync(erContext);
+            var execRequest = ToExecutionRequestAsync(erContext);
 
             // Then, convert the core execution request into a direct execution token...
 
@@ -373,7 +370,7 @@ namespace Draco.Execution.Api.Controllers
             // (/src/draco/core/Core.Execution/Interfaces/IExecutionAdapter.cs). This approach means that the same execution adapter can be used for 
             // both async/sync execution scenarios. This pipeline is configurable in /src/draco/api/Execution.Api/Modules/Factories/ExecutionProcessorFactoryModule.cs.
 
-            var execRequest = await ToExecutionRequestAsync(erContext);
+            var execRequest = ToExecutionRequestAsync(erContext);
             var execContext = await execRequestRouter.RouteRequestAsync(execRequest, CancellationToken.None);
 
             // The result of all this processing is an execution context (/src/draco/core/Core.Models/ExecutionContext.cs).
@@ -570,7 +567,7 @@ namespace Draco.Execution.Api.Controllers
                 ExecutorProperties = erContext.OriginalRequest.ExecutorProperties
             };
 
-        private async Task<ExecutionRequest> ToExecutionRequestAsync(IExecutionRequestContext erContext) =>
+        private ExecutionRequest ToExecutionRequestAsync(IExecutionRequestContext erContext) =>
             new ExecutionRequest
             {
                 CreatedDateTimeUtc = erContext.Execution.CreatedDateTimeUtc,
@@ -580,7 +577,7 @@ namespace Draco.Execution.Api.Controllers
                 ExecutionTimeoutDuration = erContext.ExtensionVersion.ExecutionExpirationPeriod,
                 Executor = erContext.Execution.Executor,
                 ExtensionId = erContext.Execution.ExtensionId,
-                ExtensionSettings = await extensionSettingsBuilder.BuildExtensionSettingsAsync(erContext),
+                
                 ExtensionVersionId = erContext.Execution.ExtensionVersionId,
                 InputObjects = erContext.ExtensionVersion.InputObjects.ToDictionary(io => io.Name),
                 LastUpdatedDateTimeUtc = erContext.Execution.LastUpdatedDateTimeUtc,

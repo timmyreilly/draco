@@ -17,7 +17,6 @@ namespace Draco.Execution.Api.Modules
             services.AddTransient<IExecutionRequestContextBuilder, ExecutionRequestContextBuilder>();
             services.AddTransient<IExecutionRequestContextValidator, DefaultExecutionRequestContextValidator>();
             services.AddTransient<IExtensionObjectApiModelService, ExtensionObjectApiModelService>();
-            services.AddTransient<IExtensionSettingsBuilder, DefaultExtensionSettingsBuilder>();
             services.AddTransient<IExtensionRsaKeyProvider, TestExtensionRsaKeyProvider>();
         }
     }
