@@ -11,9 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Api.Modules
 {
     /// <summary>
-    /// This service module wires up all the dependencies needed to stand up a "stub" execution pipeline. 
-    /// It has no external service dependencies and should be used ONLY in execution pipeline integration/end-to-end testing scenarios.
-    /// For more information on execution, see /doc/architecture/execution-models.md.
+    /// This service modules wires up all the stub dependencies needed to support the default execution pipeline in a dev/test environment.
+    /// Note that this module should be used only in dev/test scenarios and is not meant for production.
+    /// For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
     /// </summary>
     public class StubExecutionPipelineModule : IServiceModule
     {

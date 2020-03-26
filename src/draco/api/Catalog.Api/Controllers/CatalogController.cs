@@ -31,7 +31,7 @@ namespace Draco.Catalog.Api.Controllers
         }
 
         /// <summary>
-        /// Gets available extensions based on the provided full-text search criteria
+        /// Gets available extensions based on the provided full-text search criteria [q]
         /// </summary>
         /// <param name="q">The full-text search criteria</param>
         /// <param name="pageIndex">The search results page index (first page is 0)</param>
@@ -77,7 +77,7 @@ namespace Draco.Catalog.Api.Controllers
         }
 
         /// <summary>
-        /// Gets available extensions based on the provided extension category and full-text search criteria
+        /// Gets available extensions based on the provided extension [category] and full-text search criteria [q]
         /// </summary>
         /// <param name="category">The extension category name</param>
         /// <param name="q">The full-text search criteria</param>
@@ -118,7 +118,7 @@ namespace Draco.Catalog.Api.Controllers
         }
 
         /// <summary>
-        /// Gets available extensions based on the provided extension category, subcategory, and full-text search criteria
+        /// Gets available extensions based on the provided extension [category], [subcategory], and full-text search criteria [q]
         /// </summary>
         /// <param name="category">The extension category name</param>
         /// <param name="subcategory">The extension subcategory name</param>
@@ -190,7 +190,7 @@ namespace Draco.Catalog.Api.Controllers
         }
 
         /// <summary>
-        /// Gets extension version details including supported execution profiles, input objects, and output objects, and related links
+        /// Gets extension version details including supported execution profiles, input objects, output objects, and related links
         /// </summary>
         /// <param name="extensionId">The unique extension ID</param>
         /// <param name="exVersionId">The unique extension version ID</param>

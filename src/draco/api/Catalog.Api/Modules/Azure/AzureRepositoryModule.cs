@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Draco.Catalog.Api.Modules.Azure
 {
     /// <summary>
-    /// This service module wires up all the configuration/dependencies needed to use an Azure/Cosmos DB extension repository.
+    /// This service module wires up all the configuration/dependencies needed to use an Azure Cosmos DB extension repository.
     /// </summary>
     public class AzureRepositoryModule : IServiceModule
     {

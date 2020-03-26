@@ -11,9 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Api.Modules
 {
     /// <summary>
-    /// This service module wires up all the dependencies needed to stand up "stub" object storage infrastructure.
-    /// It has no external service dependencies and should be used ONLY in object storage infrastructure integration/end-to-end testing scenarios.
-    /// For more information on object storage, see /doc/architecture/execution-objects.md.
+    /// This service module wires up all the stub execution object dependencies needed to host the default execution pipeline in a dev/test environment.
+    /// Note that this module should be used only in dev/test scenarios and is not meant for production.
+    /// For more information on execution objects, see /doc/architecture/execution-objects.md.
+    /// For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
     /// </summary>
     public class StubObjectStorageModule : IServiceModule
     {
