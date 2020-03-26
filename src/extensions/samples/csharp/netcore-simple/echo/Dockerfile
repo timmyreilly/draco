@@ -10,13 +10,8 @@ FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore "echo.csproj"
-COPY . .
-RUN dotnet build "echo.csproj" -c Release -o /app/build
-
+RUN dotnet build "echo.csproj" -c Release
 FROM build AS publish
-RUN dotnet publish "echo.csproj" -c Release -o /app/publish
+RUN dotnet publish "echo.csproj" -c Release 
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "echo.dll"]
