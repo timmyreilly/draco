@@ -34,8 +34,8 @@ The variable values are used in the following setup commands.  You can change th
 DRACO_COMMON_RG_NAME="draco-common-rg"
 DRACO_EXTHUB_RG_NAME="draco-exthub-rg"
 DRACO_REGION="eastus2"
-DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***" 
-DRACO_SPN_KEY_NAME="draco-aks-spn" 
+DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"
+DRACO_SPN_KEY_NAME="draco-aks-spn"
 ```
 
 ## Login to Azure Subscription
@@ -68,18 +68,21 @@ ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --nam
 AKV_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.kvName.value --output tsv)
 
 SPN_PASSWORD=$(az ad sp create-for-rbac --name $DRACO_SPN_K8S --scopes $ACR_RESOURCE_ID --role acrpull --query password --output tsv)
+
 SPN_APP_ID=$(az ad sp show --id $DRACO_SPN_K8S --query appId --output tsv)
 
 UPN=$(az account show --query user.name --output tsv)
+
 az keyvault set-policy --name $AKV_NAME --upn $UPN --secret-permissions get list set
+
 az keyvault secret set --vault-name $AKV_NAME --name $DRACO_SPN_KEY_NAME --value $SPN_PASSWORD
 ```
 
 > NOTE: To show the secret stored in keyvault, you can use:
+
 ```bash
 az keyvault secret show --name $DRACO_SPN_KEY_NAME --vault-name $AKV_NAME --query value --output tsv
 ```
-
 
 ## Setup Draco platform infrastructure
 
@@ -90,6 +93,7 @@ The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB,
 AKSK8SVERSION=$(az aks get-versions --location $DRACO_REGION --query "orchestrators[?orchestratorType=='Kubernetes'].orchestratorVersion | sort(@) | [-2:-1:]" --output tsv)
 
 az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
+
 az deployment group create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
  ```
 
@@ -99,8 +103,11 @@ The Draco platform infrastructure deployment contains configuration outputs for 
 
 ```bash
 az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
+
 az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.extensionMgmtApiConfiguration.value > appsettings-extensionmgmtapi.json
+
 az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionConsoleConfiguration.value > appsettings-execconsole.json
+
 az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value > appsettings-execapi.json
 ```
 
@@ -110,9 +117,13 @@ In this section, the application settings for the Draco service are uploaded to 
 
 ```bash
 STG_CONN_STR=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
+
 az storage blob upload --file ./appsettings-catalogapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-catalogapi.json
+
 az storage blob upload --file ./appsettings-execapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execapi.json
+
 az storage blob upload --file ./appsettings-execconsole.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execconsole.json
+
 az storage blob upload --file ./appsettings-extensionmgmtapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-extensionmgmtapi.json
 ```
 
@@ -161,6 +172,7 @@ Configure your `kubectl` command-line tool so you can access and manage your AKS
 
 ```bash
 K8S_NAME=$(az resource list --resource-group $DRACO_EXTHUB_RG_NAME --resource-type Microsoft.ContainerService/managedClusters --query '[0].name' --output tsv)
+
 az aks get-credentials --resource-group $DRACO_EXTHUB_RG_NAME --name $K8S_NAME
 ```
 
@@ -170,11 +182,17 @@ These steps use the `Dockerfile` for each of the Draco services to build contain
 
 ```bash
 docker build . --file ./api/Catalog.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-catalogapi:latest"
+
 docker build . --file ./api/Execution.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionapi:latest"
+
 docker build . --file ./api/ExtensionManagement.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi:latest"
+
 docker build . --file ./api/ExecutionAdapter.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionadapterapi:latest"
+
 docker build . --file ./api/ExtensionService.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionserviceapi:latest"
+
 docker build . --file ./api/ObjectStorageProvider.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-objectproviderapi:latest"
+
 docker build . --file ./core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionconsole:latest"
 ```
 
