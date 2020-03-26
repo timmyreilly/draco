@@ -9,6 +9,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.Execution.Api.Modules
 {
+    /// <summary>
+    /// This "stub" module provides a default user context to the execution API.
+    /// This is intended only for dev/test purposes. Do not use in production.
+    /// In production, you will need to replace this module with one that ties the user context to your identity provider of choice.
+    /// For more information on Draco's approach to identity, see /doc/README.md#identity.
+    /// </summary>
     public class DefaultUserContextModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

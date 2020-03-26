@@ -12,30 +12,40 @@ using System.Threading.Tasks;
 
 namespace Draco.Execution.Api.Services
 {
+    /// <summary>
+    /// This class pulls together all the information needed to process an API execution request.
+    /// In the process, this class also validates the execution request against the appropriate extension, extension version, and execution profile.
+    /// </summary>
     public class ExecutionRequestContextBuilder : IExecutionRequestContextBuilder
     {
-        private readonly IExecutionRequestContextValidator erContextValidator;
         private readonly IExtensionRepository extensionRepository;
 
-        public ExecutionRequestContextBuilder(IExecutionRequestContextValidator erContextValidator, IExtensionRepository extensionRepository)
+        public ExecutionRequestContextBuilder(IExtensionRepository extensionRepository)
         {
-            this.erContextValidator = erContextValidator;
             this.extensionRepository = extensionRepository;
         }
 
         public async Task<ExecutionRequestContext<ExecutionRequestApiModel>> BuildExecutionRequestContextAsync(ExecutionRequestApiModel apiExecRequest)
         {
+            // Create a new execution request context...
+
             var erContext = new ExecutionRequestContext<ExecutionRequestApiModel>(apiExecRequest);
+
+            // Did they provide an extension ID?
 
             if (string.IsNullOrEmpty(apiExecRequest.ExtensionId))
             {
                 erContext.ValidationErrors.Add($"[{ErrorCodes.ExtensionIdNotProvided}]: [extensionId] is required.");
             }
 
+            // Did they provide an extension version ID?
+
             if (string.IsNullOrEmpty(apiExecRequest.ExtensionVersionId))
             {
                 erContext.ValidationErrors.Add($"[{ErrorCodes.ExtensionVersionIdNotProvided}]: [extensionVersionId] is required.");
             }
+
+            // Is the execution priority that they provided valid?
 
             if (Enum.TryParse<ExecutionPriority>(apiExecRequest.Priority, out var execPriority) == false)
             {
@@ -47,7 +57,11 @@ namespace Draco.Execution.Api.Services
 
             if (string.IsNullOrEmpty(apiExecRequest.ExtensionId) == false)
             {
+                // Get the extension information...
+
                 erContext.Extension = await extensionRepository.GetExtensionAsync(apiExecRequest.ExtensionId);
+
+                // Were we able to find the extension and is it active?
 
                 if (erContext.Extension == null)
                 {
@@ -59,7 +73,11 @@ namespace Draco.Execution.Api.Services
                 }
                 else if (string.IsNullOrEmpty(apiExecRequest.ExtensionVersionId) == false)
                 {
+                    // Get the extension version information...
+
                     erContext.ExtensionVersion = erContext.Extension.GetExtensionVersion(apiExecRequest.ExtensionVersionId);
+
+                    // Were we able to find the extension version and is it active?
 
                     if (erContext.ExtensionVersion == null)
                     {
@@ -73,6 +91,8 @@ namespace Draco.Execution.Api.Services
                     }
                     else
                     {
+                        // If the user has only requested validation (not execution), does the extension version support validation?
+
                         if (apiExecRequest.ValidateOnly && erContext.ExtensionVersion.SupportsValidation == false)
                         {
                             erContext.ValidationErrors.Add($"[{ErrorCodes.ExtensionVersionDoesNotSupportValidation}]: " +
@@ -80,7 +100,11 @@ namespace Draco.Execution.Api.Services
                                                            $"[{apiExecRequest.ExtensionVersionId}] does not support validation.");
                         }
 
+                        // Get the execution profile information...
+
                         erContext.ExecutionProfile = erContext.ExtensionVersion.GetExecutionProfile(apiExecRequest.ProfileName);
+
+                        // Were we able to find the execution profile information?
 
                         if (erContext.ExecutionProfile == null)
                         {
@@ -89,14 +113,14 @@ namespace Draco.Execution.Api.Services
                         }
                         else
                         {
+                            // And, finally, is the specified priority supported by the execution profile?
+
                             if (erContext.ExecutionProfile.SupportedPriorities.HasFlag(execPriority) == false)
                             {
                                 erContext.ValidationErrors.Add($"[{ErrorCodes.PriorityNotSupported}]: " +
                                                                $"Execution profile [{apiExecRequest.ProfileName}] does not support " +
                                                                $"[{execPriority}]-priority execution.");
                             }
-
-                            await erContextValidator.ValidateExecutionRequestContextAsync(erContext);
                         }
                     }
                 }

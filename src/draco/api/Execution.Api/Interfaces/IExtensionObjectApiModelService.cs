@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Draco.Execution.Api.Interfaces
 {
     /// <summary>
-    /// For extensions that expect input objects and/or provide output objects, this interface generates metadata
+    /// For extensions that expect input objects and/or generate output objects, this interface generates metadata
     /// including object definitions and accessors (see /doc/architecture/execution-objects.md#object-accessors)
     /// that are provided to the client to upload input objects and/or download output objects.
     /// </summary>

@@ -10,12 +10,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.Execution.Api.Modules
 {
+    /// <summary>
+    /// This service module wires up all the core execution API-specific dependencies.
+    /// </summary>
     public class CoreExecutionApiModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IExecutionRequestContextBuilder, ExecutionRequestContextBuilder>();
-            services.AddTransient<IExecutionRequestContextValidator, DefaultExecutionRequestContextValidator>();
             services.AddTransient<IExtensionObjectApiModelService, ExtensionObjectApiModelService>();
             services.AddTransient<IExtensionRsaKeyProvider, TestExtensionRsaKeyProvider>();
         }

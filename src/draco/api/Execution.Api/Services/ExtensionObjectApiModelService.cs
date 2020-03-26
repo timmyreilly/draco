@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 
 namespace Draco.Execution.Api.Services
 {
+    /// <summary>
+    /// This is a convenience service to the execution API that pulls together all the object accessors
+    /// needed by the client to upload input objects and download output objects.
+    /// For more information, see /doc/architecture/execution-objects.md.
+    /// </summary>
     public class ExtensionObjectApiModelService : IExtensionObjectApiModelService
     {
         private readonly IInputObjectAccessorProvider inputAccessorProvider;
