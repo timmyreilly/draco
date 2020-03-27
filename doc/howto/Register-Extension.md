@@ -17,7 +17,7 @@ The following instructions are how to register an extension on the Draco platfor
 
 * [Home Brew](https://brew.sh/) to install the following tools:
 * azure-cli (alternative install method to direct download)
-* docker  (You still need he Docker Desktop install from above)
+* docker  (You still need Docker Desktop install from above)
 * kubernetes-cli
 * helm
 
@@ -35,13 +35,12 @@ If you have more than one Azure subscription make sure you choose the correct su
 
 ```bash
 az account list  
-# Return list of accounts
 az account set --subscription "Name of Subscription"
 ```
 
 ## Initialize Variables
 
-> NOTE: These values much match the values used at initial setup
+> NOTE: These values must match the values used at initial setup
 
 ```bash
 DRACO_COMMON_RG_NAME="draco-common-rg"
@@ -51,22 +50,20 @@ DRACO_AKS_CLUSTER=$(az aks list --resource-group $DRACO_EXTHUB_RG_NAME --query "
 ACR_NAME=$(az group deployment show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
 ```
 
-## Build container images
+## Build sample echo container image
 
-This step uses the `Dockerfile` for the extension to build container image and tag it for storage in ACR.
+This step uses the `Dockerfile` for the extension to build sample echo container image and tag it for storage in ACR.
 
 > NOTE: Execute from the root of the git enlistment
 
 ```bash
 cd src/extensions/samples/csharp/netcore-simple/echo
 docker build . --file Dockerfile --tag $ACR_NAME.azurecr.io/echo:latest
-
 ```
 
-## Push container image to Azure Container Registry
+## Push echo container image to Azure Container Registry
 
 ```bash
-ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
 az acr login --name $ACR_NAME
 docker push $ACR_NAME".azurecr.io/echo"
 ```
@@ -75,7 +72,7 @@ docker push $ACR_NAME".azurecr.io/echo"
 
 ## Deploy to AKS
 
-Using yaml file in the extension folder, deploy the extension into AKS.
+Using yaml file in the sample echo extension folder, deploy the echo extension into AKS.
 
 ```bash
 kubectl apply -f extension-echo.yaml
@@ -104,14 +101,12 @@ kubernetes                 ClusterIP      10.0.0.1       <none>    443/TCP      
 
 In the above example the **initial-extensionmgmtapi** EXTERNAL-IP is the value we need below.
 
-## Register/Create the Extension with the draco platform
+## Register the echo extension container with the Draco platform
 
-Create a new extension using the following rest call.
+Create a new extension registration for the echo service using the following rest calls.
 
 * Replace address with your DNS or IP address
-* Replace ExtensionName with the name of your extension
-  
-> NOTE: The following template must be modified
+* Replace ***ExtensionName*** with the name of your extension (echo for this sample)
 
 ```json
 API Request
@@ -180,7 +175,7 @@ API Response
 
 > NOTE:  Copy **ExtensionID** returned in the model section, you will need this in following steps.
 
-## Create the Extension Version
+## Create the sample echo extension version
 
 Register a new extension version using the following steps:
 
@@ -188,6 +183,8 @@ Register a new extension version using the following steps:
 * Replace **ExtensionId** with the value from the previous step.
 * Replace **ExtensionName** with the name of the extension.
 * "version" should also be set to the version of the extension [x.xx format].
+
+> Note:  Each extension can have multiple versions in the platform at the same time.
 
 ```json
 API Request
@@ -253,16 +250,16 @@ API response:
 * Copy ***ExtensionVersionId*** from the *model* section
 * The ExtensionId and ExtensionName should be unchanged
 
-## Register/Create the Extension Profile
+## Create echo extension execution profile
 
-Each extension also need an extension profile to be set for the version.  This will set a default execution model for the extention to be async.
+Each extension also need an execution profile to be set for the version.  This will set a default execution model for the extention to be async.
 
 **TODO** Replace with link to other execution models
 
 * Replace address with your DNS or IP address
 * Replace ***ExtensionId***
 * Replace ***ExtensionVersionId***
-* Replace ***ReplaceWithExtensionName*** - Should be set to the extension name.
+* Replace ***ExtensionName*** extension name
 
 ```json
 API Request
@@ -329,9 +326,9 @@ API response:
 }
 ```
 
-The "executionUrl" can now be used to execute the extension.
+The "executionUrl" (http://***address/ExtensionName***) can now be used to execute the extension.
 
-## Extension is now registered
+## Sample echo extension is now registered and ready to be executed
 
 See the howto document on how to execute the new extension.
 ***TODO*** Add link to next HowTo document
