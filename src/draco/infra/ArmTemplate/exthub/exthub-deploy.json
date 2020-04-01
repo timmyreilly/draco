@@ -34,6 +34,7 @@
     "searchServiceReplicaCount": 2,
     "searchServicePartitionCount": 1,
     "searchServiceHostingMode": "Default",
+    "searchServiceIndexName": "[concat(variables('extensionsCosmosContainerName'), '-index')]",
     "aksAgentVmSize": "Standard_DS2_v2",
     "aksOsType": "Linux",
     "aksAgentCount": 3,
@@ -286,7 +287,7 @@
     "azureSearchIndexConfiguration": {
       "type": "object",
       "value": {
-        "name": "[concat(variables('extensionsCosmosContainerName'), '-index')]",
+        "name": "[variables('searchServiceIndexName')]",
         "fields": [
           {
             "name": "id",
@@ -426,7 +427,7 @@
       "value": {
         "name": "[concat(variables('extensionsCosmosContainerName'), '-indexer')]",
         "dataSourceName": "[variables('extensionsCosmosContainerName')]",
-        "targetIndexName": "[concat(variables('extensionsCosmosContainerName'), '-index')]"
+        "targetIndexName": "[variables('searchServiceIndexName')]"
       }
     },
     "executionApiConfiguration": {
@@ -543,9 +544,9 @@
           "azure": {
             "search": {
               "catalog": {
-                "indexName": "[[Insert search index name here.]]",
+                "indexName": "[variables('searchServiceIndexName')]",
                 "serviceName": "[variables('searchServiceName')]",
-                "queryKey": "[[Insert query key here.]]"
+                "queryKey": "[first(listQueryKeys(resourceId('Microsoft.Search/searchServices', variables('searchServicename')), '2015-08-19').value).key]"
               }
             },
             "repositories": {
