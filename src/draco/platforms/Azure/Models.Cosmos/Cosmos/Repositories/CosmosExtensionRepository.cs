@@ -28,7 +28,9 @@ namespace Draco.Azure.Models.Cosmos.Repositories
         public Task<Core.Models.Extension> GetExtensionAsync(string extensionId)
         {         
             if (string.IsNullOrEmpty(extensionId))
+            {
                 throw new ArgumentNullException(nameof(extensionId));
+            }
 
             var extensionDocs = DocumentClient.CreateDocumentQuery<JObject>(
                 DocumentCollectionUri,
@@ -39,14 +41,17 @@ namespace Draco.Azure.Models.Cosmos.Repositories
                 .ToList();
 
             var extension = extensionDocs
-                .First(o => ((string)o["modelType"]) == ModelTypes.V1.Extension)
+                .FirstOrDefault(o => ((string)o["modelType"]) == ModelTypes.V1.Extension)?
                 .ToObject<Extension>()
                 .ToCoreModel();
 
-            extension.ExtensionVersions = extensionDocs
-                .Where(o => ((string)o["modelType"]) == ModelTypes.V1.ExtensionVersion)
-                .Select(o => o.ToObject<ExtensionVersion>().ToCoreModel())
-                .ToList();
+            if (extension != null)
+            {
+                extension.ExtensionVersions = extensionDocs
+                    .Where(o => ((string)o["modelType"]) == ModelTypes.V1.ExtensionVersion)
+                    .Select(o => o.ToObject<ExtensionVersion>().ToCoreModel())
+                    .ToList();
+            }
 
             return Task.FromResult(extension);
         }

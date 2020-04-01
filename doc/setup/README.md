@@ -32,7 +32,7 @@ The variable values are used in the following setup commands.  You can change th
 
 ```bash
 DRACO_COMMON_RG_NAME="draco-common-rg"
-DRACO_EXTHUB_RG_NAME="draco-exthub-rg"
+DRACO_PLATFORM_RG_NAME="draco-platform-rg"
 DRACO_REGION="eastus2"
 DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"
 DRACO_SPN_KEY_NAME="draco-aks-spn"
@@ -61,7 +61,7 @@ Draco leverages Azure resources that generally should be managed in a separate r
 
 ```bash
 cd src/draco
-az group create --location $DRACO_REGION --name $DRACO_COMMON_RG_NAME
+az group create --location $DRACO_REGION --name $DRACO_COMMON_RG_NAME --tags platform=draco
 ACR_RESOURCE_ID=$(az deployment group create --resource-group $DRACO_COMMON_RG_NAME --template-file ./infra/ArmTemplate/common/common-deploy.json --query properties.outputs.acrResourceId.value --out tsv)
 
 ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
@@ -92,9 +92,9 @@ The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB,
 # Get the latest stable version of AKS available in the region.
 AKSK8SVERSION=$(az aks get-versions --location $DRACO_REGION --query "orchestrators[?orchestratorType=='Kubernetes'].orchestratorVersion | sort(@) | [-2:-1:]" --output tsv)
 
-az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
+az group create --location $DRACO_REGION --name $DRACO_PLATFORM_RG_NAME --tags platform=draco
 
-az deployment group create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
+az deployment group create --resource-group $DRACO_PLATFORM_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
  ```
 
 ## Retrieve Draco service configuration settings
@@ -102,13 +102,10 @@ az deployment group create --resource-group $DRACO_EXTHUB_RG_NAME --template-fil
 The Draco platform infrastructure deployment contains configuration outputs for each of the services running in AKS that make up the Draco platform.  This section saves these configuration outputs to a JSON file (application settings) for each service.
 
 ```bash
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
-
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.extensionMgmtApiConfiguration.value > appsettings-extensionmgmtapi.json
-
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionConsoleConfiguration.value > appsettings-execconsole.json
-
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value > appsettings-execapi.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.extensionMgmtApiConfiguration.value > appsettings-extensionmgmtapi.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.executionConsoleConfiguration.value > appsettings-execconsole.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value > appsettings-execapi.json
 ```
 
 ## Upload Draco service configuration settings to blob storage
@@ -116,14 +113,11 @@ az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-de
 In this section, the application settings for the Draco service are uploaded to the blob storage account.  These are referenced later in the steps to deploy the container images into AKS.
 
 ```bash
-STG_CONN_STR=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
+STG_CONN_STR=$(az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
 
 az storage blob upload --file ./appsettings-catalogapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-catalogapi.json
-
 az storage blob upload --file ./appsettings-execapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execapi.json
-
 az storage blob upload --file ./appsettings-execconsole.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execconsole.json
-
 az storage blob upload --file ./appsettings-extensionmgmtapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-extensionmgmtapi.json
 ```
 
@@ -143,13 +137,13 @@ rm ./appsettings-extensionmgmtapi.json
 In this section, the Azure Search resource is configured with necessary index and data source definitions to provide Draco's catalog search capabilities.
 
 ```bash
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchDataSourceConfiguration.value > azure-search-datasource-config.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexConfiguration.value > azure-search-index-config.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexerConfiguration.value > azure-search-indexer-config.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchDataSourceConfiguration.value > azure-search-datasource-config.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexConfiguration.value > azure-search-index-config.json
+az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexerConfiguration.value > azure-search-indexer-config.json
 
 # Get the admin-key for subsequent Azure Search REST API calls
-SEARCH_SERVICE_NAME=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchServiceName.value --output tsv)
-COSMOS_ADMIN_KEY=$(az search admin-key show --resource-group $DRACO_EXTHUB_RG_NAME --service-name $SEARCH_SERVICE_NAME --query primaryKey --output tsv)
+SEARCH_SERVICE_NAME=$(az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchServiceName.value --output tsv)
+COSMOS_ADMIN_KEY=$(az search admin-key show --resource-group $DRACO_PLATFORM_RG_NAME --service-name $SEARCH_SERVICE_NAME --query primaryKey --output tsv)
 
 # Create Azure Search data source
 curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/datasources\?api-version=2019-05-06 -d @azure-search-datasource-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
@@ -171,9 +165,8 @@ rm ./azure-search-indexer-config.json
 Configure your `kubectl` command-line tool so you can access and manage your AKS instance.
 
 ```bash
-K8S_NAME=$(az resource list --resource-group $DRACO_EXTHUB_RG_NAME --resource-type Microsoft.ContainerService/managedClusters --query '[0].name' --output tsv)
-
-az aks get-credentials --resource-group $DRACO_EXTHUB_RG_NAME --name $K8S_NAME
+K8S_NAME=$(az resource list --resource-group $DRACO_PLATFORM_RG_NAME --resource-type Microsoft.ContainerService/managedClusters --query '[0].name' --output tsv)
+az aks get-credentials --resource-group $DRACO_PLATFORM_RG_NAME --name $K8S_NAME
 ```
 
 ## Build container images
@@ -182,17 +175,11 @@ These steps use the `Dockerfile` for each of the Draco services to build contain
 
 ```bash
 docker build . --file ./api/Catalog.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-catalogapi:latest"
-
 docker build . --file ./api/Execution.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionapi:latest"
-
 docker build . --file ./api/ExtensionManagement.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi:latest"
-
 docker build . --file ./api/ExecutionAdapter.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionadapterapi:latest"
-
 docker build . --file ./api/ExtensionService.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionserviceapi:latest"
-
 docker build . --file ./api/ObjectStorageProvider.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-objectproviderapi:latest"
-
 docker build . --file ./core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionconsole:latest"
 ```
 
@@ -214,8 +201,10 @@ docker push "$ACR_NAME.azurecr.io/xhub-objectproviderapi"
 Using helm and the charts in the `./helm` folder, deploy the Draco platform services into AKS.
 
 ```bash
+AKS_DNS_PREFIX=$(az deployment group show --resource-group $DRACO_PLATFORM_RG_NAME --name exthub-deploy --query properties.outputs.deploymentPrefix.value --output tsv)
+
 cd helm
-helm install initial extension-hubs --set configuration.storageConnectionString="$STG_CONN_STR" --set images.repository="$ACR_NAME.azurecr.io"
+helm install initial extension-hubs --set configuration.storageConnectionString="$STG_CONN_STR" --set images.repository="$ACR_NAME.azurecr.io" --set dnsPrefix="$AKS_DNS_PREFIX"
 ```
 
 ## Validate Draco is running in AKS

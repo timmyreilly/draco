@@ -22,14 +22,14 @@
     }
   },
   "variables": {
-    "uniqueId": "[uniqueString(concat(subscription().id, resourceGroup().name, resourceGroup().location))]",
-    "prefix": "[concat('xhub', variables('uniqueId'))]",
-    "aksClusterName": "[take(concat(variables('prefix'), 'aks'), 50)]",
-    "aksClusterDnsPrefix": "[take(concat(variables('prefix'), 'aks'), 50)]",
-    "cosmosAccountName": "[take(concat(variables('prefix'), 'cos'), 50)]",
-    "eventGridTopicName": "[take(concat(variables('prefix'), 'execevents'), 50)]",
-    "storageAccountName": "[take(concat(variables('prefix'), 'stg'), 24)]",
-    "searchServiceName": "[take(concat(variables('prefix'), 'srch'), 50)]",
+    "prefix": "draco",
+    "uniqueId": "[uniqueString(resourceGroup().id)]",
+    "aksClusterName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
+    "aksClusterDnsPrefix": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
+    "cosmosAccountName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-cdb'), 31)]",
+    "eventGridTopicName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-egt-execution'), 50)]",
+    "storageAccountName": "[take(concat(variables('prefix'), variables('uniqueId'), 'stor'), 24)]",
+    "searchServiceName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-srch'), 50)]",
     "searchServiceSku": "Basic",
     "searchServiceReplicaCount": 2,
     "searchServicePartitionCount": 1,
@@ -43,7 +43,7 @@
     "configurationStorageContainerName": "configuration",
     "resourcesStorageContainerName": "resources",
     "extensionObjectsStorageContainerName": "extensionobjects",
-    "sbNamespaceName": "[take(concat(variables('prefix'), 'sb'), 50)]",
+    "sbNamespaceName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-bus'), 50)]",
     "sbRequestTopicName": "execution-requests",
     "sbHttpSubscriptionName": "http-v1",
     "sbRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('sbNamespaceName'), 'RootManageSharedAccessKey')]",
@@ -52,7 +52,10 @@
     "extensionsCosmosContainerName": "extensions",
     "executionsCosmosContainerName": "executions",
     "cosmosAccountResourceId": "[resourceId('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosAccountName'))]",
-    "cosmosDatabaseResourceId": "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('cosmosAccountName'), 'sql', variables('cosmosDatabaseName'))]"
+    "cosmosDatabaseResourceId": "[resourceId('Microsoft.DocumentDB/databaseAccounts/apis/databases', variables('cosmosAccountName'), 'sql', variables('cosmosDatabaseName'))]",
+    "resourceTags": {
+      "platform": "[variables('prefix')]"
+    }
   },
   "resources": [
     {
@@ -60,6 +63,7 @@
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[variables('aksClusterName')]",
+      "tags": "[variables('resourceTags')]",
       "properties": {
         "kubernetesVersion": "[parameters('aksK8sVersion')]",
         "dnsPrefix": "[variables('aksClusterDnsPrefix')]",
@@ -82,6 +86,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('storageAccountName')]",
+      "tags": "[variables('resourceTags')]",
       "location": "[resourceGroup().location]",
       "apiVersion": "2018-07-01",
       "sku": {
@@ -123,11 +128,13 @@
           }
         }
       ],
-      "properties": {}
+      "properties": {
+      }
     },
     {
       "apiVersion": "2017-04-01",
       "name": "[variables('sbNamespaceName')]",
+      "tags": "[variables('resourceTags')]",
       "type": "Microsoft.ServiceBus/namespaces",
       "location": "[resourceGroup().location]",
       "sku": {
@@ -164,6 +171,7 @@
       "name": "[variables('cosmosAccountName')]",
       "location": "[resourceGroup().location]",
       "tags": {
+        "platform": "[variables('prefix')]",
         "defaultExperience": "Core (SQL)"
       },
       "kind": "GlobalDocumentDB",
@@ -171,7 +179,8 @@
         "enableAutomaticFailover": false,
         "enableMultipleWriteLocations": false,
         "isVirtualNetworkFilterEnabled": false,
-        "virtualNetworkRules": [],
+        "virtualNetworkRules": [
+        ],
         "databaseAccountOfferType": "Standard",
         "consistencyPolicy": {
           "defaultConsistencyLevel": "Session",
@@ -185,7 +194,8 @@
             "isZoneRedundant": false
           }
         ],
-        "capabilities": []
+        "capabilities": [
+        ]
       }
     },
     {
@@ -260,6 +270,7 @@
     },
     {
       "name": "[variables('eventGridTopicName')]",
+      "tags": "[variables('resourceTags')]",
       "type": "Microsoft.EventGrid/topics",
       "location": "[resourceGroup().location]",
       "apiVersion": "2018-01-01"
@@ -267,6 +278,7 @@
     {
       "apiVersion": "2015-08-19",
       "name": "[variables('searchServiceName')]",
+      "tags": "[variables('resourceTags')]",
       "type": "Microsoft.Search/searchServices",
       "location": "[resourceGroup().location]",
       "sku": {
@@ -280,6 +292,10 @@
     }
   ],
   "outputs": {
+    "deploymentPrefix": {
+      "type": "string",
+      "value": "[concat(variables('prefix'), '-', variables('uniqueId'))]"
+    },
     "azureSearchServiceName": {
       "type": "string",
       "value": "[variables('searchServiceName')]"
@@ -298,8 +314,8 @@
             "retrievable": true,
             "sortable": false,
             "key": false
-        },
-        {
+          },
+          {
             "name": "extensionId",
             "type": "Edm.String",
             "searchable": false,
@@ -308,8 +324,8 @@
             "retrievable": true,
             "sortable": false,
             "key": false
-        },
-        {
+          },
+          {
             "name": "name",
             "type": "Edm.String",
             "searchable": true,
@@ -319,8 +335,8 @@
             "sortable": true,
             "analyzer": "standard.lucene",
             "key": false
-        },
-        {
+          },
+          {
             "name": "category",
             "type": "Edm.String",
             "searchable": true,
@@ -330,8 +346,8 @@
             "sortable": true,
             "analyzer": "standard.lucene",
             "key": false
-        },
-        {
+          },
+          {
             "name": "subcategory",
             "type": "Edm.String",
             "searchable": true,
@@ -341,8 +357,8 @@
             "sortable": true,
             "analyzer": "standard.lucene",
             "key": false
-        },
-        {
+          },
+          {
             "name": "publisherName",
             "type": "Edm.String",
             "searchable": true,
@@ -352,8 +368,8 @@
             "sortable": true,
             "analyzer": "standard.lucene",
             "key": false
-        },
-        {
+          },
+          {
             "name": "copyrightNotice",
             "type": "Edm.String",
             "searchable": false,
@@ -362,8 +378,8 @@
             "retrievable": true,
             "sortable": false,
             "key": false
-        },
-        {
+          },
+          {
             "name": "description",
             "type": "Edm.String",
             "searchable": true,
@@ -373,16 +389,16 @@
             "sortable": false,
             "analyzer": "standard.lucene",
             "key": false
-        },
-        {
+          },
+          {
             "name": "isActive",
             "type": "Edm.Boolean",
             "facetable": true,
             "filterable": true,
             "retrievable": true,
             "sortable": true
-        },
-        {
+          },
+          {
             "name": "tags",
             "type": "Collection(Edm.String)",
             "searchable": false,
@@ -390,8 +406,8 @@
             "filterable": true,
             "retrievable": true,
             "key": false
-        },
-        {
+          },
+          {
             "name": "rid",
             "type": "Edm.String",
             "searchable": false,
@@ -400,7 +416,7 @@
             "retrievable": true,
             "sortable": false,
             "key": true
-        }
+          }
         ]
       }
     },

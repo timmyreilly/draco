@@ -23,6 +23,7 @@ namespace Draco.Catalog.Api
                 .ConfigureAppConfiguration(cb =>
                 {
                     // Pull API configuration from Azure blob storage...
+                    // Storage account configuration information comes in through environment variables below.
 
                     var blobStorageAccount = CloudStorageAccount.Parse(BlobStorageConnectionString);
                     var blobClient = blobStorageAccount.CreateCloudBlobClient();
