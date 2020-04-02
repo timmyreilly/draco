@@ -44,10 +44,10 @@ az account set --subscription "Name of Subscription"
 
 ```bash
 DRACO_COMMON_RG_NAME="draco-common-rg"
-DRACO_EXTHUB_RG_NAME="draco-exthub-rg"
+DRACO_PLATFORM_RG_NAME="draco-platform-rg"
 DRACO_REGION="eastus2"
-DRACO_AKS_CLUSTER=$(az aks list --resource-group $DRACO_EXTHUB_RG_NAME --query "[].name" --output tsv)
-ACR_NAME=$(az group deployment show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
+DRACO_AKS_CLUSTER=$(az aks list --resource-group $DRACO_PLATFORM_RG_NAME --query "[].name" --output tsv)
+ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
 ```
 
 ## Build sample echo container image
@@ -282,12 +282,12 @@ Use this format:
         "normal"
         ],
         "extensionSettings": {
-        "executionUrl": "address/ExtensionName"
+        "executionUrl": "address/***ExtensionName***"
         }
     }
 ```
 
-The platform service will return a new "executionUrl" that can be used to execute this extension.
+The platform service will return the **executionUrl** from the params above.
 
 ```json
 API response:
@@ -326,9 +326,6 @@ API response:
 }
 ```
 
-The "executionUrl" (http://***address/ExtensionName***) can now be used to execute the extension.
-
 ## Sample echo extension is now registered and ready to be executed
 
-See the howto document on how to execute the new extension.
-***TODO*** Add link to next HowTo document
+See the [how to execute a Draco extension](Execute-Extension.md) for this newly registered echo extension.
