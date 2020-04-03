@@ -252,7 +252,7 @@ API response:
 
 ## Create echo extension execution profile
 
-Each extension also need an execution profile to be set for the version.  This will set a default execution model for the extention to be async.
+Each extension also need an execution profile to be set for the version.  For the echo extension, this will set a default execution model for the extention to be synchronous.
 
 **TODO** Replace with link to other execution models
 
@@ -274,7 +274,7 @@ Request Payload (if applicable)
 Use this format:
     {
         "name": "default",
-        "executionModel": "http-json/async/v1",
+        "executionModel": "http-json/sync/v1",
         "objectProvider": "az-blob/v1",
         "isActive": true,
         "executionMode": "Gateway",
@@ -310,7 +310,7 @@ API response:
         "extensionId": "ExtensionId",
         "extensionVersionId": "ExtensionVersionId",
         "description": null,
-        "executionModel": "http-json/async/v1",
+        "executionModel": "http-json/sync/v1",
         "objectProvider": "az-blob/v1",
         "executionMode": "Gateway",
         "directExecutionTokenDuration": null,
