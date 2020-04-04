@@ -7,6 +7,14 @@ metadata:
   name: {{ .Release.Name }}-executionapi
 spec:
   replicas: 3
+  minReadySeconds: 1 # Default 0
+  progressDeadlineSeconds: 60 # Default 600 - Allow for shorter time before fail
+  revisionHistoryLimit: 5 # Allow keeping 5 deployments history for rollback
+  strategy:
+    type: RollingUpdate # This is default
+    rollingUpdate:
+      maxSurge: 1 # Default 25% - number allowed to go over during update
+      maxUnavailable: 1 # Default 25% - number allowed to go down at a time
   selector:
     matchLabels:
       app: {{ .Release.Name }}-executionapi
