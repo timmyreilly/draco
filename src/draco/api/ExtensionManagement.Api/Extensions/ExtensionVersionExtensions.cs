@@ -7,6 +7,9 @@ using System;
 
 namespace Draco.ExtensionManagement.Api.Extensions
 {
+    /// <summary>
+    /// Extension methods used to convert to/from extension version API/core models
+    /// </summary>
     public static class ExtensionVersionExtensions
     {
         public static ExtensionVersion ToCoreModel(this ExtensionVersionApiModel apiModel, string extensionId) =>

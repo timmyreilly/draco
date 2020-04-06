@@ -6,6 +6,9 @@ using Draco.ExtensionManagement.Api.Models;
 
 namespace Draco.ExtensionManagement.Api.Extensions
 {
+    /// <summary>
+    /// Extension methods used to convert to/from output object API/core models
+    /// </summary>
     public static class OutputObjectExtensions
     {
         public static ExtensionOutputObject ToCoreModel(this OutputObjectApiModel apiModel) =>

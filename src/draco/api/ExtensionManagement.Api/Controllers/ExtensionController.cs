@@ -198,15 +198,23 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpDelete("{extensionId}/versions/{exVersionId}")]
         public async Task<IActionResult> DeleteExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to find the extension and extension version...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
             var exVersion = extension?.GetExtensionVersion(exVersionId);
+
+            // If we found the extension version, don't delete it, but deactivate it.
 
             if (exVersion?.IsActive == true)
             {
                 exVersion.IsActive = false;
 
+                // Save the extension version...
+
                 await extensionRepository.SaveExtensionVersionAsync(exVersion);
             }
+
+            // Regardless of whether or not we found the extension version, respond with [200 OK]...
 
             return Ok();
         }
@@ -222,12 +230,19 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<ExtensionVersionApiModel>>), 200)]
         public async Task<IActionResult> GetExtensionVersionsAsync([Required] string extensionId)
         {
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we couldn't find it, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
+
+            // Respond with [200 OK] + a list of extension versions...
+            // TODO: In the future, we may want to consider adding paging here...
 
             return Ok(extension.ExtensionVersions.Select(ev => ToApiModelContainer(ev, extensionId)));
         }
@@ -244,19 +259,29 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionVersionApiModel>), 200)]
         public async Task<IActionResult> GetExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to get the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
+
+            // Respond with [200 OK] + the extension version...
 
             return Ok(ToApiModelContainer(exVersion, extensionId));
         }
@@ -277,41 +302,63 @@ namespace Draco.ExtensionManagement.Api.Controllers
         public async Task<IActionResult> CreateInputObjectAsync([Required] string extensionId, [Required] string exVersionId, 
                                                                 [Required, FromBody] InputObjectApiModel inputObjectApiModel)
         {
+            // Validate the input object API model...
+
             var errors = Validate(inputObjectApiModel);
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
                 return BadRequest(string.Join(' ', errors));
             }
 
+            // Try to the find target extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extesnion, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the target extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Check to see if the input object already exists...
+
             var inputObjectName = inputObjectApiModel.Name.ToLower();
             var inputObject = exVersion.InputObjects.SingleOrDefault(io => (io.Name == inputObjectName));
 
             if (inputObject != null)
             {
+                // If the input object already exists, respond with [409 Conflict]...
+                // TODO: Implement PUT action for updating existing input objects.
+
                 return new ConflictObjectResult($"Extension [{extensionId}] version [{exVersionId}] input object [{inputObjectApiModel.Name}] " +
                                                 $"already exists at [{GetGetInputObjectUrl(extensionId, exVersionId, inputObjectName)}].");
             }
+
+            // Validation is done and we're ready to add the input object.
+            // Convert the input object API model to its core model counterpart and save it to the extension version...
 
             inputObject = inputObjectApiModel.ToCoreModel();
 
             exVersion.InputObjects.Add(inputObject);
 
             await extensionRepository.SaveExtensionVersionAsync(exVersion);
+
+            // Let the client know that the input object has been created...
 
             return new CreatedResult(
                 GetGetInputObjectUrl(extensionId, exVersionId, inputObjectName),
@@ -329,11 +376,15 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpDelete("{extensionId}/versions/{exVersionId}/objects/input/{objectName}")]
         public async Task<IActionResult> DeleteInputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName)
         {
+            // Try to find the extension, extension version, and input object...
+
             objectName = WebUtility.UrlDecode(objectName);
 
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
             var exVersion = extension?.GetExtensionVersion(exVersionId);
             var inputObject = exVersion?.GetInputObject(objectName.ToLower());
+
+            // If we find the input object, remove it, and save the updated extension version...
 
             if (inputObject != null)
             {
@@ -341,6 +392,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
                 await extensionRepository.SaveExtensionVersionAsync(exVersion);
             }
+
+            // Regardless of whether or not we find the input object, respond with [200 OK]...
 
             return Ok();
         }
@@ -357,19 +410,30 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<InputObjectApiModel>>), 200)]
         public async Task<IActionResult> GetInputObjectsAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the speciifed extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
+
+            // Respond with [200 OK] + a list of all input objects...
+            // TODO: May want to implement paging here in the future.
 
             return Ok(exVersion.InputObjects.Select(io => ToApiModelContainer(io, extensionId, exVersionId)));
         }
@@ -389,26 +453,40 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             objectName = WebUtility.UrlDecode(objectName);
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Try to find the specified input object... 
+
             var inputObject = exVersion.InputObjects.SingleOrDefault(io => io.Name == objectName.ToLower());
+
+            // If we can't find the input object, respond with [404 Not Found]...
 
             if (inputObject == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] input object [{objectName}] not found.");
             }
+
+            // Finally, if we did find the input object, respond with [200 OK] + the input object definition...
 
             return Ok(ToApiModelContainer(inputObject, extensionId, exVersionId));
         }
@@ -429,41 +507,62 @@ namespace Draco.ExtensionManagement.Api.Controllers
         public async Task<IActionResult> CreateOutputObjectAsync([Required] string extensionId, [Required] string exVersionId, 
                                                                  [Required, FromBody] OutputObjectApiModel outputObjectApiModel)
         {
+            // Validate the output object API model...
+
             var errors = Validate(outputObjectApiModel);
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
                 return BadRequest(string.Join(' ', errors));
             }
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Check to see if the output object already exists...
+
             var outputObjectName = outputObjectApiModel.Name.ToLower();
             var outputObject = exVersion.OutputObjects.SingleOrDefault(oo => oo.Name == outputObjectName);
 
             if (outputObject != null)
             {
+                // If it does already exist, respond with [409 Conflict]...
+                // TODO: Implement output object PUT action for updates.
+
                 return new ConflictObjectResult($"Extension [{extensionId}] version [{exVersionId}] output object [{outputObjectApiModel.Name}] " +
                                                 $"already exists at [{GetGetOutputObjectUrl(extensionId, exVersionId, outputObjectName)}].");
             }
+
+            // Convert the output object API model to its core model counterpart, add it to the extension version, and save the extension version...
 
             outputObject = outputObjectApiModel.ToCoreModel();
 
             exVersion.OutputObjects.Add(outputObject);
 
             await extensionRepository.SaveExtensionVersionAsync(exVersion);
+
+            // Let the client know that we've created the new output object...
 
             return new CreatedResult(
                 GetGetOutputObjectUrl(extensionId, exVersionId, outputObjectName),
@@ -483,9 +582,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             objectName = WebUtility.UrlDecode(objectName);
 
+            // Check to see whether the specified extension, extension version, and output object exist...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
             var exVersion = extension?.GetExtensionVersion(exVersionId);
             var outputObject = exVersion?.GetOutputObject(objectName.ToLower());
+
+            // If the output object does exist, remove it from and save the extension version...
 
             if (outputObject != null)
             {
@@ -493,6 +596,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
                 await extensionRepository.SaveExtensionVersionAsync(exVersion);
             }
+
+            // Regardless of whether or not we found the output object, respond with [200 OK]...
 
             return Ok();
         }
@@ -509,19 +614,30 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<OutputObjectApiModel>>), 200)]
         public async Task<IActionResult> GetOutputObjectsAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
+
+            // Respond with [200 OK] + a list of the specified extension version's output objects...
+            // TODO: May implement paging at some point in the future.
 
             return Ok(exVersion.OutputObjects.Select(oo => ToApiModelContainer(oo, extensionId, exVersionId)));
         }
@@ -541,26 +657,40 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             objectName = WebUtility.UrlDecode(objectName);
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we couldn't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we couldn't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Try to find the specified output object...
+
             var outputObject = exVersion.OutputObjects.SingleOrDefault(oo => oo.Name == objectName.ToLower());
+
+            // If we couldn't find the output object, respond with [404 Not Found]...
 
             if (outputObject == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] output object [{objectName}] not found.");
             }
+
+            // If we found the output object, respond with [200 OK] + the output object definition...
 
             return Ok(ToApiModelContainer(outputObject, extensionId, exVersionId));
         }
@@ -581,41 +711,62 @@ namespace Draco.ExtensionManagement.Api.Controllers
         public async Task<IActionResult> CreateExecutionProfileAsync([Required] string extensionId, [Required] string exVersionId, 
                                                                      [Required, FromBody] ExecutionProfileApiModel execProfileApiModel)
         {
+            // Validate the execution profile API model...
+
             var errors = Validate(execProfileApiModel);
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
                 return BadRequest(string.Join(' ', errors));
             }
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we couldn't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we couldn't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Check to make sure that the execution profile doesn't already exist...
+
             var execProfileName = execProfileApiModel.Name.ToLower();
             var execProfile = exVersion.ExecutionProfiles.SingleOrDefault(p => p.ProfileName == execProfileName);
 
             if (execProfile != null)
             {
+                // If it does already exist, respond with [409 Conflict]...
+
                 return new ConflictObjectResult($"Extension [{extensionId}] version [{exVersionId}] execution profile [{execProfileApiModel.Name}] " +
                                                 $"already exists at [{GetGetExecutionProfileUrl(extensionId, exVersionId, execProfileName)}].");
             }
+
+            // Convert the execution profile API model to its core model counterpart, add it to the extension version,
+            // and save the extension version.
 
             execProfile = execProfileApiModel.ToCoreModel();
 
             exVersion.ExecutionProfiles.Add(execProfile);
 
             await extensionRepository.SaveExtensionVersionAsync(exVersion);
+
+            // Let the client know that the execution profile has been created...
 
             return new CreatedResult(
                 GetGetExecutionProfileUrl(extensionId, exVersionId, execProfileName),
@@ -635,9 +786,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             profileName = WebUtility.UrlDecode(profileName);
 
+            // Try to find the specified extension, extension version, and execution profile...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
             var exVersion = extension?.GetExtensionVersion(exVersionId);
             var exProfile = exVersion?.GetExecutionProfile(profileName);
+
+            // If we find the execution profile, remove it from and save the extension version...
 
             if (exProfile != null)
             {
@@ -645,6 +800,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
                 await extensionRepository.SaveExtensionVersionAsync(exVersion);
             }
+
+            // Regardless of whether or not we found the execution profile, respond with [200 OK]...
 
             return Ok();
         }
@@ -661,19 +818,29 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<ExecutionProfileApiModel>>), 200)]
         public async Task<IActionResult> GetExecutionProfilesAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
+
+            // Once we find the extension version, respond with [200 OK] + a list of all associated execution profiles...
 
             return Ok(exVersion.ExecutionProfiles.Select(ep => ToApiModelContainer(ep, extensionId, exVersionId)));
         }
@@ -693,26 +860,40 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             profileName = WebUtility.UrlDecode(profileName);
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Try to find the specified execution profile...
+
             var execProfile = exVersion.GetExecutionProfile(profileName);
+
+            // If we can't find the profile, respond with [404 Not Found]...
 
             if (execProfile == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] execution profile [{profileName}] not found.");
             }
+
+            // If we found the profile, respond with [200 OK] + the profile definition...
 
             return Ok(ToApiModelContainer(execProfile, extensionId, exVersionId));
         }
@@ -733,38 +914,58 @@ namespace Draco.ExtensionManagement.Api.Controllers
         public async Task<IActionResult> CreateExtensionServiceAsync([Required] string extensionId, [Required] string exVersionId, 
                                                                      [Required, FromBody] ExtensionServiceApiModel serviceApiModel)
         {
+            // Validate the extension service API model...
+
             var errors = Validate(serviceApiModel);
+
+            // If there were any validation errors, respond with [400 Bad Request]...
 
             if (errors.Any())
             {
                 return BadRequest(string.Join(' ', errors));
             }
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // Check to make sure that the specified service definition doesn't already exist...
+
             var serviceName = serviceApiModel.Name.ToLower();
 
             if (exVersion.SupportedServices.ContainsKey(serviceName))
             {
+                // If the service definition already exists, respond with [409 Conflict]...
+
                 return new ConflictObjectResult($"Extension [{extensionId}] version [{exVersionId}] service [{serviceApiModel.Name}] " +
                                                 $"already exists at [{GetGetServiceUrl(extensionId, exVersionId, serviceName)}].");
             }
 
+            // Add the service definition to the extension version and save the extension version...
+
             exVersion.SupportedServices[serviceName] = JObject.FromObject(serviceApiModel.ServiceConfiguration);
 
             await extensionRepository.SaveExtensionVersionAsync(exVersion);
+
+            // Let the client know that the service definition has been created...
 
             return new CreatedResult(
                 GetGetServiceUrl(extensionId, exVersionId, serviceName),
@@ -783,19 +984,29 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<ExtensionServiceApiModel>>), 200)]
         public async Task<IActionResult> GetAllServicesAsync([Required] string extensionId, [Required] string exVersionId)
         {
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
+
+            // If we do find the extension version, respond with [200 OK] + a list of all associated service definitions...
 
             return Ok(exVersion.SupportedServices.Select(s => ToApiModelContainer(extensionId, exVersionId, s.Key, s.Value)));
         }
@@ -815,24 +1026,36 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             serviceName = WebUtility.UrlDecode(serviceName.ToLower());
 
+            // Try to find the specified extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we can't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Try to find the specified extension version...
+
             var exVersion = extension.GetExtensionVersion(exVersionId);
+
+            // If we can't find the extension version, respond with [404 Not Found]...
 
             if (exVersion == null)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] not found.");
             }
 
+            // If we can't find the specified service definition, respond with [404 Not Found]...
+
             if (exVersion.SupportedServices.ContainsKey(serviceName) == false)
             {
                 return NotFound($"Extension [{extensionId}] version [{exVersionId}] service [{serviceName}] not found.");
             }
+
+            // If we do find the service definition, respond with [200 OK] + the service definition...
 
             return Ok(ToApiModelContainer(extensionId, exVersionId, serviceName, exVersion.SupportedServices[serviceName]));
         }
@@ -850,8 +1073,12 @@ namespace Draco.ExtensionManagement.Api.Controllers
         {
             serviceName = WebUtility.UrlDecode(serviceName.ToLower());
 
+            // Try to find the specified extension and extension version...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
             var exVersion = extension?.GetExtensionVersion(exVersionId);
+
+            // If we find the specified service definition, remove it from and save the extension version...
 
             if (exVersion?.SupportedServices.ContainsKey(serviceName) == true)
             {
@@ -859,6 +1086,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
                 await extensionRepository.SaveExtensionVersionAsync(exVersion);
             }
+
+            // Regardless of whether or not we found it, respond with [200 OK]...
 
             return Ok();
         }
@@ -886,11 +1115,15 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
         private IEnumerable<string> Validate(ExtensionVersionApiModel exVersionApiModel)
         {
+            // Make sure that the provided extension version is in the right format...
+
             if (!Version.TryParse(exVersionApiModel.Version, out _))
             {
                 yield return $"Extension version [version] [{exVersionApiModel.Version}] is invalid. " +
                               "[version] must include major, minor, and, optionally, build and revision numbers (e.g., 1.0, 1.1.0, 1.1.1.0).";
             }
+
+            // Make sure that the request type URL is either not provided or is a valid absolute URL...
 
             if (!string.IsNullOrEmpty(exVersionApiModel.RequestTypeUrl) &&
                 !Uri.TryCreate(exVersionApiModel.RequestTypeUrl, UriKind.Absolute, out _))
@@ -898,6 +1131,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
                 yield return $"Extension version [requestFormatUrl] [{exVersionApiModel.RequestTypeUrl}] is invalid. " +
                               "[requestFormatUrl] must be an absolute URL (e.g., http://foo.com/request/v1).";
             }
+
+            // Make sure that the response type URL is either not provided or is a valid absolute URL...
 
             if (!string.IsNullOrEmpty(exVersionApiModel.ResponseTypeUrl) &&
                 !Uri.TryCreate(exVersionApiModel.ResponseTypeUrl, UriKind.Absolute, out _))
@@ -914,6 +1149,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
                 yield return "Input object [name] is required.";
             }
 
+            // Make sure that the object type URL is either not provided or is a valid absolute URL...
+
             if (!string.IsNullOrEmpty(objectApiModel.ObjectTypeUrl) &&
                 !Uri.TryCreate(objectApiModel.ObjectTypeUrl, UriKind.Absolute, out _))
             {
@@ -928,6 +1165,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
             {
                 yield return "Output object [name] is required.";
             }
+
+            // Make sure that the object type URL is either not provided or is a valid absolute URL...
 
             if (!string.IsNullOrEmpty(objectApiModel.ObjectTypeUrl) &&
                 !Uri.TryCreate(objectApiModel.ObjectTypeUrl, UriKind.Absolute, out _))
@@ -960,15 +1199,22 @@ namespace Draco.ExtensionManagement.Api.Controllers
             }
             else
             {
+                // Check to make sure that the execution model (either direct or gateway) that the client provided is valid.
+
                 if (Enum.TryParse<ExecutionMode>(profileApiModel.ExecutionMode, true, out var executionMode))
                 {
                     if (executionMode == ExecutionMode.Direct)
                     {
+                        // If the direct execution model is specified, make sure that the client has provided an execution token duration...
+
                         if (string.IsNullOrEmpty(profileApiModel.DirectExecutionTokenDuration))
                         {
                             yield return "When [direct] [executionMode] is specified, execution profile [directExecutionTokenDuration] is required; " +
                                          "Expected [directExecutionTokenDuration] format is [hh:mm:ss] (e.g., [01:00:00]).";
                         }
+
+                        // If the direct execution model is specified and an execution token duration is provided, make sure it's in the right format...
+
                         else if (TimeSpan.TryParse(profileApiModel.DirectExecutionTokenDuration, out _) == false)
                         {
                             yield return $"Execution profile [directExecutionTokenDuration] [{profileApiModel.DirectExecutionTokenDuration}] is invalid; " +
@@ -982,11 +1228,16 @@ namespace Draco.ExtensionManagement.Api.Controllers
                 }
             }
 
+            // Make sure that the client has provided at least one supported priority...
+
             if (profileApiModel.SupportedPriorities.None())
             {
                 yield return "Execution profile must define at least one [supportedPriorities]; " +
                              "possible options are [low], [normal], and [high].";
             }
+
+            // Otherwise, make sure that the provided priorities are valid...
+
             else
             {
                 foreach (var priority in profileApiModel.SupportedPriorities)
