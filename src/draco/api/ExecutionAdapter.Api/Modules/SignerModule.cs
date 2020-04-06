@@ -11,6 +11,9 @@ namespace Draco.ExecutionAdapter.Api.Modules
 {
     public class SignerModule : IServiceModule
     {
+        /// <summary>
+        /// This service module wires up the default object signer.
+        /// </summary>
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<ISigner, DefaultSigner>();

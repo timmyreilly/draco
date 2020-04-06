@@ -9,6 +9,7 @@ See [Draco Architecture](../architecture/azure-architecture.md) for more informa
 ## Pre-requisites
 
 * Azure Subscription
+  * You'll also need your subscription ID. You can find this at https://ms.portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade.
 * Permission to create a service principal (SPN) in Azure AD
 * [Kubernetes CLI](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 * [Docker](https://www.docker.com/products/docker-desktop)
@@ -23,191 +24,120 @@ See [Draco Architecture](../architecture/azure-architecture.md) for more informa
   * docker  (You still need Docker Desktop from above)
   * kubernetes-cli
   * helm
+  
+## Run the common resources setup script
 
-## Initialize variables
+This section sets up all the common resources (Azure Key Vault and Azure Container Registry) that will be shared across Draco platform deployments. Follow these instructions only if you have not already set up the common Draco resource group (by default `draco-commong-rg`). If you already have, feel free to [skip to the next section](#run-the-platform-resources-setup-script).
 
-The variable values are used in the following setup commands.  You can change the values to your preference for your environment.
+> This section takes approximately 15 minutes.
 
-> NOTE: The value for DRACO_SPN_K8S needs to be unique to the Azure AD tenant protecting your subscription.  If you have other deployments of this platform in subscriptions protected by the same Azure AD, then change the value to something that doesn't currently exist in your Azure AD tenant.
+### Instructions
 
-```bash
-DRACO_COMMON_RG_NAME="draco-common-rg"
-DRACO_EXTHUB_RG_NAME="draco-exthub-rg"
-DRACO_REGION="eastus2"
-DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***" 
-DRACO_SPN_KEY_NAME="draco-aks-spn" 
-```
+1. Starting from your local Draco repository root, navigate to the common resources setup script directory. 
+   
+   * From the command line, run `cd src/draco/infra/ArmTemplate/common`.
+   
+2. Execute the common resource setup script. From the command line, run...
+   
+   ```bash
+   ./setup-common.sh -l "[Azure region name]" \
+                     -n "[AKS service principal name]" \
+                     -s "[Your Subscription ID]"
+   ```
+   
+   * Replace `[Azure region name]` with the name of the Azure region that you would like to deploy Draco to. For example, if you want to deploy Draco the Central US region, replace `[Azure region name]` with `centralus`. For a complete list of Azure location names, run `az account list-locations -o table` from the command line.
+   
+   * Replace `[AKS service principal name]` with the an arbitrary, unique Azure Active Directory service principal name. We recommend that you adhere to this format: `https://k8s-draco-[some unique value]`.
+   
+      > **Note**: The `[AKS service principal name]` needs to be unique to the Azure Active Directory (AAD) tenant protecting your target subscription.  If you have other deployments of this platform in subscriptions protected by the same AAD tenant, then change the value to something that doesn't currently exist in your tenant.    
+   
+   * For complete usage information, run `./setup-common.sh`.
+  
+3. If the common resource script executes successfully, you will be presented with a table containing important information needed in the next section similar to that below. Be sure to note these values somewhere.
 
-## Login to Azure Subscription
+   ```bash
+   Common Resource Group Name:     [draco-common-rg]
+   Deployment Name:                [draco-common-...]
+   Container Registry ID:          [/subscriptions/...]
+   Container Registry Name:        [draco...]
+   Key Vault Name:                 [draco...]
+   AKS Service Principal ID:       [...]
+   AKS Service Principal Password: [...]
+   ```
 
-> NOTE: This may launch a browser to validate your credentials.
+## Run the platform resources setup script
 
-```bash
-az login
-```
+This section sets up all the resources needed to host a Draco platform. This section expects that you have already [set up the needed Draco common resources](#run-the-common-resources-setup-script) and obtained the following values -
 
-### Ensure correct Azure subscription is in use
+* `Common Resource Group Name` (default is `draco-common-rg`)
+* `Container Registry Name`
+* `Key Vault Name`
+* `AKS Service Principal ID`
 
-If you have more than one Azure subscription make sure you choose the correct subscription before running any of these commands.
+> This section takes approximately 45 minutes.
 
-```bash
-az account list  # Return list of accounts
-az account set --subscription "Name of Subscription"
-```
+### Instructions
 
-## Setup Draco common infrastructure
+1. Starting from your local Draco repository root, navigate to the platform resources setup script directory. 
+   
+   * From the command line, run `cd src/draco/infra/ArmTemplate/exthub`.
+   
+2. Execute the platform resource setup script. From the command line, run...
+   
+   ```bash
+   ./setup-platform.sh -l "[Azure region name]" \
+                       -a "[AKS Service Principal ID]" \
+                       -c "[Common Resource Group Name]" \
+                       -k "[Key Vault Name]" \
+                       -r "[Container Registry Name]" \
+                       -s "[Subscription ID]"
+   ```
+   
+   * Replace `[Azure region name]` with the name of the Azure region that you would like to deploy Draco to. For example, if you want to deploy Draco the Central US region, replace `[Azure region name]` with `centralus`. For a complete list of Azure location names, run `az account list-locations -o table` from the command line.
+     
+   * Replace `[AKS Service Principal ID]`, `[Key Vault Name]`, and `[Container Registry Name]` with the values returned from the `setup-common.sh` script in the [common setup section](#run-the-common-resources-setup-script).
+     
+   * For complete usage information, run `./setup-platform.sh`.
+   
+3. Make a note of the Draco endpoint URLs provided when the script is done running. Once all the Kubernetes services/load balancers are provisioned (see step 6), you should be able to access these Draco APIs. Your output should look similiar to that below.
 
-Draco leverages Azure resources that generally should be managed in a separate resource group.  Specifically, Draco uses Azure Contrainer Registry (ACR) to store container images and Azure Key Vault to store secrets.  These resources are deployed in a separate _common_ resource group so you can use them for other workloads beyond just Draco.
+   ```bash
+   Draco Catalog API:               [http://draco-...-catalogapi...cloudapp.azure.com]
+   Draco Execution API:             [http://draco-...-executionapi...cloudapp.azure.com]
+   Draco Extension Management API:  [http://draco-...-extensionmgmtapi...cloudapp.azure.com]
+   ```
+     
+4. Verify that the Draco Kubernetes pods have been deployed by running `kubectl get pods`. Your output should look similiar to that below.
 
-```bash
-cd src/draco
-az group create --location $DRACO_REGION --name $DRACO_COMMON_RG_NAME
-ACR_RESOURCE_ID=$(az deployment group create --resource-group $DRACO_COMMON_RG_NAME --template-file ./infra/ArmTemplate/common/common-deploy.json --query properties.outputs.acrResourceId.value --out tsv)
+   ```bash
+   NAME                           READY   STATUS    RESTARTS   AGE
+   initial-catalogapi-...         1/1     Running   0          19s
+   initial-catalogapi-...         1/1     Running   0          19s
+   initial-catalogapi-...         1/1     Running   0          19s
+   initial-executionapi-...       1/1     Running   0          19s
+   initial-executionapi-...       1/1     Running   0          19s
+   initial-executionapi-...       1/1     Running   0          19s
+   initial-executionconsole-...   1/1     Running   0          19s
+   initial-executionconsole-...   1/1     Running   0          19s
+   initial-executionconsole-...   1/1     Running   0          19s
+   initial-extensionmgmtapi-...   1/1     Running   0          19s
+   initial-extensionmgmtapi-...   1/1     Running   0          19s
+   initial-extensionmgmtapi-...   1/1     Running   0          19s
+   ```
+   
+   > **Note**: You may notice that there are three copies of each of the four core Draco services running in your AKS cluster. For high availability, [the Helm chart](/src/draco/helm/extension-hubs) included with Draco specifies that each of the four core services should have three replicas running at all times.  
+ 
+5. Verify that the Draco Kubernetes services/public load balancers have been deployed by running `kubectl get services --watch`. Your output should look similar to that below. Once `EXTERNAL-IP`s are available and no longer in a `<pending>` state for each service, you should be able to access the Draco APIs.
 
-ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
-AKV_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.kvName.value --output tsv)
+   ```bash
+   NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
+   initial-catalogapi         LoadBalancer   10.0.###.###   <pending>     80:#####/TCP,443:#####/TCP   119s
+   initial-executionapi       LoadBalancer   10.0.###.###   <pending>     80:#####/TCP,443:#####/TCP   119s
+   initial-extensionmgmtapi   LoadBalancer   10.0.###.###   <pending>     80:#####/TCP,443:#####/TCP   119s
+   ```
 
-SPN_PASSWORD=$(az ad sp create-for-rbac --name $DRACO_SPN_K8S --scopes $ACR_RESOURCE_ID --role acrpull --query password --output tsv)
-SPN_APP_ID=$(az ad sp show --id $DRACO_SPN_K8S --query appId --output tsv)
+## Register your first extension
+At this point, all of your Draco infrastrucutre should be stood up and ready to use. Next, you should [try registering your first extension](/doc/howto/Register-Extension.md).
 
-UPN=$(az account show --query user.name --output tsv)
-az keyvault set-policy --name $AKV_NAME --upn $UPN --secret-permissions get list set
-az keyvault secret set --vault-name $AKV_NAME --name $DRACO_SPN_KEY_NAME --value $SPN_PASSWORD
-```
-
-> NOTE: To show the secret stored in keyvault, you can use:
-```bash
-az keyvault secret show --name $DRACO_SPN_KEY_NAME --vault-name $AKV_NAME --query value --output tsv
-```
-
-
-## Setup Draco platform infrastructure
-
-The Draco platform is comprised of an Azure Kubernetes (AKS) cluster, Cosmos DB, Storage, and other resources specific to running the Draco platform.  This section deployes the Azure resources for the Draco platform and configures the AKS cluster with minimum permissions to pull container images from ACR.
-
-```bash
-# Get the latest stable version of AKS available in the region.
-AKSK8SVERSION=$(az aks get-versions --location $DRACO_REGION --query "orchestrators[?orchestratorType=='Kubernetes'].orchestratorVersion | sort(@) | [-2:-1:]" --output tsv)
-
-az group create --location $DRACO_REGION --name $DRACO_EXTHUB_RG_NAME
-az deployment group create --resource-group $DRACO_EXTHUB_RG_NAME --template-file ./infra/ArmTemplate/exthub/exthub-deploy.json --parameters aksK8sVersion=$AKSK8SVERSION aksServicePrincipalClientId=$SPN_APP_ID aksServicePrincipalClientSecret=$SPN_PASSWORD
- ```
-
-## Retrieve Draco service configuration settings
-
-The Draco platform infrastructure deployment contains configuration outputs for each of the services running in AKS that make up the Draco platform.  This section saves these configuration outputs to a JSON file (application settings) for each service.
-
-```bash
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.catalogApiConfiguration.value > appsettings-catalogapi.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.extensionMgmtApiConfiguration.value > appsettings-extensionmgmtapi.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionConsoleConfiguration.value > appsettings-execconsole.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value > appsettings-execapi.json
-```
-
-## Upload Draco service configuration settings to blob storage
-
-In this section, the application settings for the Draco service are uploaded to the blob storage account.  These are referenced later in the steps to deploy the container images into AKS.
-
-```bash
-STG_CONN_STR=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.executionApiConfiguration.value.platforms.azure.objectStorage.blobStorage.storageAccount.connectionString --output tsv)
-az storage blob upload --file ./appsettings-catalogapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-catalogapi.json
-az storage blob upload --file ./appsettings-execapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execapi.json
-az storage blob upload --file ./appsettings-execconsole.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-execconsole.json
-az storage blob upload --file ./appsettings-extensionmgmtapi.json --connection-string $STG_CONN_STR --container-name configuration --name appsettings-extensionmgmtapi.json
-```
-
-## [Optional] Cleanup local appsettings*.json files
-
-You can delete the local copy of these `appsettings-*.json` files after uploading them to blob storage in the previous section.
-
-```bash
-rm ./appsettings-catalogapi.json
-rm ./appsettings-execapi.json
-rm ./appsettings-execconsole.json
-rm ./appsettings-extensionmgmtapi.json
-```
-
-## Configure Azure Cosmos DB
-
-In this section, the Azure Search resource is configured with necessary index and data source definitions to provide Draco's catalog search capabilities.
-
-```bash
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchDataSourceConfiguration.value > azure-search-datasource-config.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexConfiguration.value > azure-search-index-config.json
-az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchIndexerConfiguration.value > azure-search-indexer-config.json
-
-# Get the admin-key for subsequent Azure Search REST API calls
-SEARCH_SERVICE_NAME=$(az deployment group show --resource-group $DRACO_EXTHUB_RG_NAME --name exthub-deploy --query properties.outputs.azureSearchServiceName.value --output tsv)
-COSMOS_ADMIN_KEY=$(az search admin-key show --resource-group $DRACO_EXTHUB_RG_NAME --service-name $SEARCH_SERVICE_NAME --query primaryKey --output tsv)
-
-# Create Azure Search data source
-curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/datasources\?api-version=2019-05-06 -d @azure-search-datasource-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
-
-# Create Azure Search index
-curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/indexes\?api-version=2019-05-06 -d @azure-search-index-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
-
-# Create Azure Search indexer
-curl -X POST https://$SEARCH_SERVICE_NAME.search.windows.net/indexers\?api-version=2019-05-06 -d @azure-search-indexer-config.json --header "Content-Type: application/json" --header "api-key: $COSMOS_ADMIN_KEY"
-
-# Clean up local files
-rm ./azure-search-datasource-config.json
-rm ./azure-search-index-config.json
-rm ./azure-search-indexer-config.json
-```
-
-## Configure kubectl to manage AKS
-
-Configure your `kubectl` command-line tool so you can access and manage your AKS instance.
-
-```bash
-K8S_NAME=$(az resource list --resource-group $DRACO_EXTHUB_RG_NAME --resource-type Microsoft.ContainerService/managedClusters --query '[0].name' --output tsv)
-az aks get-credentials --resource-group $DRACO_EXTHUB_RG_NAME --name $K8S_NAME
-```
-
-## Build container images
-
-These steps use the `Dockerfile` for each of the Draco services to build container images and tags them so they can be stored in ACR.
-
-```bash
-docker build . --file ./api/Catalog.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-catalogapi:latest"
-docker build . --file ./api/Execution.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionapi:latest"
-docker build . --file ./api/ExtensionManagement.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi:latest"
-docker build . --file ./api/ExecutionAdapter.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionadapterapi:latest"
-docker build . --file ./api/ExtensionService.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-extensionserviceapi:latest"
-docker build . --file ./api/ObjectStorageProvider.Api/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-objectproviderapi:latest"
-docker build . --file ./core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile --tag "$ACR_NAME.azurecr.io/xhub-executionconsole:latest"
-```
-
-## Push container images to ACR
-
-```bash
-az acr login --name $ACR_NAME
-docker push "$ACR_NAME.azurecr.io/xhub-catalogapi"
-docker push "$ACR_NAME.azurecr.io/xhub-executionapi"
-docker push "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi"
-docker push "$ACR_NAME.azurecr.io/xhub-executionconsole"
-docker push "$ACR_NAME.azurecr.io/xhub-executionadapterapi"
-docker push "$ACR_NAME.azurecr.io/xhub-extensionserviceapi"
-docker push "$ACR_NAME.azurecr.io/xhub-objectproviderapi"
-```
-
-## Deploy to AKS
-
-Using helm and the charts in the `./helm` folder, deploy the Draco platform services into AKS.
-
-```bash
-cd helm
-helm install initial extension-hubs --set configuration.storageConnectionString="$STG_CONN_STR" --set images.repository="$ACR_NAME.azurecr.io"
-```
-
-## Validate Draco is running in AKS
-
-To validate you have the Draco platform running you can query the pods.  You will see 3 replicas of each of the services.  All replicas should be in the Running status.
-
-```bash
-kubectl get pods  
-```
-
-Your Draco platform components are now ready.  You should proceed to the instructions on how to build an extension, or deploy a sample extension.
-
-> When ready to remove the Draco platform components please see the [Uninstall](UNINSTALL.md) document.
+## Uninstalling Draco
+For more information on uninstalling Draco, see [this guide](UNINSTALL.md).

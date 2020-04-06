@@ -42,16 +42,26 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionApiModel>), 201)]
         public async Task<IActionResult> CreateExtensionAsync([Required, FromBody] ExtensionApiModel extensionApiModel)
         {
+            // Validate the provided extension API model.
+
             var errors = Validate(extensionApiModel);
+
+            // Respond with [400 Bad Request] + detailed error description if there are any errors...
 
             if (errors.Any())
             {
                 return BadRequest(string.Join(' ', errors));
             }
 
+            // Convert the API model to a core extension model...
+
             var extension = extensionApiModel.ToCoreModel();
 
+            // Save the extension...
+
             await extensionRepository.SaveExtensionAsync(extension);
+
+            // Let the user know that the extension has been created...
 
             return new CreatedResult(GetGetExtensionUrl(extension.ExtensionId), ToApiModelContainer(extension));
         }
@@ -67,12 +77,18 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionApiModel>), 200)]
         public async Task<IActionResult> GetExtensionAsync([Required] string extensionId)
         {
+            // Try to get the extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we couldn't find it, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
+
+            // Otherwise, return the extension...
 
             return Ok(ToApiModelContainer(extension));
         }
@@ -86,7 +102,11 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpDelete("{extensionId}")]
         public async Task<IActionResult> DeleteExtensionAsync([Required] string extensionId)
         {
+            // Try to get the extension...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we find it, don't actually delete it, but deactivate it...
 
             if (extension?.IsActive == true)
             {
@@ -94,6 +114,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
                 await extensionRepository.SaveExtensionAsync(extension);
             }
+
+            // Regardless of whether or not we found it, respond with [200 OK]...
 
             return Ok();
         }
@@ -113,32 +135,53 @@ namespace Draco.ExtensionManagement.Api.Controllers
         public async Task<IActionResult> CreateExtensionVersionAsync([Required] string extensionId, 
                                                                      [Required, FromBody] ExtensionVersionApiModel exVersionApiModel)
         {
+            // Validate the extension version API model...
+
             var errors = Validate(exVersionApiModel);
+
+            // If any validation errors were encoutered, respond with a [400 Bad Request] + a detailed error description...
 
             if (errors.Any())
             {
                 return BadRequest(string.Join(' ', errors));
             }
 
+            // Parse the provided version string (<major>.[minor].[patch])...
+
             var version = new Version(exVersionApiModel.Version);
+
+            // Try to get the extension to which we want to add a new version...
+
             var extension = await extensionRepository.GetExtensionAsync(extensionId);
+
+            // If we couldn't find the extension, respond with [404 Not Found]...
 
             if (extension == null)
             {
                 return NotFound($"Extension [{extensionId}] not found.");
             }
 
+            // Check to see if the specified version already exists...
+
             var exVersion = extension.ExtensionVersions.SingleOrDefault(ev => Version.Parse(ev.Version) == version);
 
             if (exVersion != null)
             {
+                // If it already exists, we can't add it again. Respond with a [409 Conflict]...
+                // TODO: Implement [PUT] action for updating existing extension version.
+
                 return new ConflictObjectResult($"Extension [{extensionId}] version [{version}] already exists at " +
                                                 $"[{GetGetExtensionVersionUrl(extensionId, exVersion.ExtensionVersionId)}].");
             }
 
+            // Now that we've checked everything, we're good to add the new extension version.
+            // Convert the extension version API model to a core model and save it...
+
             exVersion = exVersionApiModel.ToCoreModel(extensionId);
 
             await extensionRepository.SaveExtensionVersionAsync(exVersion);
+
+            // Let the client know that the new extension version has been created...
 
             return new CreatedResult(
                 GetGetExtensionVersionUrl(extensionId, exVersion.ExtensionVersionId),

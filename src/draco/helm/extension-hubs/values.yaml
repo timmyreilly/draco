@@ -9,6 +9,8 @@ deployExecutionAdapterApi: false
 deployExtensionServiceApi: false
 deployObjectProviderApi: false
 
+dnsPrefix: null
+
 images:
   repository: ""
   pullPolicy: Always

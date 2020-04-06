@@ -8,7 +8,7 @@ These values must match the ones used during intial setup.
 
 ```bash
 DRACO_COMMON_RG_NAME="draco-common-rg"
-DRACO_EXTHUB_RG_NAME="draco-exthub-rg"
+DRACO_PLATFORM_RG_NAME="draco-exthub-rg"
 DRACO_REGION="eastus2"
 DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"  
 ```
@@ -37,5 +37,5 @@ az account set --subscription "Name of Subscription"
 ```bash
 az ad sp delete --id $DRACO_SPN_K8S
 az group delete --name $DRACO_COMMON_RG_NAME --yes --no-wait
-az group delete --name $DRACO_EXTHUB_RG_NAME --yes --no-wait
+az group delete --name $DRACO_PLATFORM_RG_NAME --yes --no-wait
 ```

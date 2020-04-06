@@ -352,4 +352,6 @@ src/draco/appsettings-catalogapi.json
 src/draco/appsettings-execapi.json
 src/draco/appsettings-execconsole.json
 src/draco/appsettings-extensionmgmtapi.json
+src/extensions/samples/csharp/netcore-simple/echo/Properties/launchSettings.json
+src/extensions/samples/csharp/netcore-simple/echo/app/
 .DS_Store

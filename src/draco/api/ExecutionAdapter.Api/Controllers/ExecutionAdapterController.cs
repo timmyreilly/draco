@@ -34,15 +34,25 @@ namespace Draco.ExecutionAdapter.Api.Controllers
         [ProducesResponseType(typeof(ExecutionResponseApiModel), 200)]
         public async Task<IActionResult> ExecuteAsync([FromBody] ExecutionRequestApiModel execRequestApiModel)
         {
+            // Validate the provided execution request...
+
             var errors = execRequestApiModel.ValidateApiModel().ToList();
+
+            // If the request is invalid, respond with [400 Bad Request] + detailed error description...
 
             if (errors.Any())
             {
                 return BadRequest($"[{errors.Count}] errors occurred while attempting to process your request: {string.Join(' ', errors)}");
             }
 
+            // Convert the execution request API model to a core model and hand it off to the execution pipeline.
+            // For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
+
             var execRequest = execRequestApiModel.ToCoreModel();
             var execContext = await execRequestRouter.RouteRequestAsync(execRequest, CancellationToken.None);
+
+            // At this point, even if the execution itself failed, we did our job.
+            // Respond with [200 OK] + an execution update...
 
             return Ok(execContext.ToApiModel());
         }

@@ -557,7 +557,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
 
-
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
                 .Returns(Task.FromResult(erContext));
@@ -640,7 +639,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             mockDirectExecRequestSigner
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
-
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -737,7 +735,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             mockDirectExecRequestSigner
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
-
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
@@ -1036,7 +1033,6 @@ namespace Draco.Execution.Api.UnitTests.ExecutionController
             mockDirectExecRequestSigner
                 .Setup(s => s.GenerateSignatureAsync(DefaultExtensionRsaKey, It.IsAny<DirectExecutionRequestApiModel>()))
                 .Returns(Task.FromResult(DefaultExtensionSignature));
-
 
             mockErContextBuilder
                 .Setup(b => b.BuildExecutionRequestContextAsync(execRequestApiModel))
