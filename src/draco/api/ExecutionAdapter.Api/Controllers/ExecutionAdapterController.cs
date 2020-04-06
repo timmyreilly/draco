@@ -11,6 +11,11 @@ using System.Threading.Tasks;
 
 namespace Draco.ExecutionAdapter.Api.Controllers
 {
+    /// <summary>
+    /// This controller is essentially an API wrapper around /src/core/Execution/Interfaces/IExecutionAdapter.cs.
+    /// The execution API interacts with it via /src/api/Api.Proxies/ProxyExecutionServiceProvider.cs.
+    /// For more information on execution models, see /doc/architecture/execution-models.md.
+    /// </summary>
     [ApiController]
     [Produces("application/json")]
     [Route("execution-adapter")]

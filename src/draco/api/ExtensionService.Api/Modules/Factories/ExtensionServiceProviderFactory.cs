@@ -3,18 +3,22 @@
 
 using Core.Interfaces;
 using Core.Modules;
-using Core.Services.Providers;
 using Draco.Core.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace ExtensionService.Api.Modules.Factories
 {
+    /// <summary>
+    /// This service module maps extension service names to extension service providers.
+    /// As you onboard new extension services, you'll need to register them here.
+    /// For more information, see /doc/architecture/extension-services.md.
+    /// </summary>
     public class ExtensionServiceProviderFactoryModule : BaseNamedServiceModule<IExecutionServiceProvider>
     {
         public override void AddNamedServices(IConfiguration configuration, INamedServiceRegistry<IExecutionServiceProvider> serviceRegistry)
         {
-            serviceRegistry["stub/v1"] = sp => sp.GetService<StubExecutionServiceProvider>();
+            // Register new services here. See below for an example.
+            // serviceRegistry["stub/v1"] = sp => sp.GetService<StubServiceProvider>();
         }
     }
 }
