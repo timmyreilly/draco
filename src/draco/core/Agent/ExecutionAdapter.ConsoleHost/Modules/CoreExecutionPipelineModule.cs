@@ -12,6 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.ConsoleHost.Modules
 {
+    /// <summary>
+    /// Wires up all the platform-agnostic core dependencies needed to power the execution pipeline with the standard
+    /// "http-json/async/v1" execution model. For more information on execution models, see /doc/architecture/execution-models.md.
+    /// For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
+    /// </summary>
     public class CoreExecutionPipelineModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
