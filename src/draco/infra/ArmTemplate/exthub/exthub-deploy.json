@@ -24,6 +24,8 @@
   "variables": {
     "prefix": "draco",
     "uniqueId": "[uniqueString(resourceGroup().id)]",
+    "apimName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-apim')]",
+    "aksVNetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
     "aksClusterName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "aksClusterDnsPrefix": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "cosmosAccountName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-cdb'), 31)]",
@@ -58,6 +60,47 @@
     }
   },
   "resources": [
+    {
+      "apiVersion": "2019-11-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('aksVNetName')]",
+      "tags": "[variables('resourceTags')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": ["10.0.0.0/8"]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.240.0.0/16",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "apiVersion": "2019-12-01-preview",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('apimName')]",
+      "tags": "[variables('resourceTags')]",
+      "sku": {
+        "name": "Developer",
+        "capacity": 1
+      },
+      "properties": {
+        "publisherEmail": "johndoe@contoso.com",
+        "publisherName": "John Doe"
+      }
+    },
     {
       "apiVersion": "2018-03-31",
       "type": "Microsoft.ContainerService/managedClusters",
