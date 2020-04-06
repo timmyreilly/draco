@@ -14,7 +14,7 @@ namespace Draco.ExecutionAdapter.ConsoleHost.Modules.Azure
 {
     /// <summary>
     /// This modules wires up all the configuration/dependenices needed to use Azure blob storage and shared access signatures (SAS)
-    /// for input/output object accessors. For more infomraiton on Azure blob storage SAS, see https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview.!
+    /// for input/output object accessors. For more infomraiton on Azure blob storage SAS, see https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview.
     /// For more information on execution objects, see /doc/architecture/execution-objects.md.
     /// </summary>
     public class AzureObjectStorageModule : IServiceModule

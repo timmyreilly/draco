@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Draco.Core.Extensions
 {
+    /// <summary>
+    /// A bunch of helper extension methods that are used across the platform.
+    /// </summary>
     public static class EnumerableExtensions
     {
         public static bool None<T>(this IEnumerable<T> source) => !source.Any();
