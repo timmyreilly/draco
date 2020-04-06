@@ -4,5 +4,19 @@
         <name>ExtensionService.Api</name>
     </assembly>
     <members>
+        <member name="T:ExtensionService.Api.Controllers.ExtensionServiceController">
+            <summary>
+            This controller is essentially an API wrapper around /src/core/Services/Interfaces/IExecutionServiceProvider.cs.
+            The execution API interacts with it via /src/api/Api.Proxies/ProxyExecutionServiceProvider.cs.
+            For more information on execution services, see /doc/architecture/execution-services.md.
+            </summary>
+        </member>
+        <member name="T:ExtensionService.Api.Modules.Factories.ExtensionServiceProviderFactoryModule">
+            <summary>
+            This service module maps extension service names to extension service providers.
+            As you onboard new extension services, you'll need to register them here.
+            For more information, see /doc/architecture/extension-services.md.
+            </summary>
+        </member>
     </members>
 </doc>

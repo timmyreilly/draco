@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ObjectStorageProvider.Api.Modules
 {
+    /// <summary>
+    /// This service module wires up all the dependencies needed to sign object accessors.
+    /// </summary>
     public class SignerModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
