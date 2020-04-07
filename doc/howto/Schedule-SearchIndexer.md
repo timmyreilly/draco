@@ -21,11 +21,16 @@ The indexer needs to run on a schedule in order to update the index for new exte
 
 When the draco platform is setup intially there are some names assigned and those will be needed here. This is a list needed to update the search indexer to run on a schedule.
 
-Search Service Name = This is defined on draco platform setup. Set as uniqueID defined with '-srch' on the end. Can also be found in the portal under search service
-Index Name = This is defined on draco platform setup. Set as uniqueID defined with '-index' on the end. Can also be found in the portal under search service overview tab, then indexes.
-Indexer Name = This is defined on draco platform setup. Set as uniqueID defined with '-indexer' on the end. Can also be found in the portal under search service overview tab, then indexers.
-Data Source Name = Set as 'extensions'
-Search Service Admin/API Key = Found in portal on Search Service then under keys. Portal names it admin key, the API call will use API-key
+Search Service Name
+: This is defined on draco platform setup. Set as uniqueID defined with '-srch' on the end. Can also be found in the portal under search service
+Index Name
+: This is defined on draco platform setup. Set as uniqueID defined with '-index' on the end. Can also be found in the portal under search service overview tab, then indexes.
+Indexer Name
+: This is defined on draco platform setup. Set as uniqueID defined with '-indexer' on the end. Can also be found in the portal under search service overview tab, then indexers.
+Data Source Name
+: Set as 'extensions'
+Search Service Admin/API Key
+: Found in portal on Search Service then under keys. Portal names it admin key, the API call will use API-key
 
 ## Serch Service RestAPI call to schedule indexer to run on an interval
 
@@ -82,13 +87,18 @@ API Response
     }
 ```
 > Note: URI Parameters
-Parameter = Description
-service name =	Required. Set this to the unique, user-defined name of your search service.
-indexer name =	Required. The request URI specifies the name of the indexer to run.
-api-version =	Required. The current version is api-version=2019-05-06. See API versions in Azure Cognitive Search for a list of available versions.
+Parameter
+: Description
+service name
+: Required. Set this to the unique, user-defined name of your search service.
+indexer name
+: Required. The request URI specifies the name of the indexer to run.
+api-version
+: Required. The current version is api-version=2019-05-06. See API versions in Azure Cognitive Search for a list of available versions.
 
 Request Headers
-api-key =	Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).
+api-key
+: Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).
 
 > NOTE:  Replace any variables in [RedHighlight] with your own naming/variables.
 
