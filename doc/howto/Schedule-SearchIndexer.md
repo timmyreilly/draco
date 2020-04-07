@@ -103,10 +103,11 @@ API Response
 <dt>api-key</dt>
     <dd>Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).</dd>
 </dl>
+---
 > NOTE:  Replace any variables in [RedHighlight] with your own naming/variables.
-
+---
 > NOTE:  Schedule params - Interval is set as a time interval in the format of PT Time then H/M for hours or minutes. Example: PT10M will run the indexer every 10 minutes. PT2H would run the indexer every 2 hours. This can be set up to 24 hours. 
-
+---
 ## Serch Service RestAPI call to schedule indexer to run on demand
 
 ```json
