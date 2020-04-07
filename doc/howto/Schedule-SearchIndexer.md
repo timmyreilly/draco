@@ -86,8 +86,7 @@ API Response
         "cache": null
     }
 ```
-> Note: URI Parameters
-Parameter
+URI Parameters
 : Description
 service name
 : Required. Set this to the unique, user-defined name of your search service.
