@@ -47,7 +47,8 @@ DRACO_COMMON_RG_NAME="draco-common-rg"
 DRACO_PLATFORM_RG_NAME="draco-platform-rg"
 DRACO_REGION="eastus2"
 DRACO_AKS_CLUSTER=$(az aks list --resource-group $DRACO_PLATFORM_RG_NAME --query "[].name" --output tsv)
-ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
+ACR_NAME=$(az acr list --resource-group $DRACO_COMMON_RG_NAME --query "[].name" --output tsv)
+
 ```
 
 ## Build sample echo container image
@@ -58,7 +59,7 @@ This step uses the `Dockerfile` for the extension to build sample echo container
 
 ```bash
 cd src/extensions/samples/csharp/netcore-simple/echo
-docker build . --file Dockerfile --tag $ACR_NAME.azurecr.io/echo:latest
+docker build . --file Dockerfile --tag $ACR_NAME".azurecr.io/echo:latest"
 ```
 
 ## Push echo container image to Azure Container Registry

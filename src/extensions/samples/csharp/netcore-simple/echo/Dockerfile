@@ -11,7 +11,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
-# csproj
+# Copy csproj and get dotnet ready to build
 COPY *.csproj ./
 RUN dotnet restore
 
@@ -34,3 +34,4 @@ COPY --from=publish /app/publish .
 
 #set entry point
 ENTRYPOINT ["dotnet", "echo.dll"]
+
