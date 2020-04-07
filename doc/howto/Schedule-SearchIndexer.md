@@ -86,9 +86,9 @@ API Response
         "cache": null
     }
 ```
-<dl>
-<dt>URI Parameters</dt>
-    <dd>: Description</dd>
+
+### URI Parameters
+<dl>    
 <dt>service name</dt>
     <dd>Required. Set this to the unique, user-defined name of your search service.</dd>
 <dt>indexer name</dt>
@@ -97,9 +97,9 @@ API Response
     <dd>Required. The current version is api-version=2019-05-06. See API versions in Azure Cognitive Search for a list of available versions.</dt>
 </dl>
 
-<dl>
-<dt>Request Headers</dt>
 
+### Request Headers
+<dl>
 <dt>api-key</dt>
     <dd>Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).</dd>
 </dl>
