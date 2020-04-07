@@ -105,7 +105,7 @@ API Response
 </dl>
 
 > NOTE:  Replace any variables in [RedHighlight] with your own naming/variables.
-</br>
+
 > NOTE:  Schedule params - Interval is set as a time interval in the format of PT Time then H/M for hours or minutes. Example: PT10M will run the indexer every 10 minutes. PT2H would run the indexer every 2 hours. This can be set up to 24 hours. 
 </br>
 ## Serch Service RestAPI call to schedule indexer to run on demand
