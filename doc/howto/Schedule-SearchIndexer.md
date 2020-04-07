@@ -32,24 +32,24 @@ Data Source Name
 Search Service Admin/API Key
 : Found in portal on Search Service then under keys. Portal names it admin key, the API call will use API-key
 
-## Serch Service RestAPI call to schedule indexer to run on an interval
+## Search Service RestAPI call to schedule indexer to run on an interval
 
-* Replace any variables in [Value] format with your own naming/variables.
+* Replace any variables in {{Value}} format with your own naming/variables.
 
 ```json
 API Request
 HTTP Verb and URL:  
     Set Verb to PUT
-    Set URL to https://[search service name].search.windows.net/indexers/[indexer name]?api-version=[api-version]
+    Set URL to https://{{search service name}}.search.windows.net/indexers/{{indexer name}}?api-version={{api-version}}
     Content-Type: application/json  
-    api-key: [admin key]    
+    api-key: {{admin key}}    
 
 Request Payload (json)
 Use this format:
 
     {
         "dataSourceName": "extensions",
-        "targetIndexName": ["[uniqueID]-index"],
+        "targetIndexName": "{{uniqueID}}-index",
         "schedule" : { "interval" : "PT10M"},  
         "parameters" : { "maxFailedItems" : 10, "maxFailedItemsPerBatch" : 5 },
         "configuration" : { "assumeOrderByHighWaterMarkColumn" : true }
@@ -62,13 +62,13 @@ The response from the service will return a status 200 OK - and will return the 
 ```json
 API Response
     {
-        "@odata.context": "https://[SearchServiceName]srch.search.windows.net/$metadata#indexers/$entity",
+        "@odata.context": "https://{{SearchServiceName}}srch.search.windows.net/$metadata#indexers/$entity",
         "@odata.etag": "\"0x8DXXXXXXXXXXXXX\"",
-        "name": ["[uniqueID]-indexer"],
+        "name": "[uniqueID]-indexer",
         "description": null,
         "dataSourceName": "extensions",
         "skillsetName": null,
-        "targetIndexName": ["[uniqueID]-index"],
+        "targetIndexName": "{{uniqueID}}-index",
         "disabled": null,
         "schedule": {
             "interval": "PT10M",
@@ -104,7 +104,7 @@ API Response
     <dd>Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).</dd>
 </dl>
 
-> NOTE:  Replace any variables in [RedHighlight] with your own naming/variables.
+> NOTE:  Replace any variables in {{Value}} with your own naming/variables.
 
 > NOTE:  Schedule params - Interval is set as a time interval in the format of PT Time then H/M for hours or minutes. Example: PT10M will run the indexer every 10 minutes. PT2H would run the indexer every 2 hours. This can be set up to 24 hours. 
 </br>
@@ -115,9 +115,9 @@ API Response
 API Request
 HTTP Verb and URL:  
     Set Verb to POST
-    Set URL to https://[search service name].search.windows.net/indexers/[indexer name]/run?api-version=[api-version]
+    Set URL to https://{{Search service name}}.search.windows.net/indexers/{{indexer name}}/run?api-version={{api-version}}
     Content-Type: application/json  
-    api-key: [admin key]    
+    api-key: {{admin key}}    
 
 Request Payload (json)
 Body:
