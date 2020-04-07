@@ -34,7 +34,7 @@ Search Service Admin/API Key
 
 ## Serch Service RestAPI call to schedule indexer to run on an interval
 
-* Replace any variables in "***Var***" format with your own naming/variables.
+* Replace any variables in [Value] format with your own naming/variables.
 
 ```json
 API Request
@@ -49,7 +49,7 @@ Use this format:
 
     {
         "dataSourceName": "extensions",
-        "targetIndexName": "[uniqueID]-index",
+        "targetIndexName": ["[uniqueID]-index"],
         "schedule" : { "interval" : "PT10M"},  
         "parameters" : { "maxFailedItems" : 10, "maxFailedItemsPerBatch" : 5 },
         "configuration" : { "assumeOrderByHighWaterMarkColumn" : true }
@@ -64,11 +64,11 @@ API Response
     {
         "@odata.context": "https://[SearchServiceName]srch.search.windows.net/$metadata#indexers/$entity",
         "@odata.etag": "\"0x8DXXXXXXXXXXXXX\"",
-        "name": "[uniqueID]-indexer",
+        "name": ["[uniqueID]-indexer"],
         "description": null,
         "dataSourceName": "extensions",
         "skillsetName": null,
-        "targetIndexName": "[uniqueID]-index",
+        "targetIndexName": ["[uniqueID]-index"],
         "disabled": null,
         "schedule": {
             "interval": "PT10M",
