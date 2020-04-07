@@ -44,7 +44,7 @@ Use this format:
 
     {
         "dataSourceName": "extensions",
-        "targetIndexName": "***uniqueID***-index",
+        "targetIndexName": "[uniqueID]-index",
         "schedule" : { "interval" : "PT10M"},  
         "parameters" : { "maxFailedItems" : 10, "maxFailedItemsPerBatch" : 5 },
         "configuration" : { "assumeOrderByHighWaterMarkColumn" : true }
@@ -57,13 +57,13 @@ The response from the service will return a status 200 OK - and will return the 
 ```json
 API Response
     {
-        "@odata.context": "https://***SearchServiceName***srch.search.windows.net/$metadata#indexers/$entity",
+        "@odata.context": "https://[SearchServiceName]srch.search.windows.net/$metadata#indexers/$entity",
         "@odata.etag": "\"0x8DXXXXXXXXXXXXX\"",
-        "name": "***uniqueID***-indexer",
+        "name": "[uniqueID]-indexer",
         "description": null,
         "dataSourceName": "extensions",
         "skillsetName": null,
-        "targetIndexName": "***uniqueID***-index",
+        "targetIndexName": "[uniqueID]-index",
         "disabled": null,
         "schedule": {
             "interval": "PT10M",
@@ -90,13 +90,11 @@ api-version =	Required. The current version is api-version=2019-05-06. See API v
 Request Headers
 api-key =	Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).
 
-> NOTE:  Replace any variables in "***Var***" with your own naming/variables.
+> NOTE:  Replace any variables in [RedHighlight] with your own naming/variables.
 
 > NOTE:  Schedule params - Interval is set as a time interval in the format of PT Time then H/M for hours or minutes. Example: PT10M will run the indexer every 10 minutes. PT2H would run the indexer every 2 hours. This can be set up to 24 hours. 
 
 ## Serch Service RestAPI call to schedule indexer to run on demand
-
-* Replace any variables in "***Var***" format with your own naming/variables.
 
 ```json
 API Request
