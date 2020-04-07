@@ -86,19 +86,23 @@ API Response
         "cache": null
     }
 ```
-URI Parameters
-: Description
-service name
-: Required. Set this to the unique, user-defined name of your search service.
-indexer name
-: Required. The request URI specifies the name of the indexer to run.
-api-version
-: Required. The current version is api-version=2019-05-06. See API versions in Azure Cognitive Search for a list of available versions.
+<dl>
+<dt>URI Parameters</dt>
+    <dd>: Description</dd>
+<dt>service name</dt>
+    <dd>Required. Set this to the unique, user-defined name of your search service.</dd>
+<dt>indexer name</dt>
+    <dd>Required. The request URI specifies the name of the indexer to run.</dd>
+<dt>api-version</dt>
+    <dd>Required. The current version is api-version=2019-05-06. See API versions in Azure Cognitive Search for a list of available versions.</dt>
+</dl>
 
-Request Headers
-api-key
-: Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).
+<dl>
+<dt>Request Headers</dt>
 
+<dt>api-key</dt>
+    <dd>Required. The api-key is used to authenticate the request to your Search service. It is a string value, unique to your service. Get requests about objects in your service must include an api-key field set to your admin key (as opposed to a query key).</dd>
+</dl>
 > NOTE:  Replace any variables in [RedHighlight] with your own naming/variables.
 
 > NOTE:  Schedule params - Interval is set as a time interval in the format of PT Time then H/M for hours or minutes. Example: PT10M will run the indexer every 10 minutes. PT2H would run the indexer every 2 hours. This can be set up to 24 hours. 
