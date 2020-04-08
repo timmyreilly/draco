@@ -443,7 +443,9 @@
       "value": {
         "name": "[concat(variables('extensionsCosmosContainerName'), '-indexer')]",
         "dataSourceName": "[variables('extensionsCosmosContainerName')]",
-        "targetIndexName": "[variables('searchServiceIndexName')]"
+        "targetIndexName": "[variables('searchServiceIndexName')]",
+        "schedule" : { "interval" : "PT10M"},  
+        "parameters" : { "maxFailedItems" : 10, "maxFailedItemsPerBatch" : 5 }
       }
     },
     "executionApiConfiguration": {
