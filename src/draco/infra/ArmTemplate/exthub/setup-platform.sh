@@ -71,13 +71,16 @@ LATEST_AKS_K8S_VERSION=$(az aks get-versions --location "$LOCATION" --query "orc
 echo -e "\nLatest stable AKS Kubernetes version in [$LOCATION] is [$LATEST_AKS_K8S_VERSION]."
 echo -e "\nGetting AKS service principal [$AKS_SPN_APP_ID] password from key vault [$AKV_NAME]..."
 
+# Get the ASK SPN object Id from AAD
+AKS_SPN_OBJECTID=$(az ad sp show --id "$AKS_SPN_APP_ID" --query objectId --output tsv)
+
 # Get AKS SPN password from key vault...
 AKS_SPN_PASSWORD=$(az keyvault secret show --name "$DRACO_SPN_AKV_KEY_NAME" --vault-name "$AKV_NAME" --query value --output tsv)
 
 # Stand everything up...
 echo -e "\nDeploying Draco platform resources to resource group [$DRACO_PLATFORM_RG_NAME]. This can take up to 30 minutes...\n"
 
-az deployment group create --verbose --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$DRACO_DEPLOYMENT_NAME" --template-file "./exthub-deploy.json" --parameters aksK8sVersion="$LATEST_AKS_K8S_VERSION" aksServicePrincipalClientId="$AKS_SPN_APP_ID" aksServicePrincipalClientSecret="$AKS_SPN_PASSWORD"
+az deployment group create --verbose --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$DRACO_DEPLOYMENT_NAME" --template-file "./exthub-deploy.json" --parameters aksK8sVersion="$LATEST_AKS_K8S_VERSION" aksServicePrincipalClientId="$AKS_SPN_APP_ID" aksServicePrincipalObjectId="$AKS_SPN_OBJECTID" aksServicePrincipalClientSecret="$AKS_SPN_PASSWORD"
 
 DEPLOYMENT_PREFIX=$(az deployment group show --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$DRACO_DEPLOYMENT_NAME" --query properties.outputs.deploymentPrefix.value --output tsv)
 

@@ -30,8 +30,6 @@
   "variables": {
     "prefix": "draco",
     "uniqueId": "[uniqueString(resourceGroup().id)]",
-    "apimName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-apim')]",
-    "aksVNetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
     "aksClusterName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "aksClusterDnsPrefix": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "cosmosAccountName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-cdb'), 31)]",
@@ -104,6 +102,36 @@
       }
     },
     {
+      "type": "Microsoft.Resources/deployments",
+      "name": "ClusterSubnetRoleAssignmentDeployment",
+      "apiVersion": "2019-10-01",
+      "resourceGroup": "[resourceGroup().name]",
+      "dependsOn": [
+        "[variables('aksVNetName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+              "apiVersion": "2019-04-01-preview",
+              "name": "[concat(variables('aksVNetName'), '/aks-subnet', '/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                "principalId": "[parameters('aksServicePrincipalObjectId')]",
+                "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVNetName'), 'aks-subnet')]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
       "apiVersion": "2020-02-01",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
@@ -135,40 +163,553 @@
       }
     },
     {
-      "type": "Microsoft.Resources/deployments",
-      "name": "ClusterSubnetRoleAssignmentDeployment",
-      "apiVersion": "2019-10-01",
-      "resourceGroup": "[resourceGroup().name]",
-      "dependsOn": [
-        "[variables('aksVNetName')]"
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageAccountName')]",
+      "tags": "[variables('resourceTags')]",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2018-07-01",
+      "sku": {
+        "name": "[variables('storageAccountType')]"
+      },
+      "kind": "StorageV2",
+      "resources": [
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-03-01-preview",
+          "name": "[concat('default/', variables('resourcesStorageContainerName'))]",
+          "dependsOn": [
+            "[variables('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-03-01-preview",
+          "name": "[concat('default/', variables('extensionObjectsStorageContainerName'))]",
+          "dependsOn": [
+            "[variables('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        },
+        {
+          "type": "blobServices/containers",
+          "apiVersion": "2018-03-01-preview",
+          "name": "[concat('default/', variables('configurationStorageContainerName'))]",
+          "dependsOn": [
+            "[variables('storageAccountName')]"
+          ],
+          "properties": {
+            "publicAccess": "None"
+          }
+        }
       ],
       "properties": {
-        "mode": "Incremental",
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {},
-          "variables": {},
+      }
+    },
+    {
+      "apiVersion": "2017-04-01",
+      "name": "[variables('sbNamespaceName')]",
+      "tags": "[variables('resourceTags')]",
+      "type": "Microsoft.ServiceBus/namespaces",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "Standard"
+      },
+      "resources": [
+        {
+          "apiVersion": "2017-04-01",
+          "name": "[variables('sbRequestTopicName')]",
+          "type": "topics",
+          "dependsOn": [
+            "[variables('sbNamespaceName')]"
+          ],
+          "properties": {
+          },
           "resources": [
             {
-              "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
-              "apiVersion": "2019-04-01-preview",
-              "name": "[concat(variables('aksVNetName'), '/aks-subnet', '/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name))]",
+              "apiVersion": "2017-04-01",
+              "name": "[variables('sbHttpSubscriptionName')]",
+              "type": "subscriptions",
+              "dependsOn": [
+                "[variables('sbRequestTopicName')]"
+              ],
               "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
-                "principalId": "[parameters('aksServicePrincipalObjectId')]",
-                "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVNetName'), 'aks-subnet')]"
               }
             }
           ]
         }
+      ]
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2015-04-08",
+      "name": "[variables('cosmosAccountName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "platform": "[variables('prefix')]",
+        "defaultExperience": "Core (SQL)"
+      },
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "enableAutomaticFailover": false,
+        "enableMultipleWriteLocations": false,
+        "isVirtualNetworkFilterEnabled": false,
+        "virtualNetworkRules": [
+        ],
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
+        },
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0,
+            "isZoneRedundant": false
+          }
+        ],
+        "capabilities": [
+        ]
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/apis/databases",
+      "name": "[concat(variables('cosmosAccountName'), '/sql/', variables('cosmosDatabaseName'))]",
+      "apiVersion": "2016-03-31",
+      "dependsOn": [
+        "[variables('cosmosAccountResourceId')]"
+      ],
+      "properties": {
+        "resource": {
+          "id": "[variables('cosmosDatabaseName')]"
+        },
+        "options": {
+
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers",
+      "name": "[concat(variables('cosmosAccountName'), '/sql/', variables('cosmosDatabaseName'), '/', variables('executionsCosmosContainerName'))]",
+      "apiVersion": "2016-03-31",
+      "dependsOn": [
+        "[variables('cosmosDatabaseResourceId')]"
+      ],
+      "properties": {
+        "resource": {
+          "id": "[variables('executionsCosmosContainerName')]",
+          "partitionKey": {
+            "paths": [
+              "/executor/tenantId"
+            ],
+            "kind": "Hash"
+          },
+          "indexingPolicy": {
+            "indexingMode": "consistent",
+            "includedPaths": [
+              {
+                "path": "/*"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "apiVersion": "2016-03-31",
+      "dependsOn": [
+        "[variables('cosmosDatabaseResourceId')]"
+      ],
+      "name": "[concat(variables('cosmosAccountName'), '/sql/', variables('cosmosDatabaseName'), '/', variables('extensionsCosmosContainerName'))]",
+      "properties": {
+        "resource": {
+          "id": "[variables('extensionsCosmosContainerName')]",
+          "partitionKey": {
+            "paths": [
+              "/extensionId"
+            ],
+            "kind": "Hash"
+          },
+          "indexingPolicy": {
+            "indexingMode": "consistent",
+            "includedPaths": [
+              {
+                "path": "/*"
+              }
+            ]
+          }
+        }
+      },
+      "type": "Microsoft.DocumentDb/databaseAccounts/apis/databases/containers"
+    },
+    {
+      "name": "[variables('eventGridTopicName')]",
+      "tags": "[variables('resourceTags')]",
+      "type": "Microsoft.EventGrid/topics",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2018-01-01"
+    },
+    {
+      "apiVersion": "2015-08-19",
+      "name": "[variables('searchServiceName')]",
+      "tags": "[variables('resourceTags')]",
+      "type": "Microsoft.Search/searchServices",
+      "location": "[resourceGroup().location]",
+      "sku": {
+        "name": "[toLower(variables('searchServiceSku'))]"
+      },
+      "properties": {
+        "replicaCount": "[variables('searchServiceReplicaCount')]",
+        "partitionCount": "[variables('searchServicePartitionCount')]",
+        "hostingMode": "[variables('searchServiceHostingMode')]"
       }
     }
   ],
   "outputs": {
-    "subnetId": {
+    "deploymentPrefix": {
       "type": "string",
-      "value": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVNetName'), 'aks-subnet')]"
+      "value": "[concat(variables('prefix'), '-', variables('uniqueId'))]"
+    },
+    "azureSearchServiceName": {
+      "type": "string",
+      "value": "[variables('searchServiceName')]"
+    },
+    "azureSearchIndexConfiguration": {
+      "type": "object",
+      "value": {
+        "name": "[variables('searchServiceIndexName')]",
+        "fields": [
+          {
+            "name": "id",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "key": false
+          },
+          {
+            "name": "extensionId",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": false,
+            "key": false
+          },
+          {
+            "name": "name",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": false,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+          },
+          {
+            "name": "category",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+          },
+          {
+            "name": "subcategory",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+          },
+          {
+            "name": "publisherName",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true,
+            "analyzer": "standard.lucene",
+            "key": false
+          },
+          {
+            "name": "copyrightNotice",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "key": false
+          },
+          {
+            "name": "description",
+            "type": "Edm.String",
+            "searchable": true,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "analyzer": "standard.lucene",
+            "key": false
+          },
+          {
+            "name": "isActive",
+            "type": "Edm.Boolean",
+            "facetable": true,
+            "filterable": true,
+            "retrievable": true,
+            "sortable": true
+          },
+          {
+            "name": "tags",
+            "type": "Collection(Edm.String)",
+            "searchable": false,
+            "facetable": false,
+            "filterable": true,
+            "retrievable": true,
+            "key": false
+          },
+          {
+            "name": "rid",
+            "type": "Edm.String",
+            "searchable": false,
+            "facetable": false,
+            "filterable": false,
+            "retrievable": true,
+            "sortable": false,
+            "key": true
+          }
+        ]
+      }
+    },
+    "azureSearchDataSourceConfiguration": {
+      "type": "object",
+      "value": {
+        "name": "[variables('extensionsCosmosContainerName')]",
+        "type": "cosmosdb",
+        "credentials": {
+          "connectionString": "[concat('AccountEndpoint=https://', variables('cosmosAccountName'), '.documents.azure.com:443/;AccountKey=', listKeys(variables('cosmosAccountResourceId'), '2016-03-31').primaryMasterKey, ';Database=', variables('cosmosDatabaseName') )]"
+        },
+        "container": {
+          "name": "[variables('extensionsCosmosContainerName')]",
+          "query": "SELECT * FROM c WHERE c._ts > @HighWaterMark AND c.modelType = 'Extension/v1' ORDER BY c._ts"
+        },
+        "dataChangeDetectionPolicy": {
+          "@odata.type": "#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy",
+          "highWaterMarkColumnName": "_ts"
+        }
+      }
+    },
+    "azureSearchIndexerConfiguration": {
+      "type": "object",
+      "value": {
+        "name": "[concat(variables('extensionsCosmosContainerName'), '-indexer')]",
+        "dataSourceName": "[variables('extensionsCosmosContainerName')]",
+        "targetIndexName": "[variables('searchServiceIndexName')]",
+        "schedule" : { "interval" : "PT10M"},  
+        "parameters" : { "maxFailedItems" : 10, "maxFailedItemsPerBatch" : 5 }
+      }
+    },
+    "executionApiConfiguration": {
+      "type": "object",
+      "value": {
+        "Logging": {
+          "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
+          }
+        },
+        "AllowedHosts": "*",
+        "core": {
+          "executionPipeline": {
+            "httpClient": {
+              "maximumRetryAttempts": 3
+            }
+          },
+          "objectStorage": {
+            "url": {
+              "defaultUrlExpirationPeriod": "01:00:00"
+            }
+          }
+        },
+        "platforms": {
+          "azure": {
+            "executionPipeline": {
+              "serviceBus": {
+                "executionAdapter": {
+                  "connectionString": "[listkeys(variables('sbRuleResourceId'), '2017-04-01').primaryConnectionString]",
+                  "topicName": "[variables('sbRequestTopicName')]"
+                }
+              },
+              "eventGrid": {
+                "updatePublisher": {
+                  "topicEndpoint": "[reference(variables('eventGridTopicName')).endpoint]",
+                  "topicKey": "[listKeys(resourceId('Microsoft.EventGrid/topics', variables('eventGridTopicName')), '2018-01-01').key1]"
+                }
+              }
+            },
+            "objectStorage": {
+              "blobStorage": {
+                "inputObjectUrlProvider": {
+                  "containerName": "[variables('extensionObjectsStorageContainerName')]"
+                },
+                "outputObjectUrlProvider": {
+                  "containerName": "[variables('extensionObjectsStorageContainerName')]"
+                },
+                "storageAccount": {
+                  "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                }
+              }
+            },
+            "repositories": {
+              "cosmosDb": {
+                "execution": {
+                  "endpointUri": "[concat('https://', variables('cosmosAccountName'), '.documents.azure.com:443/')]",
+                  "accessKey": "[listKeys(variables('cosmosAccountResourceId'), '2016-03-31').primaryMasterKey]",
+                  "databaseName": "[variables('cosmosDatabaseName')]",
+                  "collectionName": "[variables('executionsCosmosContainerName')]"
+                },
+                "extension": {
+                  "endpointUri": "[concat('https://', variables('cosmosAccountName'), '.documents.azure.com:443/')]",
+                  "accessKey": "[listKeys(variables('cosmosAccountResourceId'), '2016-03-31').primaryMasterKey]",
+                  "databaseName": "[variables('cosmosDatabaseName')]",
+                  "collectionName": "[variables('extensionsCosmosContainerName')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "extensionMgmtApiConfiguration": {
+      "type": "object",
+      "value": {
+        "Logging": {
+          "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
+          }
+        },
+        "AllowedHosts": "*",
+        "platforms": {
+          "azure": {
+            "repositories": {
+              "cosmosDb": {
+                "extension": {
+                  "endpointUri": "[concat('https://', variables('cosmosAccountName'), '.documents.azure.com:443/')]",
+                  "accessKey": "[listKeys(variables('cosmosAccountResourceId'), '2016-03-31').primaryMasterKey]",
+                  "databaseName": "[variables('cosmosDatabaseName')]",
+                  "collectionName": "[variables('extensionsCosmosContainerName')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "catalogApiConfiguration": {
+      "type": "object",
+      "value": {
+        "Logging": {
+          "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
+          }
+        },
+        "AllowedHosts": "*",
+        "platforms": {
+          "azure": {
+            "search": {
+              "catalog": {
+                "indexName": "[variables('searchServiceIndexName')]",
+                "serviceName": "[variables('searchServiceName')]",
+                "queryKey": "[first(listQueryKeys(resourceId('Microsoft.Search/searchServices', variables('searchServicename')), '2015-08-19').value).key]"
+              }
+            },
+            "repositories": {
+              "cosmosDb": {
+                "extension": {
+                  "endpointUri": "[concat('https://', variables('cosmosAccountName'), '.documents.azure.com:443/')]",
+                  "accessKey": "[listKeys(variables('cosmosAccountResourceId'), '2016-03-31').primaryMasterKey]",
+                  "databaseName": "[variables('cosmosDatabaseName')]",
+                  "collectionName": "[variables('extensionsCosmosContainerName')]"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "executionConsoleConfiguration": {
+      "type": "object",
+      "value": {
+        "Logging": {
+          "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Information",
+            "Microsoft.Hosting.Lifetime": "Information"
+          }
+        },
+        "AllowedHosts": "*",
+        "core": {
+          "executionPipeline": {
+            "httpClient": {
+              "maximumRetryAttempts": 3
+            }
+          },
+          "objectStorage": {
+            "url": {
+              "defaultUrlExpirationPeriod": "01:00:00"
+            }
+          }
+        },
+        "platforms": {
+          "azure": {
+            "executionPipeline": {
+              "serviceBus": {
+                "requestSubscriber": {
+                  "connectionString": "[listkeys(variables('sbRuleResourceId'), '2017-04-01').primaryConnectionString]",
+                  "topicName": "[variables('sbRequestTopicName')]",
+                  "subscriptionName": "[variables('sbHttpSubscriptionName')]"
+                }
+              }
+            },
+            "objectStorage": {
+              "blobStorage": {
+                "inputObjectUrlProvider": {
+                  "containerName": "[variables('extensionObjectsStorageContainerName')]"
+                },
+                "outputObjectUrlProvider": {
+                  "containerName": "[variables('extensionObjectsStorageContainerName')]"
+                },
+                "storageAccount": {
+                  "connectionString": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

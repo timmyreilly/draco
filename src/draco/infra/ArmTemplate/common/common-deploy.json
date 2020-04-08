@@ -8,8 +8,6 @@
     "uniqueId": "[uniqueString(resourceGroup().id)]",
     "acrName": "[take(concat(variables('prefix'), variables('uniqueId'), 'acr'), 50)]",
     "akvName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-akv'), 24)]",
-    "apimName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-apim')]",
-    "apimVnetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
     "acrSku": "Basic",
     "akvSku": "Standard",
     "resourceTags": {
@@ -18,48 +16,54 @@
   },
   "resources": [
     {
-      "apiVersion": "2019-11-01",
-      "type": "Microsoft.Network/virtualNetworks",
-      "location": "[resourceGroup().location]",
-      "name": "[variables('apimVNetName')]",
+      "name": "[variables('acrName')]",
       "tags": "[variables('resourceTags')]",
-      "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "10.11.0.0/16"
-          ]
-        },
-        "subnets": [
-          {
-            "name": "apim-subnet",
-            "properties": {
-              "addressPrefix": "10.11.0.0/24",
-              "delegations": [],
-              "privateEndpointNetworkPolicies": "Enabled",
-              "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-          }
-        ],
-        "virtualNetworkPeerings": [],
-        "enableDdosProtection": false,
-        "enableVmProtection": false
-      }
-    },
-
-    {
-      "apiVersion": "2019-12-01-preview",
-      "type": "Microsoft.ApiManagement/service",
+      "type": "Microsoft.ContainerRegistry/registries",
+      "apiVersion": "2017-10-01",
       "location": "[resourceGroup().location]",
-      "name": "[variables('apimName')]",
-      "tags": "[variables('resourceTags')]",
       "sku": {
-        "name": "Developer",
-        "capacity": 1
+        "name": "[variables('acrSku')]",
+        "tier": "[variables('acrSku')]"
       },
       "properties": {
-        "publisherEmail": "johndoe@contoso.com",
-        "publisherName": "John Doe"
+        "adminUserEnabled": true
+      }
+    },
+    {
+      "name": "[variables('akvName')]",
+      "tags": "[variables('resourceTags')]",
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2018-02-14",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [
+        ],
+        "sku": {
+          "name": "[variables('akvSku')]",
+          "family": "A"
+        },
+        "enabledForDeployment": true,
+        "enabledForTemplateDeployment": true
       }
     }
-  ]
+  ],
+  "outputs": {
+    "deploymentPrefix": {
+      "type": "string",
+      "value": "[concat(variables('prefix'), '-', variables('uniqueId'))]"
+    },
+    "acrResourceId": {
+      "type": "string",
+      "value": "[resourceId('Microsoft.ContainerRegistry/registries', variables('acrName'))]"
+    },
+    "acrName": {
+      "type": "string",
+      "value": "[variables('acrName')]"
+    },
+    "kvName": {
+      "type": "string",
+      "value": "[variables('akvName')]"
+    }
+  }
 }
