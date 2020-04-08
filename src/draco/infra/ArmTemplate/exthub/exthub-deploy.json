@@ -154,12 +154,17 @@
             "osType": "[variables('aksOsType')]",
             "storageProfile": "ManagedDisks",
             "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVNetName'), 'aks-subnet')]",
-            "maxPods": 30
+            "maxPods": 30,
+            "type": "VirtualMachineScaleSets"
           }
         ],
         "servicePrincipalProfile": {
           "clientId": "[parameters('aksServicePrincipalClientId')]",
           "Secret": "[parameters('aksServicePrincipalClientSecret')]"
+        },
+        "networkProfile": {
+          "networkPlugin": "azure",
+          "loadBalancerSku": "standard"
         }
       }
     },
