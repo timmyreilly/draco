@@ -33,6 +33,7 @@
     "aksClusterName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "aksClusterDnsPrefix": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "aksVnetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
+    "apiMgmtName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-apim')]",
     "cosmosAccountName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-cdb'), 31)]",
     "eventGridTopicName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-egt-execution'), 50)]",
     "storageAccountName": "[take(concat(variables('prefix'), variables('uniqueId'), 'stor'), 24)]",
@@ -130,6 +131,28 @@
             }
           ]
         }
+      }
+    },
+    {
+      "apiVersion": "2019-12-01-preview",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('apiMgmtName')]",
+      "tags": "[variables('resourceTags')]",
+      "dependsOn": [
+        "[variables('aksVNetName')]"
+      ],
+      "sku": {
+        "name": "Premium",
+        "capacity": 1
+      },
+      "properties": {
+        "publisherEmail": "johndoe@contoso.com",
+        "publisherName": "Draco",
+        "virtualNetworkConfiguration": {
+          "subnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVNetName'), 'gateway-subnet')]" 
+        },
+        "virtualNetworkType": "External"
       }
     },
     {
