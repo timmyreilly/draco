@@ -32,6 +32,7 @@
     "uniqueId": "[uniqueString(resourceGroup().id)]",
     "aksClusterName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "aksClusterDnsPrefix": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
+    "aksVnetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
     "cosmosAccountName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-cdb'), 31)]",
     "eventGridTopicName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-egt-execution'), 50)]",
     "storageAccountName": "[take(concat(variables('prefix'), variables('uniqueId'), 'stor'), 24)]",
