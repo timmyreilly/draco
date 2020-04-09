@@ -113,7 +113,7 @@ Create a new extension registration for the echo service using the following res
 API Request
 HTTP Verb and URL:  
     Set Verb to POST
-    Set URL to http://address/extensions
+    Set URL to {{extmgmt_url}}/extensions
 
 Request Headers:
     Content-Type: application/json
@@ -158,7 +158,7 @@ API Response
                         "echo",
                         "demo"
                     ],
-                    "id": "***ExtensionID***",
+                    "id": "{{extension_id}}",
                     "name": "ExtensionName",
                     "category": "Demo",
                     "subcategory": "Test Extensions",
@@ -174,14 +174,14 @@ API Response
 }
 ```
 
-> NOTE:  Copy **ExtensionID** returned in the model section, you will need this in following steps.
+> NOTE:  Copy {{extension_id}} returned in the model section, you will need this in following steps.
 
 ## Create the sample echo extension version
 
 Register a new extension version using the following steps:
 
 * Replace address with your DNS or IP address.
-* Replace **ExtensionId** with the value from the previous step.
+* Replace {{extension_id}} with the value from the previous step.
 * Replace **ExtensionName** with the name of the extension.
 * "version" should also be set to the version of the extension [x.xx format].
 
@@ -191,7 +191,7 @@ Register a new extension version using the following steps:
 API Request
 HTTP Verb and URL:  
     Set Verb to POST
-    Set URL to address/extensions/***ExtensionId***/versions
+    Set URL to {{extmgmt_url}}/extensions/{{extension_id}}/versions
 
 Request Headers:
     Content-Type: application/json
@@ -232,7 +232,7 @@ API response:
             "postNewService": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/services"
         },
         "model": {
-            "id": "***ExtensionVersionId***",
+            "id": "{{extension_version_id}}",
             "extensionId": "ExtensionId",
             "releaseNotes": null,
             "requestTypeName": "ExtensionName/requests/v1",
@@ -258,15 +258,15 @@ Each extension also need an execution profile to be set for the version.  For th
 **TODO** Replace with link to other execution models
 
 * Replace address with your DNS or IP address
-* Replace ***ExtensionId***
-* Replace ***ExtensionVersionId***
-* Replace ***ExtensionName*** extension name
+* Replace {{extension_id}}
+* Replace {{extension_version_id}}
+* Replace ***ExtensionExecutionUrl***  - This is your complete URL to call your extension.  In the case of this echo extension it should be http://**echo svc public ip**/echo.
 
 ```json
 API Request
 HTTP Verb and URL:
     Set Verb to POST
-    Set URL to DNSname/extensions/***ExtensionId***/versions/***ExtensionVersionId***/profiles
+    Set URL to {{extmgmt_url}}/extensions/{{extension_id}}/versions/{{extension_version_id}}/profiles
 
 Request Headers:
     Content-Type: application/json
@@ -282,13 +282,14 @@ Use this format:
         "supportedPriorities": [
         "normal"
         ],
-        "extensionSettings": {
-        "executionUrl": "address/***ExtensionName***"
+        "extensionSettings":
+        {
+            "executionUrl": "***ExtensionExecutionUrl***=(http://<<echo svc public ip>>/echo)"
         }
     }
 ```
 
-The platform service will return the **executionUrl** from the params above.
+The platform service will return success for registration.
 
 ```json
 API response:
@@ -308,8 +309,8 @@ API response:
     },
     "model": {
         "name": "default",
-        "extensionId": "ExtensionId",
-        "extensionVersionId": "ExtensionVersionId",
+        "extensionId": "{{extension_id}}",  # Matches value passed in
+        "extensionVersionId": "{{extension_version_id}}", # Matches value passed in
         "description": null,
         "executionModel": "http-json/sync/v1",
         "objectProvider": "az-blob/v1",
@@ -321,7 +322,7 @@ API response:
         ],
         "clientConfiguration": {},
         "extensionSettings": {
-            "executionUrl": "***address/ExtensionName***"
+            "executionUrl": "***ExtensionExecutionUrl***"  # Should match value passed in
         }
     }
 }
