@@ -9,8 +9,17 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Services
 {
+    /// <summary>
+    /// A simple mechanism for digitally signing strings.
+    /// </summary>
     public class DefaultSigner : ISigner
     {
+        /// <summary>
+        /// Generate a digital signature for a string.
+        /// </summary>
+        /// <param name="rsaKeyXml">The XML-formatted RSA key material</param>
+        /// <param name="toSign">The string to sign</param>
+        /// <returns></returns>
         public Task<string> GenerateSignatureAsync(string rsaKeyXml, string toSign)
         {
             if (string.IsNullOrEmpty(rsaKeyXml))

@@ -24,6 +24,8 @@ namespace Draco.ExecutionAdapter.ConsoleHost
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            // Start listening for execution requests...
+
             logger.LogInformation("Subscribing to incoming execution requests...");
 
             await this.requestSubscriber.SubscribeAsync(cancellationToken);
