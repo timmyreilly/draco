@@ -4,32 +4,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: extensionecho
+  name: sample-echo
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: extensionecho
+      app: sample-echo
   template:
     metadata:
       labels:
-        app: extensionecho
+        app: sample-echo
     spec:
       containers:
-      - name: extension-echo:latest
-        image: $ACR_NAME.azurecr.io/extension-echo
+      - name: echo
+        image: dracodv2vytrugocvmacr.azurecr.io/echo:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
           name: api
         - containerPort: 443
           name: apis
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: extensionecho
+  name: sample-echo
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: "aks-subnet"
   labels: 
-    app: extensionecho
+    app: sample-echo
 spec:
   type: LoadBalancer
   ports:
@@ -38,4 +42,4 @@ spec:
   - port: 443
     name: apis
   selector:
-    app: extensionecho
+    app: sample-echo

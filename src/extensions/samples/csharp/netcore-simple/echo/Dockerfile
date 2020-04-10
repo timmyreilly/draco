@@ -1,17 +1,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS base
-WORKDIR ./app
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-WORKDIR ./src
-COPY . .
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
+WORKDIR /src
+COPY ["echo.csproj", "echo.csproj"]
 RUN dotnet restore "echo.csproj"
-RUN dotnet build "echo.csproj" -c Release
+COPY . .
+
+RUN dotnet build "echo.csproj" -c Release -o /app/build
+
 FROM build AS publish
-RUN dotnet publish "echo.csproj" -c Release 
+RUN dotnet publish "echo.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
 
 ENTRYPOINT ["dotnet", "echo.dll"]
