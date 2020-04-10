@@ -11,6 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.ConsoleHost.Modules
 {
+    /// <summary>
+    /// This module maps object provider names to input object accessor providers that can handle them.
+    /// For more information on object providers, see /doc/architecture/execution-objects.md.
+    /// </summary>
     public class InputObjectAccessorProviderFactoryModule : BaseNamedServiceModule<IInputObjectAccessorProvider>
     {
         public override void AddNamedServices(IConfiguration configuration, INamedServiceRegistry<IInputObjectAccessorProvider> serviceRegistry)

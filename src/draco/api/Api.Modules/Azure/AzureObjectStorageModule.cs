@@ -14,7 +14,7 @@ namespace Draco.Api.Modules.Azure
 {
     /// <summary>
     /// Default service module for wiring up all the configuration/dependencies needed for using
-    /// the Azure blobs (az-blobs/v1) object storage provider
+    /// the default Azure blobs (az-blobs/v1) object storage provider
     /// </summary>
     public class AzureObjectStorageModule : IServiceModule
     {

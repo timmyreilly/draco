@@ -10,13 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Draco.Api.Modules
 {
     /// <summary>
-    /// This service module wires up all the core object storage dependencies needed as part of the standard execution pipeline. 
-    /// These common dependencies will be neeeded regardless of which storage platform(s) you're using.
-    /// 
-    /// This service module is platform-agnostic and will need to be configured alongside platform-specific (Azure, AWS, etc.)
-    /// service modules that wire up dependencies needed for platform-level storage support (Azure blobs, AWS S3, NFS, SMB, etc.)
-    /// 
-    /// For more information on object storage, see /doc/architecture/execution-objects.md.
+    /// This service module wires up all the core object storage dependencies needed as part of the default execution pipeline.
+    /// For more information, see /doc/architecture/execution-objects.md.
     /// </summary>
     public class CoreObjectStorageModule : IServiceModule
     {

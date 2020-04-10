@@ -22,6 +22,9 @@ namespace Draco.Execution.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(cb =>
                 {
+                    // Pull execution API configuration from Azure blob storage.
+                    // All the informaiton needed to access the right storage account is passed in through environment variables (see below).
+
                     var blobStorageAccount = CloudStorageAccount.Parse(BlobStorageConnectionString);
                     var blobClient = blobStorageAccount.CreateCloudBlobClient();
                     var blobContainer = blobClient.GetContainerReference(ContainerName);

@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 
 namespace Draco.Core
 {
+    /// <summary>
+    /// A simple, generic client for working with JSON-based REST APIs.
+    /// </summary>
     public class JsonHttpClient : IJsonHttpClient
     {
         private const string JsonMediaType = "application/json";
@@ -29,11 +32,14 @@ namespace Draco.Core
 
         public JsonHttpClient(IHttpClientOptions clientOptions)
         {
+            // Create the inner HTTP client...
             this.httpClient = new HttpClient();
 
+            // Configure the retry policy...
             this.httpRetryPolicy = Policy.Handle<HttpRequestException>()
                 .ConfigureExponentialBackOffRetryPolicy(clientOptions.MaximumRetryAttempts);
 
+            // Always include the "application/json" accept header...
             this.httpClient.DefaultRequestHeaders.Accept.Clear();
             this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(JsonMediaType));
         }
@@ -41,13 +47,16 @@ namespace Draco.Core
         public async Task<HttpResponse<TResponse>> GetAsync<TResponse>(string url)
         {
             if (string.IsNullOrEmpty(url))
+            {
                 throw new ArgumentNullException(nameof(url));
+            }
 
             if (Uri.TryCreate(url, UriKind.Absolute, out _) == false)
+            {
                 throw new ArgumentException($"[{url}] is not a valid absolute URL.", nameof(url));
+            }
 
-            var httpResponse = await httpRetryPolicy.Execute(async () =>
-                EnsureSuccessStatusCode(await httpClient.GetAsync(url)));
+            var httpResponse = await httpRetryPolicy.Execute(async () => EnsureSuccessStatusCode(await httpClient.GetAsync(url)));
 
             return new HttpResponse<TResponse>(httpResponse.StatusCode, await TryToGetResponseData<TResponse>(httpResponse));
         }
@@ -55,27 +64,22 @@ namespace Draco.Core
         public async Task<HttpResponse> PostAsync(string url, object requestData)
         {
             if (string.IsNullOrEmpty(url))
+            {
                 throw new ArgumentNullException(nameof(url));
+            }
 
             if (Uri.TryCreate(url, UriKind.Absolute, out _) == false)
+            {
                 throw new ArgumentException($"[{url}] is not a valid absolute URL.", nameof(url));
+            }
 
             if (requestData == null)
+            {
                 throw new ArgumentNullException(nameof(requestData));
+            }
 
             var httpResponse = await httpRetryPolicy.Execute(async () =>
-            {
-                try
-                {
-                    return EnsureSuccessStatusCode(await httpClient.PostAsync(url, ToHttpContent(requestData)));
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-
-                    throw;
-                }
-            });
+                EnsureSuccessStatusCode(await httpClient.PostAsync(url, ToHttpContent(requestData))));
 
             return new HttpResponse(httpResponse.StatusCode);
         }
@@ -83,13 +87,19 @@ namespace Draco.Core
         public async Task<HttpResponse<TResponse>> PostAsync<TResponse>(string url, object requestData)
         {
             if (string.IsNullOrEmpty(url))
+            {
                 throw new ArgumentNullException(nameof(url));
+            }
 
             if (Uri.TryCreate(url, UriKind.Absolute, out _) == false)
+            {
                 throw new ArgumentException($"[{url}] is not a valid absolute URL.", nameof(url));
+            }
 
             if (requestData == null)
+            {
                 throw new ArgumentNullException(nameof(requestData));
+            }
 
             var httpResponse = await httpRetryPolicy.Execute(async () =>
             {

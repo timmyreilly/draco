@@ -111,15 +111,16 @@ namespace Draco.Execution.Api.Controllers
                 if (erContext.ExecutionProfile.ExecutionMode == ExecutionMode.Direct)
                 {
                     // If the selected [executionMode] is [direct] (that is, the client will be executing the extension directly), we're basically done.
-                    // Return a scoped, time-limited, digitally-signed execution token. For more information on direct execution, see /doc/architecture/direct-execution.md.
+                    // For more information on direct execution, see /doc/architecture/direct-execution.md.
+                    // Return a scoped, time-limited, digitally-signed execution token.
 
                     return Ok(await CreateDirectExecutionRequestAsync(erContext));
                 }
                 else
                 {
                     // If the selected [executionMode] is [gateway] (that is, we'll be processing the execution request on behalf of the client),
-                    // dispatch the execution request for processing (execution router >> processor >> adapter) and respond to the client appropriately.
-                    // For more information, see /doc/architecture/execution-models.md.
+                    // dispatch the execution request to the standard execution pipeline...
+                    // For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
 
                     return await ToExecutionRequestRoutedResultAsync(await ExecuteAsync(erContext));
                 }
@@ -170,7 +171,7 @@ namespace Draco.Execution.Api.Controllers
             erContext.ExtensionVersion = erContext.Extension.GetExtensionVersion(erContext.Execution.ExtensionVersionId);
             erContext.ExecutionProfile = erContext.ExtensionVersion.GetExecutionProfile(erContext.Execution.ExecutionProfileName);
 
-            // Make sure that we have the right input objects and **only** the right input objects...
+            // Make sure that we have the right input objects and only the right input objects...
 
             erContext.Execution.ProvidedInputObjects.AddRange(erContext.OriginalRequest.ProvidedInputObjects.Where(pio =>
                 erContext.ExtensionVersion.InputObjects.Any(io => io.Name == pio) &&
@@ -207,8 +208,8 @@ namespace Draco.Execution.Api.Controllers
             }
             else
             {
-                // Otherwise, dispatch the execution request for processing (execution router >> processor >> adapter)
-                // and respond to the client appropriately.
+                // Otherwise, dispatch the execution request to the execution pipeline and respond back to the client appropriately.
+                // For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
 
                 return await ToExecutionRequestRoutedResultAsync(await ExecuteAsync(erContext));
             }
@@ -267,12 +268,8 @@ namespace Draco.Execution.Api.Controllers
                 return NotFound($"[{ErrorCodes.ExecutionNotFound}]: Execution [{executionId}] not found.");
             }
 
-            // When a new execution is new, a unique, execution-scoped [statusUpdateKey] is also created.
-            // The [statusUpdateKey] is bound to the lifetime of the execution. It should be known **only** to Draco (through the execution repository) and the extension.
-            // The [statusUpdateKey] is essentially a bearer token. We assume that the extension resides outside the Draco trust boundary in an on-premises, 
-            // "corporate IT" environment where only port 443 is allowed outbound to a public API endpoint (this one). The [statusUpdateKey] + HTTPS provides 
-            // sufficient security to guarantee that the provided execution status update is authentic. If the [statusUpdateKey] does not match the one that we have on file,
-            // respond with [403 Forbidden]...
+            // Make sure that the provided [statusUpdateKey] matches that of the execution. If it doesn't, respond with a [403 Forbidden].
+            // For more information on the execution pipeline and the role of the status update key, see /doc/architecture/execution-pipeline.md.
 
             if (execution.StatusUpdateKey != updateApiModel.StatusUpdateKey)
             {
@@ -283,7 +280,8 @@ namespace Draco.Execution.Api.Controllers
 
             execution = ApplyExecutionUpdate(updateApiModel, execution);
 
-            // Check that the status update makes sense. Specifically, make sure that the provided status and status transition is valid...
+            // Check that the status update makes sense.
+            // Specifically, check that the provided status itself is valid and the status transition makes sense.
 
             if (string.IsNullOrEmpty(updateApiModel.Status) == false)
             {
@@ -306,11 +304,11 @@ namespace Draco.Execution.Api.Controllers
                 }
             }
 
-            // Persist the updated execution...
+            // sSave the updated execution...
 
             await UpdateExecutionAsync(execution);
 
-            // Respond with [200 OK] and let the execution processor/extension know that the status update was successfully processed...
+            // Respond with [200 OK] and let the caller know that the update was successfully processed...
 
             return Ok(await ToExecutionUpdateApiModelAsync(execution));
         }
@@ -338,10 +336,9 @@ namespace Draco.Execution.Api.Controllers
             };
 
             // Based on the selected execution profile, set the expiration date/time (how long the client can use the extension directly for)
-            // and digitally sign the execution request using the hub's private key. In this model, we're assuming that the extension has the hub's
-            // public key so it can verify the authenticity of the direct execution request and all the associated metadata. While we assume that Draco and the extension
-            // trust each other, we also assume that the client and extension do not. This approach provides a standard, cryptographically secure mechanism for establishing
-            // an indirect trust between Draco and the extension using the client as a proxy.
+            // and digitally sign the execution request using the hub's private key. In this model, we assume that the target execution has the hub's
+            // public key and can us it to verify the authenticity of the token and all the information contained therein.
+            // For more information, see /doc/architecture/direct-execution.md.
 
             directExecRequest.ExpirationDateTimeUtc = DateTime.UtcNow.Add(erContext.ExecutionProfile.DirectExecutionTokenDuration.Value);
             directExecRequest.Signature = await directExecRequestSigner.GenerateSignatureAsync(execRequest.SignatureRsaKeyXml, directExecRequest);
@@ -361,25 +358,19 @@ namespace Draco.Execution.Api.Controllers
 
         private async Task<Core.Models.Execution> ExecuteAsync(IExecutionRequestContext erContext)
         {
-            // Dispatch the execution request for processing (router >> processor >> adapter >> (extension?))...
-
-            // Depending on the execution model (specified as part of the selected execution profile), the extension may be executed immediately (sync)
-            // or an execution request may be queued for later processing (async). In either case, the execution request router
-            // (/src/draco/core/Core.Execution/Routers/ExecutionRequestRouter.cs) is responsible for selecting the appropriate execution processor (per exsecution model)
-            // (/src/draco/core/Core.Execution/Interfaces/IExecutionProcessor.cs) and handing off the request to the right execution adapter
-            // (/src/draco/core/Core.Execution/Interfaces/IExecutionAdapter.cs). This approach means that the same execution adapter can be used for 
-            // both async/sync execution scenarios. This pipeline is configurable in /src/draco/api/Execution.Api/Modules/Factories/ExecutionProcessorFactoryModule.cs.
+            // Dispatch the execution request to the execution pipeline...
+            // For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
 
             var execRequest = ToExecutionRequestAsync(erContext);
             var execContext = await execRequestRouter.RouteRequestAsync(execRequest, CancellationToken.None);
 
             // The result of all this processing is an execution context (/src/draco/core/Core.Models/ExecutionContext.cs).
             // An execution context contains all the information that the execution request does + an execution status update that includes
-            // status, description, percentage complete, validation errors, etc. This execution context is then applied to the core execution model...
+            // status, description, percentage complete, validation errors, etc. This execution context is then applied to the core execution model.
 
             erContext.Execution = ApplyExecutionContext(execContext, erContext.Execution);
 
-            // Persist the updated execution model...
+            // Save the updated execution...
 
             await UpdateExecutionAsync(erContext.Execution);
 
@@ -388,52 +379,35 @@ namespace Draco.Execution.Api.Controllers
 
         private async Task UpdateExecutionAsync(Core.Models.Execution execution)
         {
-            // Any time an execution is updated...
-            // It is saved back to the extension repository...
+            // Save the execution model to the execution repository...
 
             await execRepository.UpsertExecutionAsync(execution);
 
-            // And an event is emitted...
+            // And publish an execution update event.
 
             await execUpdatePublisher.PublishUpdateAsync(execution);
         }
 
         private async Task<IActionResult> ToExecutionRequestRoutedResultAsync(Core.Models.Execution execution)
         {
-            // At this point, we're taking a post-execution core execution model (it's already been run through the initial execution pipeline)
-            // and converting it to an appropriate HTTP response back to the API consumer. We start by convering the core execution model to
-            // a more "API-friendly" execution update that will be returned to the client...  
+            // At this point, the execution request has already been displatched to the execution pipeline (/doc/architecture/execution-pipeline.md),
+            // We're taking the result of that processing, converting into an HTTP response, and passing it back to the original caller.
 
             var updateApiModel = await ToExecutionUpdateApiModelAsync(execution);
 
-            // Now, based on the execution status, we pick an appropriate HTTP status code...
+            // Map the execution status to the right HTTP status code...
 
             switch (execution.Status)
             {
-                // If the execution is sychronous and is still running (long-running) **or**
-                // the execution has been queued for later processing, respond with [202 Accepted]...
-
                 case ExecutionStatus.Processing:
                 case ExecutionStatus.Queued:
                     return Accepted(updateApiModel);
-
-                // If the execution has been canceled (by the user - roadmap feature) **or**
-                // the execution has completed successfully **or**
-                // this was a validation only request and validation succeeded, respond with [200 OK]...
-
                 case ExecutionStatus.Canceled:
                 case ExecutionStatus.Succeeded:
                 case ExecutionStatus.ValidationSucceeded:
                     return Ok(updateApiModel);
-
-                // If validation failed, respond with [400 Bad Request]...
-
                 case ExecutionStatus.ValidationFailed:
                     return BadRequest(updateApiModel);
-
-                // Something broke! It was probably our fault!
-                // Respond with [500 Internal Server Error]...
-
                 default:
                     return StatusCode((int)(HttpStatusCode.InternalServerError), updateApiModel);
             }

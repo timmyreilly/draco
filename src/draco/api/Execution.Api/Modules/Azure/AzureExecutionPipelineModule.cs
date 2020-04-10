@@ -10,6 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.Execution.Api.Modules.Azure
 {
+    /// <summary>
+    /// This service module wires up all the configuration/depenenices needed to host an execution pipeline on Azure.
+    /// For more information on the execution pipeline, see /doc/architecture/execution-pipeline.md.
+    /// </summary>
     public class AzureExecutionPipelineModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

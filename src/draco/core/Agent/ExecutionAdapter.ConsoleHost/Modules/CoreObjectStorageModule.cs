@@ -9,6 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.ConsoleHost.Modules
 {
+    /// <summary>
+    /// Wires up all the platform-agnostic dependencies needed to support URL-based execution object accessors.
+    /// For more information on object accessors, see /doc/architecture/execution-objects.md#object-accessors.
+    /// </summary>
     public class CoreObjectStorageModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

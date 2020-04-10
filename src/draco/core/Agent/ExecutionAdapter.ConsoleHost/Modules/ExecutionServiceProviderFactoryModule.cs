@@ -4,17 +4,20 @@
 using Core.Interfaces;
 using Core.Modules;
 using Draco.Core.Services.Interfaces;
-using Draco.IntegrationTests.HowdyService;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.ConsoleHost.Modules
 {
+    /// <summary>
+    /// This module maps execution service names to execution service providers.
+    /// For more information on execution services, see /doc/architecture/extension-services.md.
+    /// </summary>
     public class ExecutionServiceProviderFactoryModule : BaseNamedServiceModule<IExecutionServiceProvider>
     {
         public override void AddNamedServices(IConfiguration configuration, INamedServiceRegistry<IExecutionServiceProvider> serviceRegistry)
         {
-            serviceRegistry["howdy/v1"] = sp => sp.GetService<HowdyServiceProvider>();
+            // TODO: Register service providers here...
+            // serviceRegistry["howdy/v1"] = sp => sp.GetService<HowdyServiceProvider>();
         }
     }
 }

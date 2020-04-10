@@ -10,6 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.ConsoleHost.Modules.Azure
 {
+    /// <summary>
+    /// This module wires up all the configuration/dependencies needed to use an Azure Cosmos DB extension repository.
+    /// </summary>
     public class AzureExecutionPipelineModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

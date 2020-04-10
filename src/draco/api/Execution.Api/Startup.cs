@@ -60,9 +60,8 @@ namespace Draco.Execution.Api
                     .ConfigureServices<ExecutionProcessorFactoryModule>(Configuration) // Configure additional execution adapters here.
                     .ConfigureServices<ExecutionServiceProviderFactoryModule>(Configuration) // Configure additional service providers here.
                     .ConfigureServices<InputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional input object accessor providers here.
-                    .ConfigureServices<OutputObjectAccessorProviderFactoryModule>(Configuration)
-                    .ConfigureServices<JsonHttpExecutionAdapterModule>(Configuration)
-                    .ConfigureServices<HowdyExecutionServiceModule>(Configuration)
+                    .ConfigureServices<OutputObjectAccessorProviderFactoryModule>(Configuration) // Configure additional output object accessor providers here.
+                    .ConfigureServices<JsonHttpExecutionAdapterModule>(Configuration) 
                     .ConfigureServices<SignerModule>(Configuration);
 
         // Follow this pattern when adding additional platforms.

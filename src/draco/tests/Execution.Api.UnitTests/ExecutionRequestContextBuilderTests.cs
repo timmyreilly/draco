@@ -5,7 +5,6 @@ using Draco.Core.Models;
 using Draco.Core.Models.Enumerations;
 using Draco.Core.Models.Interfaces;
 using Draco.Execution.Api.Constants;
-using Draco.Execution.Api.Interfaces;
 using Draco.Execution.Api.Models;
 using Draco.Execution.Api.Services;
 using FluentAssertions;
@@ -47,12 +46,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_NoExtensionIdProvided_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -74,12 +69,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_NoExtensionVersionIdProvided_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -101,12 +92,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_InvalidPriorityProvided_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -130,12 +117,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_InvalidExtensionIdProvided_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -158,12 +141,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_GivenADisabledExtension_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -188,12 +167,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_InvalidExtensionVersionId_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -216,12 +191,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_GivenADisabledExtensionVersion_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -246,12 +217,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_ValidateOnlyButExtensionVersionDoesNotSupportValidation_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -277,12 +244,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_InvalidExecutionProfileName_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -306,12 +269,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_ExecutionProfileDoesNotSupportPriority_ShouldGenerateError()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -321,10 +280,6 @@ namespace Draco.Execution.Api.UnitTests
             };
 
             var extension = CreateDefaultExtension();
-
-            mockErContextValidator
-                .Setup(v => v.ValidateExecutionRequestContextAsync(It.IsAny<IExecutionRequestContext>()))
-                .Returns(Task.FromResult(true));
 
             mockExtensionRepository
                 .Setup(r => r.GetExtensionAsync(DefaultExtensionId))
@@ -339,12 +294,8 @@ namespace Draco.Execution.Api.UnitTests
         [Fact]
         public async Task BuildExecutionRequestContextAsync_GivenMultipleMistakes_ShouldGenerateMultipleErrors()
         {
-            var mockErContextValidator = new Mock<IExecutionRequestContextValidator>();
             var mockExtensionRepository = new Mock<IExtensionRepository>();
-
-            var erContextBuilder = new ExecutionRequestContextBuilder(
-                mockErContextValidator.Object,
-                mockExtensionRepository.Object);
+            var erContextBuilder = new ExecutionRequestContextBuilder(mockExtensionRepository.Object);
 
             var execRequestApiModel = new ExecutionRequestApiModel
             {
@@ -352,10 +303,6 @@ namespace Draco.Execution.Api.UnitTests
             };
 
             var extension = CreateDefaultExtension();
-
-            mockErContextValidator
-                .Setup(v => v.ValidateExecutionRequestContextAsync(It.IsAny<IExecutionRequestContext>()))
-                .Returns(Task.FromResult(true));
 
             mockExtensionRepository
                 .Setup(r => r.GetExtensionAsync(DefaultExtensionId))

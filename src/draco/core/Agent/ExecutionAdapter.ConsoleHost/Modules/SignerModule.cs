@@ -13,6 +13,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Draco.ExecutionAdapter.ConsoleHost.Modules
 {
+    /// <summary>
+    /// This service module wires up all the dependencies needed to sign execution requests and object accessors.
+    /// </summary>
     public class SignerModule : IServiceModule
     {
         public void ConfigureServices(IServiceCollection services, IConfiguration configuration)

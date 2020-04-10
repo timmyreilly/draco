@@ -4,7 +4,6 @@
 using Draco.Core.Hosting.Extensions;
 using Draco.ExecutionAdapter.ConsoleHost.Modules;
 using Draco.ExecutionAdapter.ConsoleHost.Modules.Azure;
-using Draco.ExecutionAdapter.ConsoleHost.Modules.ExecutionServices;
 using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +24,9 @@ namespace Draco.ExecutionAdapter.ConsoleHost
                 .UseEnvironment(Environments.Development)
                 .ConfigureAppConfiguration((hostContext, configApp) =>
                 {
+                    // Grab configuration information from blob storage...
+                    // The information needed to access blob storage is provided through environment variables below.
+
                     var blobStorageAccount = CloudStorageAccount.Parse(BlobStorageConnectionString);
                     var blobClient = blobStorageAccount.CreateCloudBlobClient();
                     var blobContainer = blobClient.GetContainerReference(ContainerName);
@@ -39,7 +41,11 @@ namespace Draco.ExecutionAdapter.ConsoleHost
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
+                    // Register the subscriber hosted service...
+
                     services.AddHostedService<SubscriberHostedService>();
+
+                    // Register core services...
 
                     services.ConfigureServices<CoreExecutionPipelineModule>(hostContext.Configuration)
                             .ConfigureServices<CoreObjectStorageModule>(hostContext.Configuration)
@@ -57,10 +63,6 @@ namespace Draco.ExecutionAdapter.ConsoleHost
                     // Register execution adapters...
 
                     services.ConfigureServices<JsonHttpExecutionAdapterModule>(hostContext.Configuration);
-
-                    // Register execution services...
-
-                    services.ConfigureServices<HowdyExecutionServiceModule>(hostContext.Configuration);
                 })
                 .ConfigureLogging((hostContext, logConfig) =>
                 {

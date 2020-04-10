@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Interfaces
 {
+    /// <summary>
+    /// Defines a simple, generic mechanism for working with JSON-based REST APIs.
+    /// </summary>
     public interface IJsonHttpClient
     {
         Task<HttpResponse<TResponse>> GetAsync<TResponse>(string url);

@@ -11,7 +11,8 @@ using System;
 namespace Draco.Api.Proxies.Extensions
 {
     /// <summary>
-    /// Extension methods for creating internal API proxies
+    /// Extension methods for creating internal execution pipeline API proxies
+    /// For more information on the execution pipeline, see /doc/architecture/extension-pipeline.md.
     /// </summary>
     public static class ServiceProviderExtensions
     {

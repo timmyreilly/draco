@@ -11,6 +11,9 @@ using System.Linq;
 
 namespace Draco.ExtensionManagement.Api.Extensions
 {
+    /// <summary>
+    /// Extension methods used to convert to/from execution profile core/API models
+    /// </summary>
     public static class ExecutionProfileExtensions
     {
         public static ExecutionProfile ToCoreModel(this ExecutionProfileApiModel apiModel) =>

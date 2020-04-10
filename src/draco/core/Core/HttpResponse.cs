@@ -5,6 +5,9 @@ using System.Net;
 
 namespace Draco.Core
 {
+    /// <summary>
+    /// Describes a generic HTTP response returned by a REST API.
+    /// </summary>
     public class HttpResponse
     {
         public HttpResponse() { }
@@ -17,6 +20,10 @@ namespace Draco.Core
         public HttpStatusCode StatusCode { get; set; }
     }
 
+    /// <summary>
+    /// Describes a generic HTTP response and type-specific body returned by a REST API.
+    /// </summary>
+    /// <typeparam name="TResponse">The type of HTTP response body</typeparam>
     public class HttpResponse<TResponse> : HttpResponse
     {
         public HttpResponse() { }

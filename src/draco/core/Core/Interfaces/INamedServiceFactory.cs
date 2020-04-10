@@ -6,6 +6,10 @@ using System.Collections.Generic;
 
 namespace Draco.Core.Interfaces
 {
+    /// <summary>
+    /// Defines a generic mechanism for creating and managing named services.
+    /// </summary>
+    /// <typeparam name="TService">The type of service that the factory creates</typeparam>
     public interface INamedServiceFactory<TService>
     {
         IEnumerable<string> Keys { get; }
