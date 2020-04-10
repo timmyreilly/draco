@@ -1,0 +1,55 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-echo
+spec:
+  replicas: 1
+  minReadySeconds: 1 # Default 0
+  progressDeadlineSeconds: 60 # Default 600 - Allow for shorter time before fail
+  revisionHistoryLimit: 5 # Allow keeping 5 deployments history for rollback
+  strategy:
+    type: RollingUpdate # How do you want to update the pods?
+    rollingUpdate:
+      maxSurge: 1 # Default 25% - number allowed to go over during update
+      maxUnavailable: 1 # Default 25% - number allowed to go down at a time
+  selector:
+    matchLabels: # This is the magic string that ties all these parts together MUST MATCH ACROSS ALL PARTS
+      app: echo-sample
+  template: # This is a POD spec that will be run on each of the replicas specified above
+    metadata:
+      labels:
+        app: echo-sample # This is the magic string that ties all these parts together MUST MATCH ACROSS ALL PARTS
+    spec:
+      containers:  # Use :latest to ensure the most recent image is used
+      - name: echo-host
+        image: {{ACR_NAME}}.azureacr.io/echo:latest  
+        imagePullPolicy: Always  # Force the image to be downloaded
+        resources:
+            limits:
+              memory: "200Mi" # Limit the max RAM
+              cpu: "200m" # About 20% of the CPU
+            requests:
+              memory: "128Mi" # Ram we need to operate
+        ports: # Open all ports you want forwarded from the service to the instances of the pods
+        - containerPort: 80
+        - containerPort: 443
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-echo
+  labels: 
+    app: echo-sample # This is the magic string that ties all these parts together MUST MATCH ACROSS ALL PARTS
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80  # You can change the target port on the pod, but we will just pass direct
+    name: api
+  - port: 443
+    targetPort: 443
+    name: apis
+  selector:
+    app: echo-sample # This is the magic string that ties all these parts together MUST MATCH ACROSS ALL PARTS

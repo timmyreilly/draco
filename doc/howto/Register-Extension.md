@@ -59,14 +59,14 @@ This step uses the `Dockerfile` for the extension to build sample echo container
 
 ```bash
 cd src/extensions/samples/csharp/netcore-simple/echo
-docker build . --file Dockerfile --tag $ACR_NAME".azurecr.io/echo:latest"
+docker build . --file Dockerfile --tag $ACR_NAME".azurecr.io/sample-echo:latest"
 ```
 
 ## Push echo container image to Azure Container Registry
 
 ```bash
 az acr login --name $ACR_NAME
-docker push $ACR_NAME".azurecr.io/echo"
+docker push $ACR_NAME".azurecr.io/sample-echo"
 ```
 
 > NOTE: This will push to the Azure Container Registry (ACR). You can verify this in the portal via the ACR resource.
@@ -75,8 +75,10 @@ docker push $ACR_NAME".azurecr.io/echo"
 
 Using yaml file in the sample echo extension folder, deploy the echo extension into AKS.
 
+> NOTE: Kubectl will not do variable expansion from with a yaml file.  You MUST edit the yaml file below and replace the {{ACR_NAME}} string with your actual ACR_NAME.
+
 ```bash
-kubectl apply -f extension-echo.yaml
+kubectl apply -f sample-echo.yaml
 ```
 
 ## Validate Extension service is running in AKS
@@ -93,7 +95,7 @@ Get the extension management api External IP address from the Kubectl get servic
 
 ```bash
 NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-extensionecho1             LoadBalancer   10.0.117.50    X.X.X.X   80:30424/TCP,443:30466/TCP   21h
+sample-echo             LoadBalancer   10.0.117.50    X.X.X.X   80:30424/TCP,443:30466/TCP   21h
 initial-catalogapi         LoadBalancer   10.0.119.97    X.X.X.X   80:32542/TCP,443:32275/TCP   22h
 initial-executionapi       LoadBalancer   10.0.246.229   X.X.X.X   80:30844/TCP,443:31053/TCP   22h
 initial-extensionmgmtapi   LoadBalancer   10.0.150.241   X.X.X.X   80:32743/TCP,443:32610/TCP   22h
@@ -107,7 +109,7 @@ In the above example the **initial-extensionmgmtapi** EXTERNAL-IP is the value w
 Create a new extension registration for the echo service using the following rest calls.
 
 * Replace address with your DNS or IP address
-* Replace ***ExtensionName*** with the name of your extension (echo for this sample)
+* Replace ***ExtensionName*** with the name of your extension (sample-echo for this sample)
 
 ```json
 API Request
@@ -122,9 +124,9 @@ Request Payload (json)
 Use this format:
 {
     "name": "***ExtensionName***",
-    "category": "Demo",
+    "category": "Sample",
     "subcategory": "Test Extensions",
-    "description": "Test request for registration of an extension",
+    "description": "Sample echo request for registration of an extension",
     "publisherName": "Microsoft",
     "copyrightNotice": "Copyright (c) Microsoft Corporation",
     "additionalUrls": {
@@ -133,9 +135,8 @@ Use this format:
     },
     "isActive": true,
     "tags": [
-    "test",
     "echo",
-    "demo"
+    "sample"
     ]
 }
 ```
@@ -154,17 +155,16 @@ API Response
     },
     "model": {
                     "tags": [
-                        "test",
                         "echo",
-                        "demo"
+                        "sample"
                     ],
                     "id": "{{extension_id}}",
                     "name": "ExtensionName",
-                    "category": "Demo",
+                    "category": "Sample",
                     "subcategory": "Test Extensions",
                     "coverImageUrl": null,
                     "logoUrl": null,
-                    "description": "Test extension for registration of an extension",
+                    "description": "Sample echo extension for registration of an extension",
                     "publisherName": "Microsoft",
                     "copyrightNotice": "Copyright (c) Microsoft Corporation",
                     "isActive": true,
