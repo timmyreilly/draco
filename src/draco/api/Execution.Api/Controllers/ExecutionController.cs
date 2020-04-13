@@ -577,7 +577,7 @@ namespace Draco.Execution.Api.Controllers
                 ExecutionTimeoutDuration = erContext.ExtensionVersion.ExecutionExpirationPeriod,
                 Executor = erContext.Execution.Executor,
                 ExtensionId = erContext.Execution.ExtensionId,
-                
+                ExtensionSettings = erContext.ExecutionProfile.ExtensionSettings,
                 ExtensionVersionId = erContext.Execution.ExtensionVersionId,
                 InputObjects = erContext.ExtensionVersion.InputObjects.ToDictionary(io => io.Name),
                 LastUpdatedDateTimeUtc = erContext.Execution.LastUpdatedDateTimeUtc,
