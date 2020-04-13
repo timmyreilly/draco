@@ -1,0 +1,45 @@
+name: ci-infra-common
+
+on:
+  pull_request:
+    branches: master
+
+env:
+  rgName: 'common-rg-test'
+  rgLocation: 'westus'
+
+defaults:
+  run:    
+    working-directory: src/draco
+
+jobs:
+  build-test:
+    name: 'Build, Test, and Deploy Solution'
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Azure Login
+      uses: Azure/login@v1
+      with: # Paste output of `az ad sp create-for-rbac` as value
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Create Resource Group
+      run: az group create -l ${{ env.rgLocation }} -n ${{ env.rgName }}
+    - name: Azure Resource Manager (ARM) Template Deployment
+      uses: whiteducksoftware/azure-arm-action-js@v1
+      with:
+        resourceGroupName: ${{ env.rgName }}
+        templateLocation: src/draco/infra/ArmTemplate/common/common-deploy.json
+        deploymentMode: Incremental
+        deploymentName: test-deployment
+    - name: Delete Resource Group
+      run: az group delete -n ${{ env.rgName }} -y --no-wait

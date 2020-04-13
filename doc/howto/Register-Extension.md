@@ -47,7 +47,8 @@ DRACO_COMMON_RG_NAME="draco-common-rg"
 DRACO_PLATFORM_RG_NAME="draco-platform-rg"
 DRACO_REGION="eastus2"
 DRACO_AKS_CLUSTER=$(az aks list --resource-group $DRACO_PLATFORM_RG_NAME --query "[].name" --output tsv)
-ACR_NAME=$(az deployment group show --resource-group $DRACO_COMMON_RG_NAME --name common-deploy --query properties.outputs.acrName.value --output tsv)
+ACR_NAME=$(az acr list --resource-group $DRACO_COMMON_RG_NAME --query "[].name" --output tsv)
+
 ```
 
 ## Build sample echo container image
@@ -58,14 +59,14 @@ This step uses the `Dockerfile` for the extension to build sample echo container
 
 ```bash
 cd src/extensions/samples/csharp/netcore-simple/echo
-docker build . --file Dockerfile --tag $ACR_NAME.azurecr.io/echo:latest
+docker build . --file Dockerfile --tag $ACR_NAME".azurecr.io/sample-echo:latest"
 ```
 
 ## Push echo container image to Azure Container Registry
 
 ```bash
 az acr login --name $ACR_NAME
-docker push $ACR_NAME".azurecr.io/echo"
+docker push $ACR_NAME".azurecr.io/sample-echo"
 ```
 
 > NOTE: This will push to the Azure Container Registry (ACR). You can verify this in the portal via the ACR resource.
@@ -74,8 +75,10 @@ docker push $ACR_NAME".azurecr.io/echo"
 
 Using yaml file in the sample echo extension folder, deploy the echo extension into AKS.
 
+> NOTE: Kubectl will not do variable expansion from with a yaml file.  You MUST edit the yaml file below and replace the {{ACR_NAME}} string with your actual ACR_NAME.
+
 ```bash
-kubectl apply -f extension-echo.yaml
+kubectl apply -f sample-echo.yaml
 ```
 
 ## Validate Extension service is running in AKS
@@ -92,7 +95,7 @@ Get the extension management api External IP address from the Kubectl get servic
 
 ```bash
 NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-extensionecho1             LoadBalancer   10.0.117.50    X.X.X.X   80:30424/TCP,443:30466/TCP   21h
+sample-echo             LoadBalancer   10.0.117.50    X.X.X.X   80:30424/TCP,443:30466/TCP   21h
 initial-catalogapi         LoadBalancer   10.0.119.97    X.X.X.X   80:32542/TCP,443:32275/TCP   22h
 initial-executionapi       LoadBalancer   10.0.246.229   X.X.X.X   80:30844/TCP,443:31053/TCP   22h
 initial-extensionmgmtapi   LoadBalancer   10.0.150.241   X.X.X.X   80:32743/TCP,443:32610/TCP   22h
@@ -106,13 +109,13 @@ In the above example the **initial-extensionmgmtapi** EXTERNAL-IP is the value w
 Create a new extension registration for the echo service using the following rest calls.
 
 * Replace address with your DNS or IP address
-* Replace ***ExtensionName*** with the name of your extension (echo for this sample)
+* Replace ***ExtensionName*** with the name of your extension (sample-echo for this sample)
 
 ```json
 API Request
 HTTP Verb and URL:  
     Set Verb to POST
-    Set URL to http://address/extensions
+    Set URL to {{extmgmt_url}}/extensions
 
 Request Headers:
     Content-Type: application/json
@@ -121,9 +124,9 @@ Request Payload (json)
 Use this format:
 {
     "name": "***ExtensionName***",
-    "category": "Demo",
+    "category": "Sample",
     "subcategory": "Test Extensions",
-    "description": "Test request for registration of an extension",
+    "description": "Sample echo request for registration of an extension",
     "publisherName": "Microsoft",
     "copyrightNotice": "Copyright (c) Microsoft Corporation",
     "additionalUrls": {
@@ -132,9 +135,8 @@ Use this format:
     },
     "isActive": true,
     "tags": [
-    "test",
     "echo",
-    "demo"
+    "sample"
     ]
 }
 ```
@@ -153,17 +155,16 @@ API Response
     },
     "model": {
                     "tags": [
-                        "test",
                         "echo",
-                        "demo"
+                        "sample"
                     ],
-                    "id": "***ExtensionID***",
+                    "id": "{{extension_id}}",
                     "name": "ExtensionName",
-                    "category": "Demo",
+                    "category": "Sample",
                     "subcategory": "Test Extensions",
                     "coverImageUrl": null,
                     "logoUrl": null,
-                    "description": "Test extension for registration of an extension",
+                    "description": "Sample echo extension for registration of an extension",
                     "publisherName": "Microsoft",
                     "copyrightNotice": "Copyright (c) Microsoft Corporation",
                     "isActive": true,
@@ -173,14 +174,14 @@ API Response
 }
 ```
 
-> NOTE:  Copy **ExtensionID** returned in the model section, you will need this in following steps.
+> NOTE:  Copy {{extension_id}} returned in the model section, you will need this in following steps.
 
 ## Create the sample echo extension version
 
 Register a new extension version using the following steps:
 
 * Replace address with your DNS or IP address.
-* Replace **ExtensionId** with the value from the previous step.
+* Replace {{extension_id}} with the value from the previous step.
 * Replace **ExtensionName** with the name of the extension.
 * "version" should also be set to the version of the extension [x.xx format].
 
@@ -190,7 +191,7 @@ Register a new extension version using the following steps:
 API Request
 HTTP Verb and URL:  
     Set Verb to POST
-    Set URL to address/extensions/***ExtensionId***/versions
+    Set URL to {{extmgmt_url}}/extensions/{{extension_id}}/versions
 
 Request Headers:
     Content-Type: application/json
@@ -231,7 +232,7 @@ API response:
             "postNewService": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/services"
         },
         "model": {
-            "id": "***ExtensionVersionId***",
+            "id": "{{extension_version_id}}",
             "extensionId": "ExtensionId",
             "releaseNotes": null,
             "requestTypeName": "ExtensionName/requests/v1",
@@ -257,15 +258,15 @@ Each extension also need an execution profile to be set for the version.  For th
 **TODO** Replace with link to other execution models
 
 * Replace address with your DNS or IP address
-* Replace ***ExtensionId***
-* Replace ***ExtensionVersionId***
-* Replace ***ExtensionName*** extension name
+* Replace {{extension_id}}
+* Replace {{extension_version_id}}
+* Replace ***ExtensionExecutionUrl***  - This is your complete URL to call your extension.  In the case of this echo extension it should be http://**echo svc public ip**/echo.
 
 ```json
 API Request
 HTTP Verb and URL:
     Set Verb to POST
-    Set URL to DNSname/extensions/***ExtensionId***/versions/***ExtensionVersionId***/profiles
+    Set URL to {{extmgmt_url}}/extensions/{{extension_id}}/versions/{{extension_version_id}}/profiles
 
 Request Headers:
     Content-Type: application/json
@@ -281,13 +282,14 @@ Use this format:
         "supportedPriorities": [
         "normal"
         ],
-        "extensionSettings": {
-        "executionUrl": "address/***ExtensionName***"
+        "extensionSettings":
+        {
+            "executionUrl": "***ExtensionExecutionUrl***=(http://<<echo svc public ip>>/echo)"
         }
     }
 ```
 
-The platform service will return the **executionUrl** from the params above.
+The platform service will return success for registration.
 
 ```json
 API response:
@@ -307,8 +309,8 @@ API response:
     },
     "model": {
         "name": "default",
-        "extensionId": "ExtensionId",
-        "extensionVersionId": "ExtensionVersionId",
+        "extensionId": "{{extension_id}}",  # Matches value passed in
+        "extensionVersionId": "{{extension_version_id}}", # Matches value passed in
         "description": null,
         "executionModel": "http-json/sync/v1",
         "objectProvider": "az-blob/v1",
@@ -320,7 +322,7 @@ API response:
         ],
         "clientConfiguration": {},
         "extensionSettings": {
-            "executionUrl": "***address/ExtensionName***"
+            "executionUrl": "***ExtensionExecutionUrl***"  # Should match value passed in
         }
     }
 }
