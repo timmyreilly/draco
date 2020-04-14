@@ -6,6 +6,10 @@ using System;
 
 namespace Draco.Core.ObjectStorage.Models
 {
+    /// <summary>
+    /// This is the request that execution object URL providers use to generate URLs.
+    /// For more information on execution objects, see /doc/architecture/execution-objects.md.
+    /// </summary>
     public class ObjectUrlRequest
     {
         public ObjectUrlRequest() { }

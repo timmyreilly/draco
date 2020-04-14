@@ -7,6 +7,10 @@ using System;
 
 namespace Draco.Core.ObjectStorage.Models
 {
+    /// <summary>
+    /// This is the request that input object accessor providers use to generate accessors.
+    /// For more information on object accessors, see /doc/architecture/execution-objects.md#accessors.
+    /// </summary>
     public class InputObjectAccessorRequest
     {
         public ExtensionInputObject ObjectMetadata { get; set; }
