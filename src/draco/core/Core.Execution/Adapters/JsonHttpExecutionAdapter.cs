@@ -165,12 +165,14 @@ namespace Draco.Core.Execution.Adapters
             {
                 // If the extension responded with a [202 Accepted], the execution is long-running. Mark the execution as [Processing].
                 // The extension is expected to call back to the execution API with status updates.
+
                 case HttpStatusCode.Accepted:
                     logger.LogInformation($"Execution [{execContext.ExecutionId}] is long-running.");
                     execContext.UpdateStatus(ExecutionStatus.Processing);
                     break;
 
-                // If the extension responded with a [200 OK], execution was succesful. Mark the execution as such. 
+                // If the extension responded with a [200 OK], execution was succesful. Mark the execution as such.
+
                 case HttpStatusCode.OK:
                     logger.LogInformation($"Execution [{execContext.ExecutionId}] complete.");
                     execContext.UpdateStatus(ExecutionStatus.Succeeded);
@@ -180,12 +182,14 @@ namespace Draco.Core.Execution.Adapters
                 // called the extension wrong. The extension may have provided further information as [validationErrors].
                 // If [validationErrors] were provided, mark the execution as [ValidationFailed].
                 // If [validationErrors] were not provided, something else went wrong, so mark the execution as [Failed].
+
                 case HttpStatusCode.BadRequest:
                     logger.LogWarning($"Execution request [{execContext.ExecutionId}] is invalid.");
                     ProcessBadRequest(execContext, httpExecResponse.Content);
                     break;
 
                 // The extension responded with a status code that we didn't expect. Throw an exception...
+
                 default:
                     throw new HttpRequestException($"Extension returned an unexpected status code: [{httpExecResponse.StatusCode}].");
             }
@@ -210,6 +214,7 @@ namespace Draco.Core.Execution.Adapters
             switch (httpExecResponse.StatusCode)
             {
                 // If the extension responded with a [200 OK], mark the execution [ValidationSucceeded].
+
                 case HttpStatusCode.OK:
                     logger.LogInformation($"Execution request [{execContext.ExecutionId}] is valid.");
                     execContext.UpdateStatus(ExecutionStatus.ValidationSucceeded);
@@ -219,12 +224,14 @@ namespace Draco.Core.Execution.Adapters
                 // called the extension wrong. The extension may have provided further information as [validationErrors].
                 // If [validationErrors] were provided, mark the execution as [ValidationFailed].
                 // If [validationErrors] were not provided, something else went wrong, so mark the execution as [Failed].
+
                 case HttpStatusCode.BadRequest:
                     logger.LogInformation($"Execution request [{execContext.ExecutionId}] is invalid.");
                     ProcessBadRequest(execContext, httpExecResponse.Content);
                     break;
 
                 // The extension responded with a status code that we didn't expect. Throw an exception...
+                
                 default:
                     throw new HttpRequestException($"Extension returned an unexpected status code: [{httpExecResponse.StatusCode}].");
             }
