@@ -11,3 +11,10 @@ This document provides detailed guidance on debugging the core Draco services (A
   * For more information on setting up Draco, see [this document](/doc/setup).
 * [Visual Studio 2019](https://visualstudio.microsoft.com/vs/)
   * If you don't already have Visual Studio 2019 installed, you can [download](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=Community&rel=16) and use Visual Studio 2019 Community Edition for **free** for the purposes of debugging Draco. For more information on Community Edition license terms, see [this document](https://visualstudio.microsoft.com/license-terms/mlt031819/).
+  
+## Instructions
+
+| Instructions | Screenshot |
+| ------------ | ---------- |
+| Navigate to the Azure portal. | |
+| Navigate to the Draco platform resource group. By default, the name of this resource group is `draco-platform-rg` unless you explicitly chose a different one during the initial [setup](/doc/setup) process. | | 
