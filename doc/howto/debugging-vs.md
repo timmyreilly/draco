@@ -16,6 +16,6 @@ This document provides detailed guidance on debugging the core Draco services (A
 
 | Instructions | Screenshot |
 | ------------ | ---------- |
-| Navigate to the Azure portal. | |
+| Navigate to the Azure portal. | ![Azure portal](/doc/images/debug-portal.JPG) |
 | Navigate to the Draco platform resource group. By default, the name of this resource group is `draco-platform-rg` unless you explicitly chose a different one during the initial [setup](/doc/setup) process. | |
 | Locate the Draco platform storage account within the resource group. The name of your storage account won't be the same as that shown in the screenshot but, by default, it will be the only storage account in the resource group. | |
