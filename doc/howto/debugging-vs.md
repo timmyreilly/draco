@@ -1,6 +1,6 @@
 # Debugging Draco services locally
 
-This document provides detailed guidance on debugging the core Draco services (API and remote execution agent) running in your Azure environment from your local machine using [Visual Studio 2019](https://visualstudio.microsoft.com/vs/).
+This document provides detailed guidance on debugging the core Draco services (API and remote execution agent) running in your Azure environment from your local developer machine using [Visual Studio 2019](https://visualstudio.microsoft.com/vs/).
 
 > Documentation for other development environments (Visual Studio Code, etc.) is on the roadmap. We welcome contributions from the community in building this documentation out.
 
