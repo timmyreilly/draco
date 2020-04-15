@@ -34,13 +34,14 @@ namespace Draco.Catalog.Api.Controllers
         /// Gets available extensions based on the provided full-text search criteria [q]
         /// </summary>
         /// <param name="q">The full-text search criteria</param>
+        /// <param name="tags">Tags </param>
         /// <param name="pageIndex">The search results page index (first page is 0)</param>
         /// <param name="pageSize">The search results page size</param>
         /// <response code="200">Search results returned.</response>
         /// <response code="400">See error text for more details.</response>
         [HttpGet("search")]
         [ProducesResponseType(typeof(CatalogSearchResultsApiModel), 200)]
-        public async Task<IActionResult> SearchAsync([Required] string q, int pageIndex = 0, int pageSize = 10)
+        public async Task<IActionResult> SearchAsync([Required] string q, string tags, int pageIndex = 0, int pageSize = 10)
         {
             // Check to make sure that paging parameters make sense...
 
@@ -64,6 +65,7 @@ namespace Draco.Catalog.Api.Controllers
             {
                 PageIndex = pageIndex,
                 PageLength = pageSize,
+                Tags = tags,
                 Query = q
             };
 
@@ -220,6 +222,52 @@ namespace Draco.Catalog.Api.Controllers
             // Otherwise, respond with [200 OK] + extension version detail...
 
             return Ok(ToDetailApiModel(extensionVersion));
+        }
+
+        /// <summary>
+        /// Gets available extensions based on the provided extension tags search criteria
+        /// </summary>
+        /// <param name="tags">The tags search criteria</param>
+        /// <param name="pageIndex">The search results page index (first page is 0)</param>
+        /// <param name="pageSize">The search results page size</param>
+        /// <response code="200">Search results returned.</response>
+        /// <response code="400">See error text for more details.</response>
+        [HttpGet("search/{tags}")]
+        [ProducesResponseType(typeof(CatalogSearchResultsApiModel), 200)]
+        public async Task<IActionResult> SearchAsync([Required] string tags = null, int pageIndex = 0, int pageSize = 10)
+        {
+            // Check to make sure that paging parameters make sense...
+
+            var errors = ValidatePaging(pageIndex, pageSize).ToList();
+
+            // Check to make sure search criteria was provided...
+
+            if (string.IsNullOrEmpty(tags))
+            {
+                errors.Add($"[tags] are required.");
+            }
+
+            // If there were any validation errors, respond with [400 Bad Request] + detailed error description...
+
+            if (errors.Any())
+            {
+                return BadRequest(string.Join(' ', errors));
+            }
+
+            var searchRequest = new CatalogSearchRequest
+            {
+                PageIndex = pageIndex,
+                PageLength = pageSize,
+                Tags = tags
+            };
+
+            // Run the search...
+
+            var searchResults = await catalogSearchService.SearchAsync(searchRequest);
+
+            // Always respond with [200 OK] even if there aren't any results...
+
+            return Ok(ToDetailApiModel(searchResults));
         }
 
         private string GetGetExtensionDetailUrl(string extensionId, string searchId, string actionId) =>

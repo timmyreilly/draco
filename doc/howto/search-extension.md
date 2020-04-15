@@ -115,3 +115,21 @@ API Response
 
     Same as Extension search above
 ```
+
+## Search the Draco platform Catalog API for Tags
+
+* Replace address with your DNS or IP address from the catalogAPI - External IP above.
+* Replace {{tag}} with the tag associated with the Extension
+
+```json
+API Request
+HTTP Verb and URL:  
+    Set Verb to GET
+    Set URL to http://address/catalog/search/{{tag}}
+```
+
+```json
+API Response
+
+    Same as Extension search above
+```
