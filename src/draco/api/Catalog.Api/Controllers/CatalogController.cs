@@ -32,16 +32,16 @@ namespace Draco.Catalog.Api.Controllers
 
         /// <summary>
         /// Gets available extensions based on the provided full-text search criteria [q]
+        /// Added tags as an optional filter
         /// </summary>
         /// <param name="q">The full-text search criteria</param>
-        /// <param name="tags">Tags </param>
         /// <param name="pageIndex">The search results page index (first page is 0)</param>
         /// <param name="pageSize">The search results page size</param>
         /// <response code="200">Search results returned.</response>
         /// <response code="400">See error text for more details.</response>
         [HttpGet("search")]
         [ProducesResponseType(typeof(CatalogSearchResultsApiModel), 200)]
-        public async Task<IActionResult> SearchAsync([Required] string q, string tags, int pageIndex = 0, int pageSize = 10)
+        public async Task<IActionResult> SearchAsync([Required] string q, int pageIndex = 0, int pageSize = 10)
         {
             // Check to make sure that paging parameters make sense...
 
@@ -65,7 +65,6 @@ namespace Draco.Catalog.Api.Controllers
             {
                 PageIndex = pageIndex,
                 PageLength = pageSize,
-                Tags = tags,
                 Query = q
             };
 
@@ -258,7 +257,7 @@ namespace Draco.Catalog.Api.Controllers
             {
                 PageIndex = pageIndex,
                 PageLength = pageSize,
-                Tags = tags
+                Tags = tags 
             };
 
             // Run the search...
