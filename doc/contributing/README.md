@@ -37,3 +37,4 @@ The following table outlines the resource naming conventions that Draco adheres 
 | Container registry | `acr` | `draco6eqa2ltcvlhp2acr` |
 | Key vault | `akv` | `draco-6eqa2ltcvlhp2-akv` |
 | Application insights | `appi` | `draco6eqa2ltcvlhp2appi`
+| Logging and Monitoring | `log` | `draco-6eqa2ltcvlhp2-log` |
