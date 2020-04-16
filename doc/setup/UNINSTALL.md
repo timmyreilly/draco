@@ -8,7 +8,7 @@ These values must match the ones used during intial setup.
 
 ```bash
 DRACO_COMMON_RG_NAME="draco-common-rg"
-DRACO_PLATFORM_RG_NAME="draco-exthub-rg"
+DRACO_PLATFORM_RG_NAME="draco-platform-rg"
 DRACO_REGION="eastus2"
 DRACO_SPN_K8S="http://draco-k8s-***UNIQUE*VALUE***"  
 ```

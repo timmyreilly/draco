@@ -17,20 +17,34 @@ namespace echo.Controllers
     [Route("[controller]")]
     public class EchoController : ControllerBase
     {
+        private readonly ILogger _logger;
 
         public EchoController(ILogger<EchoController> logger)
         {
+            _logger = logger;
         }
 
         // POST echo
         [HttpPost]
         [ProducesResponseType(typeof(HttpExecutionResponse), 200)]
-        public async Task<IActionResult> PostEcho(HttpExecutionRequest execRequest)
+        public IActionResult PostEcho(HttpExecutionRequest execRequest)
         {
-            HttpExecutionResponse httpExecResponse = new HttpExecutionResponse();
-            httpExecResponse.ExecutionId = execRequest.ExecutionId;
-            httpExecResponse.ResponseData = JObject.FromObject(execRequest);
-            return Ok(httpExecResponse);
+            using( _logger.BeginScope("Echo Post") )
+            {
+                HttpExecutionResponse httpExecResponse = new HttpExecutionResponse();
+                httpExecResponse.ExecutionId = execRequest.ExecutionId;
+                httpExecResponse.ResponseData = JObject.FromObject(execRequest);
+                return Ok(httpExecResponse);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            using(_logger.BeginScope("Echo probe get"))
+            {
+                return Ok("Please POST the following snippet: \r\n{ \"requestData\": { \"request\": \"some request data\" }, \"properties\": { \"message\": \"hello, world!\" } }");
+            }
         }
 
     }

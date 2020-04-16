@@ -24,8 +24,23 @@ spec:
     spec:
       containers:  # Use :latest to ensure the most recent image is used
       - name: echo-host
-        image: {{ACR_NAME}}.azureacr.io/echo:latest  
+        image: {{ACR_NAME}}.azureacr.io/sample-echo:latest
         imagePullPolicy: Always  # Force the image to be downloaded
+        livenessProbe:
+          httpGet:
+            path: /healthcheck # Any url to determine if the extension is running
+            port: 80
+          initialDelaySeconds: 15
+          timeoutSeconds: 2  # How long for the service to respond?
+          periodSeconds: 60  # Check every 60 seconds for service being alive
+          failureThreshold: 1 # If we can't reach it, restart
+        readinessProbe:
+          httpGet:
+            path: /health  # Ensure this is a valid path for your application
+            port: 80
+          initialDelaySeconds: 2  # How long until readiness should be checked
+          periodSeconds: 5  # How many seconds to wait between tries
+          failureThreshold: 6 # We will wait 30 seconds and then declare the pod bad
         resources:
             limits:
               memory: "200Mi" # Limit the max RAM
