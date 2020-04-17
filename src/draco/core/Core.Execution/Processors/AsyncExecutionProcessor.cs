@@ -15,6 +15,13 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Execution.Processors
 {
+    /// <summary>
+    /// This processor invokes the appropriate execution adapter [TAdapter] to execute the target extension
+    /// and reports execution updates back to the remote execution API via HTTP PUT. Typically, this processor is used in
+    /// asynchronous execution scenarios as part of the remote execution agent. For more information on execution processors and the
+    /// role that they play in the Draco execution pipeline, see /doc/architecture/execution-pipeline.md.
+    /// </summary>
+    /// <typeparam name="TAdapter">The type of execution adapter that this processor uses to execute an extension</typeparam>
     public class AsyncExecutionProcessor<TAdapter> : IExecutionProcessor<TAdapter> 
         where TAdapter : IExecutionAdapter
     {
@@ -49,6 +56,8 @@ namespace Draco.Core.Execution.Processors
                 throw new ArgumentNullException(nameof(execRequest));
             }
 
+            // We're about to execute the extension. Update the execution status to [Processing].
+
             var execContext = execRequest.ToExecutionContext().UpdateStatus(ExecutionStatus.Processing);
 
             logger.LogInformation($"Updating execution [{execRequest.ExecutionId}] status: [{execContext.Status}]...");
@@ -57,9 +66,13 @@ namespace Draco.Core.Execution.Processors
 
             logger.LogInformation($"Processing execution request [{execRequest.ExecutionId}]...");
 
+            // Invoke the execution adapter and execute the extension.
+
             execContext = await this.execAdapter.ExecuteAsync(execRequest, cancelToken);
 
             logger.LogInformation($"Updating execution [{execRequest.ExecutionId}] status: [{execContext.Status}]...");
+
+            // All done! Update the execution status based on the response from the execution adapter.
 
             await UpdateExecutionStatusAsync(execRequest.UpdateExecutionStatusUrl, execContext.ToExecutionUpdate());
 

@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Draco.Core.Catalog.Models
 {
+    /// <summary>
+    /// Top-level structure for navigating search results.
+    /// </summary>
     public class CatalogSearchResults
     {
         public string SearchId { get; set; }

@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Execution.Processors
 {
+    /// <summary>
+    /// This is the default execution request router that routes execution requests to the appropriate
+    /// processor based on execution model name. For more information on the execution request router and the
+    /// role that it plays in the Draco execution pipeline, see /doc/architecture/execution-pipeline.md.
+    /// </summary>
     public class ExecutionRequestRouter : IExecutionRequestRouter
     {
         private readonly INamedServiceFactory<IExecutionProcessor> processorFactory;
@@ -29,10 +34,15 @@ namespace Draco.Core.Execution.Processors
                 throw new ArgumentNullException(nameof(execRequest));
             }
 
+            // If this hub doesn't support a specific execution model, throw an exception and let the
+            // execution API communicate the failure back to the client appropriately.
+
             if (processorFactory.CanCreateService(execRequest.ExecutionModelName) == false)
             {
                 throw new NotSupportedException($"Execution model [{execRequest.ExecutionModelName}] not supported.");
             }
+
+            // Otherwise, create the processor and dispatch the execution request.
 
             var processor = processorFactory.CreateService(execRequest.ExecutionModelName, serviceProvider);
 

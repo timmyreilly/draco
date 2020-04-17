@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Execution.Services
 {
+    /// <summary>
+    /// Digitally signs HTTP execution requests.
+    /// </summary>
     public class HttpExecutionRequestSigner : ISigner<HttpExecutionRequest>
     {
         private readonly ISigner stringSigner;
@@ -29,6 +32,9 @@ namespace Draco.Core.Execution.Services
                 throw new ArgumentNullException(nameof(toSign));
             }
 
+            // Convert the execution request to a canonical string.
+            // TODO: Document this string format so that target extensions can verify execution request signatures.
+
             var toSignAsString =
                 $"{toSign.ExecutionId}|" +
                 $"{toSign.ExecutionProfileName}|" +
@@ -37,6 +43,8 @@ namespace Draco.Core.Execution.Services
                 $"{toSign.StatusUpdateKey}|" +
                 $"{toSign.GetExecutionStatusUrl}|" +
                 $"{toSign.UpdateExecutionStatusUrl}";
+
+            // Use the generic string signer to sign the canonical execution request string.
 
             return stringSigner.GenerateSignatureAsync(rsaKeyXml, toSignAsString);
         }

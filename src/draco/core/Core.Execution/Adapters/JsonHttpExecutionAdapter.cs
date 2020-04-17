@@ -20,6 +20,10 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Execution.Adapters
 {
+    /// <summary>
+    /// This execution adapter supports the "json-http/async/v1" and "json-http/sync/v1" execution models.
+    /// For more information, see /doc/architecture/execution-models.md#example.
+    /// </summary>
     public class JsonHttpExecutionAdapter : BaseExecutionAdapter, IExecutionAdapter
     {
         private readonly TimeSpan defaultTimeoutPeriod = TimeSpan.FromHours(1);
@@ -53,19 +57,33 @@ namespace Draco.Core.Execution.Adapters
 
             logger.LogInformation($"Processing execution request [{execRequest.ExecutionId}]...");
 
+            // Give all the applicable extension services a chance to do any synchronous pre-work ahead of the actual execution...
+            // For more information on extension services, see /doc/architecture/extension-services.md.
+
             await (execRequest.ValidateOnly ?
                    this.execServiceProvider.OnValidatingAsync(execRequest) :
                    this.execServiceProvider.OnExecutingAsync(execRequest));
+
+            // UTC now + the execution timeout on the execution request if it was provided.
+            // If no execution timeout was defined, default to an hour [defaultTimeoutPeriod].
 
             execRequest.CalculateExecutionTimeoutDateTimeUtc(defaultTimeoutPeriod);
 
             logger.LogDebug($"Execution [{execRequest.ExecutionId}] timeout set to [{execRequest.ExecutionTimeoutDateTimeUtc}] UTC.");
 
+            // We're about to execution the extension. Create an execution context to capture the results...
+
             var execContext = execRequest.ToExecutionContext();
 
             try
             {
+                // Deserialize the execution model-specific settings, provided in the [execRequest.extensionSettings] JSON object property,
+                // to get the execution and/or validation URLs that we need to handle the request.
+
                 var httpSettings = GetHttpExtensionSettings(execRequest);
+
+                // Create the execution request that we'll POST to the extension...
+
                 var httpExecRequest = await ToHttpExecutionRequestAsync(execRequest);
 
                 logger.LogDebug($"Execution [{execRequest.ExecutionId}] URL is [{httpSettings.ExecutionUrl}].");
@@ -73,6 +91,9 @@ namespace Draco.Core.Execution.Adapters
                 logger.LogDebug(string.IsNullOrEmpty(httpSettings.ValidationUrl) ?
                                 $"Execution [{execRequest.ExecutionId}] validation URL is [{httpSettings.ValidationUrl}]." :
                                 $"Execution [{execRequest.ExecutionId}] validation URL not provided.");
+
+                // If there was a valid RSA public/private key pair provided along with the request,
+                // sign the request before we send it along to the extension...
 
                 if (!string.IsNullOrEmpty(execRequest.SignatureRsaKeyXml))
                 {
@@ -83,16 +104,23 @@ namespace Draco.Core.Execution.Adapters
 
                 if (execRequest.ValidateOnly)
                 {
+                    // If it's a validation only request, make sure that the extension actually supports validation.
+                    // Under normal circumstances, this should have been caught way further upstream at the execution API.
+
                     if (execRequest.IsValidationSupported == false)
                     {
                         throw new NotSupportedException($"Extension [{execRequest.ExtensionId}:{execRequest.ExtensionVersionId}] " +
                                                          "does not support validation.");
                     }
 
+                    // Validate the request...
+
                     execContext = await ValidateAsync(execContext, httpExecRequest, httpSettings);
                 }
                 else
                 {
+                    // Execute the request...
+
                     execContext = await ExecuteAsync(execContext, httpExecRequest, httpSettings);
                 }
             }
@@ -104,6 +132,9 @@ namespace Draco.Core.Execution.Adapters
             }
             finally
             {
+                // Give all the applicable extension services a chance to do any synchronous post-work after the execution
+                // regardless of whether or not it succeeded. For more information on extension services, see /doc/architecture/extension-services.md.
+
                 await (execRequest.ValidateOnly ?
                        this.execServiceProvider.OnValidatedAsync(execContext) :
                        this.execServiceProvider.OnExecutedAsync(execContext));
@@ -119,8 +150,12 @@ namespace Draco.Core.Execution.Adapters
         {
             logger.LogInformation($"Posting execution request [{execContext.ExecutionId}] to [{httpSettings.ExecutionUrl}]...");
 
+            // POST the request to the extension...
+
             var httpExecResponse = await this.jsonHttpClient.PostAsync<HttpExecutionResponse>(
                 httpSettings.ExecutionUrl, httpExecRequest);
+
+            // Gather all the appropriate information returned from the extension...
 
             execContext.ResultData = httpExecResponse.Content?.ResponseData;
             execContext.ProvidedOutputObjects = httpExecResponse.Content?.ProvidedOutputObjects;
@@ -128,18 +163,33 @@ namespace Draco.Core.Execution.Adapters
 
             switch (httpExecResponse.StatusCode)
             {
+                // If the extension responded with a [202 Accepted], the execution is long-running. Mark the execution as [Processing].
+                // The extension is expected to call back to the execution API with status updates.
+
                 case HttpStatusCode.Accepted:
                     logger.LogInformation($"Execution [{execContext.ExecutionId}] is long-running.");
                     execContext.UpdateStatus(ExecutionStatus.Processing);
                     break;
+
+                // If the extension responded with a [200 OK], execution was succesful. Mark the execution as such.
+
                 case HttpStatusCode.OK:
                     logger.LogInformation($"Execution [{execContext.ExecutionId}] complete.");
                     execContext.UpdateStatus(ExecutionStatus.Succeeded);
                     break;
+
+                // If the extension responded with a [400 Bad Request], either we called the extension wrong OR the client
+                // called the extension wrong. The extension may have provided further information as [validationErrors].
+                // If [validationErrors] were provided, mark the execution as [ValidationFailed].
+                // If [validationErrors] were not provided, something else went wrong, so mark the execution as [Failed].
+
                 case HttpStatusCode.BadRequest:
                     logger.LogWarning($"Execution request [{execContext.ExecutionId}] is invalid.");
                     ProcessBadRequest(execContext, httpExecResponse.Content);
                     break;
+
+                // The extension responded with a status code that we didn't expect. Throw an exception...
+
                 default:
                     throw new HttpRequestException($"Extension returned an unexpected status code: [{httpExecResponse.StatusCode}].");
             }
@@ -152,21 +202,36 @@ namespace Draco.Core.Execution.Adapters
         {
             logger.LogInformation($"Posting execution validation request [{execContext.ExecutionId}] to [{httpSettings.ValidationUrl}]...");
 
+            // POST the validation request to the extension...
+
             var httpExecResponse = await this.jsonHttpClient.PostAsync<HttpExecutionResponse>(
                 httpSettings.ValidationUrl, httpExecRequest);
+
+            // Grab any validation errors...
 
             execContext.ValidationErrors = httpExecResponse.Content?.ValidationErrors?.Select(ve => ve.ToCoreModel()).ToList();
 
             switch (httpExecResponse.StatusCode)
             {
+                // If the extension responded with a [200 OK], mark the execution [ValidationSucceeded].
+
                 case HttpStatusCode.OK:
                     logger.LogInformation($"Execution request [{execContext.ExecutionId}] is valid.");
                     execContext.UpdateStatus(ExecutionStatus.ValidationSucceeded);
                     break;
+
+                // If the extension responded with a [400 Bad Request], either we called the extension wrong OR the client
+                // called the extension wrong. The extension may have provided further information as [validationErrors].
+                // If [validationErrors] were provided, mark the execution as [ValidationFailed].
+                // If [validationErrors] were not provided, something else went wrong, so mark the execution as [Failed].
+
                 case HttpStatusCode.BadRequest:
                     logger.LogInformation($"Execution request [{execContext.ExecutionId}] is invalid.");
                     ProcessBadRequest(execContext, httpExecResponse.Content);
                     break;
+
+                // The extension responded with a status code that we didn't expect. Throw an exception...
+                
                 default:
                     throw new HttpRequestException($"Extension returned an unexpected status code: [{httpExecResponse.StatusCode}].");
             }

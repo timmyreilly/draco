@@ -12,6 +12,13 @@ using System.Threading.Tasks;
 
 namespace Draco.Core.Execution.Processors
 {
+    /// <summary>
+    /// This processor invokes the appropriate execution adapter [TAdapter] to execute the target extension
+    /// and reports execution updates directly back to the execution API in-process. Typically, this processor is used in
+    /// synchronous execution scenarios as part of the execution or execution adapter APIs. For more information on execution processors and the
+    /// role that they play in the Draco execution pipeline, see /doc/architecture/execution-pipeline.md.
+    /// </summary>
+    /// <typeparam name="TAdapter">The type of execution adapter that this processor uses to execute an extension</typeparam>
     public class ExecutionProcessor<TAdapter> : IExecutionProcessor<TAdapter> 
         where TAdapter : IExecutionAdapter
     {
@@ -38,6 +45,9 @@ namespace Draco.Core.Execution.Processors
             {
                 throw new ArgumentNullException(nameof(execRequest));
             }
+
+            // We're not doing much here. In the case of synchronous execution, the processor is really just a lightweight "coupling"
+            // that connects the execution or execution adapter API to the execution adapter.
 
             logger.LogInformation($"Processing execution request [{execRequest.ExecutionId}]...");
 

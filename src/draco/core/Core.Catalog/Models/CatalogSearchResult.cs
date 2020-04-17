@@ -7,6 +7,9 @@ namespace Draco.Core.Catalog.Models
 {
     public class CatalogSearchResult
     {
+        // TODO: [ActionId] to be used as part of reinforcement learning (initially Azure Cognitive Services Personalizer)
+        //       capability to make intelligent extension recommendations.
+
         public string ActionId { get; set; }
         public string ExtensionId { get; set; }
         public string ExtensionName { get; set; }

@@ -7,6 +7,11 @@ using System.Collections.Generic;
 
 namespace Draco.Core.ObjectStorage.Models
 {
+    /// <summary>
+    /// URL + associated metadata used to access an execution object.
+    /// For URL-based object accessors, this model is typically the accessor itself.
+    /// For more information on execution objects and accessors, see /doc/architecture/execution-objects.md.
+    /// </summary>
     public class ObjectUrl
     {
         [JsonProperty("url")]

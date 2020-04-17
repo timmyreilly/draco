@@ -10,6 +10,7 @@ namespace Draco.Execution.Api.Models
 {
     public class DirectExecutionRequestApiModel
     {
+        [JsonProperty("executionId")]
         public string ExecutionId { get; set; }
         [JsonProperty("extensionId")]
         public string ExtensionId { get; set; }
