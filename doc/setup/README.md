@@ -24,25 +24,38 @@ See [Draco Architecture](../architecture/azure-architecture.md) for more informa
   * docker  (You still need Docker Desktop from above)
   * kubernetes-cli
   * helm
-  
+
+## Login to Azure Subscription
+
+Use the following commands to authenticate to Azure and set the Azure subscription you want Draco deployed in.
+
+```bash
+az login
+
+# If you have multiple subscriptions, set the subscription to use for Draco.
+az account list 
+az account set --subscription "Name of Subscription"
+```
+
 ## Run the common resources setup script
 
-This section sets up all the common resources (Azure Key Vault and Azure Container Registry) that will be shared across Draco platform deployments. Follow these instructions only if you have not already set up the common Draco resource group (by default `draco-commong-rg`). If you already have, feel free to [skip to the next section](#run-the-platform-resources-setup-script).
+This section sets up all the common resources (Key Vault, Container Registry, API Management) that will be shared across Draco platform deployments. Follow these instructions only if you have not already set up the common Draco resource group (by default `draco-commong-rg`). If you already have, feel free to [skip to the next section](#run-the-platform-resources-setup-script).
 
-> This section takes approximately 15 minutes.
+> This section takes approximately 35 minutes.
 
 ### Instructions
 
-1. Starting from your local Draco repository root, navigate to the common resources setup script directory. 
-   
-   * From the command line, run `cd src/draco/infra/ArmTemplate/common`.
+1. Starting from your local Draco repository root, run the following command:
+
+   ```
+   cd src/draco/infra
+   ```
    
 2. Execute the common resource setup script. From the command line, run...
    
    ```bash
    ./setup-common.sh -l "[Azure region name]" \
-                     -n "[AKS service principal name]" \
-                     -s "[Your Subscription ID]"
+                     -n "[AKS service principal name]"
    ```
    
    * Replace `[Azure region name]` with the name of the Azure region that you would like to deploy Draco to. For example, if you want to deploy Draco the Central US region, replace `[Azure region name]` with `centralus`. For a complete list of Azure location names, run `az account list-locations -o table` from the command line.
@@ -51,63 +64,40 @@ This section sets up all the common resources (Azure Key Vault and Azure Contain
    
       > **Note**: The `[AKS service principal name]` needs to be unique to the Azure Active Directory (AAD) tenant protecting your target subscription.  If you have other deployments of this platform in subscriptions protected by the same AAD tenant, then change the value to something that doesn't currently exist in your tenant.    
    
-   * For complete usage information, run `./setup-common.sh`.
+   * For complete usage information and to see additional optional parameters available, run `./setup-common.sh`.
   
-3. If the common resource script executes successfully, you will be presented with a table containing important information needed in the next section similar to that below. Be sure to note these values somewhere.
+3. When the script finishes, it will output information needed in the next section similar to that below. Be sure to note these values somewhere.
 
    ```bash
    Common Resource Group Name:     [draco-common-rg]
-   Deployment Name:                [draco-common-...]
-   Container Registry ID:          [/subscriptions/...]
-   Container Registry Name:        [draco...]
-   Key Vault Name:                 [draco...]
-   AKS Service Principal ID:       [...]
-   AKS Service Principal Password: [...]
+   AKS Service Principal ID:       [{guid}]
    ```
 
 ## Run the platform resources setup script
 
-This section sets up all the resources needed to host a Draco platform. This section expects that you have already [set up the needed Draco common resources](#run-the-common-resources-setup-script) and obtained the following values -
+This section sets up all the resources needed to host a Draco platform. This section expects that you have already [set up the Draco common resources](#run-the-common-resources-setup-script) and obtained the following values:
 
 * `Common Resource Group Name` (default is `draco-common-rg`)
-* `Container Registry Name`
-* `Key Vault Name`
 * `AKS Service Principal ID`
 
-> This section takes approximately 45 minutes.
+> This section takes approximately 25 minutes.
 
 ### Instructions
 
-1. Starting from your local Draco repository root, navigate to the platform resources setup script directory. 
-   
-   * From the command line, run `cd src/draco/infra/ArmTemplate/exthub`.
-   
-2. Execute the platform resource setup script. From the command line, run...
-   
-   ```bash
-   ./setup-platform.sh -l "[Azure region name]" \
-                       -a "[AKS Service Principal ID]" \
-                       -c "[Common Resource Group Name]" \
-                       -k "[Key Vault Name]" \
-                       -r "[Container Registry Name]" \
-                       -s "[Subscription ID]"
-   ```
-   
-   * Replace `[Azure region name]` with the name of the Azure region that you would like to deploy Draco to. For example, if you want to deploy Draco the Central US region, replace `[Azure region name]` with `centralus`. For a complete list of Azure location names, run `az account list-locations -o table` from the command line.
-     
-   * Replace `[AKS Service Principal ID]`, `[Key Vault Name]`, and `[Container Registry Name]` with the values returned from the `setup-common.sh` script in the [common setup section](#run-the-common-resources-setup-script).
-     
-   * For complete usage information, run `./setup-platform.sh`.
-   
-3. Make a note of the Draco endpoint URLs provided when the script is done running. Once all the Kubernetes services/load balancers are provisioned (see step 6), you should be able to access these Draco APIs. Your output should look similiar to that below.
+1. Execute the platform resource setup script. From the command line, run the following command:
 
+   > Note: The _platform_ resources will deploy to the same region the _common_ resources are deployed to, but in a different resource group.  The resource group name defaults to `draco-platform-rg` but can be changed using the `-r` parameter.
+   
    ```bash
-   Draco Catalog API:               [http://draco-...-catalogapi...cloudapp.azure.com]
-   Draco Execution API:             [http://draco-...-executionapi...cloudapp.azure.com]
-   Draco Extension Management API:  [http://draco-...-extensionmgmtapi...cloudapp.azure.com]
+   ./setup-platform.sh -a "[AKS Service Principal ID]" \
+                       -c "[Common Resource Group Name]"
    ```
+      
+      * Replace `[AKS Service Principal ID]` with the value returned from the `setup-common.sh` script in the [common setup section](#run-the-common-resources-setup-script).
      
-4. Verify that the Draco Kubernetes pods have been deployed by running `kubectl get pods`. Your output should look similiar to that below.
+      * For complete usage information and to see additional optional parameters available, run `./setup-platform.sh`.
+   
+2. Verify that the Draco Kubernetes pods are running using `kubectl get pods`. Your output should look similiar to that below.
 
    ```bash
    NAME                           READY   STATUS    RESTARTS   AGE
@@ -125,9 +115,9 @@ This section sets up all the resources needed to host a Draco platform. This sec
    initial-extensionmgmtapi-...   1/1     Running   0          19s
    ```
    
-   > **Note**: You may notice that there are three copies of each of the four core Draco services running in your AKS cluster. For high availability, [the Helm chart](/src/draco/helm/extension-hubs) included with Draco specifies that each of the four core services should have three replicas running at all times.  
+   > **Note**: There are three copies of each of the four core Draco services running in your AKS cluster. For high availability, [the Helm chart](/src/draco/helm/extension-hubs) included with Draco specifies that each service should have three replicas running at all times.  
  
-5. Verify that the Draco Kubernetes services/public load balancers have been deployed by running `kubectl get services --watch`. Your output should look similar to that below. Once `EXTERNAL-IP`s are available and no longer in a `<pending>` state for each service, you should be able to access the Draco APIs.
+3. Verify the internal load balancers for the Draco services are configured by running `kubectl get services`. Your output will look similar to that below.  After the `EXTERNAL-IP`s are available (ie: not `<pending>`) you can continue to the next section.
 
    ```bash
    NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)                      AGE
@@ -136,8 +126,26 @@ This section sets up all the resources needed to host a Draco platform. This sec
    initial-extensionmgmtapi   LoadBalancer   10.0.###.###   <pending>     80:#####/TCP,443:#####/TCP   119s
    ```
 
-## Register your first extension
-At this point, all of your Draco infrastrucutre should be stood up and ready to use. Next, you should [try registering your first extension](/doc/howto/Register-Extension.md).
+**Don't continue to the next section until _after_ the `EXTERNAL-IP`s are available.  It generally takes 1-2 mins for the internal load balancers to configure.**
+
+## Run the Draco API configuration script
+
+This section configures the Draco API's in the Azure API Management instance in the common resource group. This section expects that you have already [set up the Draco common resources](#run-the-common-resources-setup-script) and [setup the Draco platform resources](#run-the-platform-resources-setup-script).
+
+> This section takes approximately 1 minute.
+
+### Instructions
+
+1. Execute the Draco API configuration script. From the command line, run the following command:
+
+   ```bash
+   ./setup-draco-apis.sh -c "[Common Resource Group Name]"
+   ```
+
+2. When the script finishes it will output the URL for the Draco API's.  These URL's may be used to call the API's to [register an extension](/doc/howto/Register-Extension.md), [search for extensions](/doc/howto/search-extension.md), and [execute an extension](/doc/howto/Execute-Extension.md).
+
+## Register your first extension (optional)
+Now the Draco infrastrucutre is ready to use.  Next, consider [registering a sample extension](/doc/howto/Register-Extension.md).
 
 ## Uninstalling Draco
 For more information on uninstalling Draco, see [this guide](UNINSTALL.md).

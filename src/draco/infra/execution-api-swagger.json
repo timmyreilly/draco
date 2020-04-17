@@ -1,0 +1,483 @@
+{
+    "properties": {
+        "path": "execution",
+        "protocols": [
+            "http"
+        ],
+        "format": "openapi+json",
+        "subscriptionRequired": false,
+        "serviceUrl": "http://internal-load-balancer-ip-address",
+        "value": {
+            "openapi": "3.0.1",
+            "info": {
+                "title": "Draco Execution API",
+                "version": "v1"
+            },
+            "paths": {
+                "/Execution": {
+                    "post": {
+                        "tags": [
+                            "Execution"
+                        ],
+                        "summary": "Creates a new execution",
+                        "requestBody": {
+                            "description": "The execution request",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionRequestApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionRequestApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionRequestApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionRequestApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "200": {
+                                "description": "Either the execution has completed synchronously or, in the case of direct execution, an execution token has been returned. Details included in response."
+                            },
+                            "202": {
+                                "description": "The execution is queued or input objects (specified in the response) are required before continuing. Details included in response."
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            }
+                        }
+                    }
+                },
+                "/Execution/{executionId}/continue": {
+                    "put": {
+                        "tags": [
+                            "Execution"
+                        ],
+                        "summary": "Continues existing execution after input object(s) have been provided",
+                        "parameters": [
+                            {
+                                "name": "executionId",
+                                "in": "path",
+                                "description": "The execution ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "A list of input object(s) that have been provided",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ContinueExecutionApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ContinueExecutionApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ContinueExecutionApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ContinueExecutionApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "200": {
+                                "description": "The execution has completed synchronously. Details included in response.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExecutionUpdateApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "202": {
+                                "description": "The execution has been queued. Details included in response.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExecutionUpdateApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            },
+                            "404": {
+                                "description": "The specified execution was not found."
+                            }
+                        }
+                    }
+                },
+                "/Execution/{executionId}/status": {
+                    "get": {
+                        "tags": [
+                            "Execution"
+                        ],
+                        "summary": "Gets the status of an existing execution",
+                        "parameters": [
+                            {
+                                "name": "executionId",
+                                "in": "path",
+                                "description": "The execution ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Success",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExecutionUpdateApiModel"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "put": {
+                        "tags": [
+                            "Execution"
+                        ],
+                        "summary": "Updates the status of an existing execution",
+                        "parameters": [
+                            {
+                                "name": "executionId",
+                                "in": "path",
+                                "description": "The execution ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "The execution status update",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/UpdateExecutionStatusApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/UpdateExecutionStatusApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/UpdateExecutionStatusApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/UpdateExecutionStatusApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "200": {
+                                "description": "Success",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExecutionUpdateApiModel"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "components": {
+                "schemas": {
+                    "ExecutionRequestApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "extensionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionVersionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "profileName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "priority": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "properties": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "validateOnly": {
+                                "type": "boolean"
+                            },
+                            "requestData": {
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ContinueExecutionApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "providedObjects": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "InputObjectApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectProvider": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isRequired": {
+                                "type": "boolean"
+                            },
+                            "toUpload": {
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "OutputObjectApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectProvider": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "toDownload": {
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ValidationErrorApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "errorId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "errorCode": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "errorMessage": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "errorData": {
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExecutionUpdateApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "properties": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "executionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "status": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "statusMessage": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "getExecutionStatusUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "putExecutionStatusUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "percentComplete": {
+                                "type": "number",
+                                "format": "double",
+                                "nullable": true
+                            },
+                            "lastUpdatedUtc": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "expirationDateTimeUtc": {
+                                "type": "string",
+                                "format": "date-time"
+                            },
+                            "resultData": {
+                                "type": "object",
+                                "nullable": true
+                            },
+                            "inputObjects": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "$ref": "#/components/schemas/InputObjectApiModel"
+                                },
+                                "nullable": true
+                            },
+                            "outputObjects": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "$ref": "#/components/schemas/OutputObjectApiModel"
+                                },
+                                "nullable": true
+                            },
+                            "validationErrors": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ValidationErrorApiModel"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "UpdateExecutionStatusApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "status": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "statusMessage": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "statusUpdateKey": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "percentComplete": {
+                                "type": "number",
+                                "format": "double",
+                                "nullable": true
+                            },
+                            "lastUpdatedDateTimeUtc": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                            },
+                            "executionTimeoutDateTimeUtc": {
+                                "type": "string",
+                                "format": "date-time",
+                                "nullable": true
+                            },
+                            "resultData": {
+                                "type": "object",
+                                "nullable": true
+                            },
+                            "validationErrors": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ValidationErrorApiModel"
+                                },
+                                "nullable": true
+                            },
+                            "properties": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "providedOutputObjects": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            }
+        }
+    }
+}

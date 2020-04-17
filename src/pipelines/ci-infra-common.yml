@@ -39,6 +39,7 @@ stages:
         location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: 'src/draco/infra/ArmTemplate/common/common-deploy.json'
+        overrideParameters: '-apimPublisherEmail $(apimPublisherEmail)'
         deploymentMode: 'Validation'
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:

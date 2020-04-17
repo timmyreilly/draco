@@ -35,12 +35,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// Creates a new extension
         /// </summary>
         /// <param name="extensionApiModel">The new extension definition</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="201">Extension created.</response>
         /// <response code="400">Details included in response.</response>
         [HttpPost]
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionApiModel>), 201)]
-        public async Task<IActionResult> CreateExtensionAsync([Required, FromBody] ExtensionApiModel extensionApiModel)
+        public async Task<IActionResult> CreateExtensionAsync([Required, FromBody] ExtensionApiModel extensionApiModel, [FromQuery] bool includeLinks=false)
         {
             // Validate the provided extension API model.
 
@@ -63,19 +64,20 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // Let the user know that the extension has been created...
 
-            return new CreatedResult(GetGetExtensionUrl(extension.ExtensionId), ToApiModelContainer(extension));
+            return new CreatedResult(GetGetExtensionUrl(extension.ExtensionId), ToApiModelContainer(extension, includeLinks));
         }
         
         /// <summary>
         /// Gets the specified extension
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Extension returned.</response>
         /// <response code="404">Extension not found.</response>
         [HttpGet("{extensionId}")]
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionApiModel>), 200)]
-        public async Task<IActionResult> GetExtensionAsync([Required] string extensionId)
+        public async Task<IActionResult> GetExtensionAsync([Required] string extensionId, [FromQuery] bool includeLinks=false)
         {
             // Try to get the extension...
 
@@ -90,17 +92,18 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // Otherwise, return the extension...
 
-            return Ok(ToApiModelContainer(extension));
+            return Ok(ToApiModelContainer(extension, includeLinks));
         }
 
         /// <summary>
         /// Deletes the specified extension
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpDelete("{extensionId}")]
-        public async Task<IActionResult> DeleteExtensionAsync([Required] string extensionId)
+        public async Task<IActionResult> DeleteExtensionAsync([Required] string extensionId, [FromQuery] bool includeLinks=false)
         {
             // Try to get the extension...
 
@@ -125,6 +128,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionApiModel">The new extension version definition</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="201">Extension version created.</response>
         /// <response code="400">Details included in response.</response>
@@ -133,7 +137,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpPost("{extensionId}/versions")]
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionVersionApiModel>), 201)]
         public async Task<IActionResult> CreateExtensionVersionAsync([Required] string extensionId, 
-                                                                     [Required, FromBody] ExtensionVersionApiModel exVersionApiModel)
+                                                                     [Required, FromBody] ExtensionVersionApiModel exVersionApiModel,
+                                                                     [FromQuery] bool includeLinks=false)
         {
             // Validate the extension version API model...
 
@@ -185,7 +190,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             return new CreatedResult(
                 GetGetExtensionVersionUrl(extensionId, exVersion.ExtensionVersionId),
-                ToApiModelContainer(exVersion, extensionId));
+                ToApiModelContainer(exVersion, extensionId, includeLinks));
         }
 
         /// <summary>
@@ -193,10 +198,11 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpDelete("{extensionId}/versions/{exVersionId}")]
-        public async Task<IActionResult> DeleteExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId)
+        public async Task<IActionResult> DeleteExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId, [FromQuery] bool includeLinks=false)
         {
             // Try to find the extension and extension version...
 
@@ -223,12 +229,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// Gets all versions of the specified extension
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Extension version(s) returned.</response>
         /// <response code="404">Extension not found.</response>
         [HttpGet("{extensionId}/versions")]
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<ExtensionVersionApiModel>>), 200)]
-        public async Task<IActionResult> GetExtensionVersionsAsync([Required] string extensionId)
+        public async Task<IActionResult> GetExtensionVersionsAsync([Required] string extensionId, [FromQuery] bool includeLinks=false)
         {
             // Try to find the specified extension...
 
@@ -244,7 +251,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
             // Respond with [200 OK] + a list of extension versions...
             // TODO: In the future, we may want to consider adding paging here...
 
-            return Ok(extension.ExtensionVersions.Select(ev => ToApiModelContainer(ev, extensionId)));
+            return Ok(extension.ExtensionVersions.Select(ev => ToApiModelContainer(ev, extensionId, includeLinks)));
         }
 
         /// <summary>
@@ -252,12 +259,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Extension version returned.</response>
         /// <response code="404">Extension or extension version not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}")]
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionVersionApiModel>), 200)]
-        public async Task<IActionResult> GetExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId)
+        public async Task<IActionResult> GetExtensionVersionAsync([Required] string extensionId, [Required] string exVersionId, [FromQuery] bool includeLinks=false)
         {
             // Try to get the specified extension...
 
@@ -283,7 +291,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // Respond with [200 OK] + the extension version...
 
-            return Ok(ToApiModelContainer(exVersion, extensionId));
+            return Ok(ToApiModelContainer(exVersion, extensionId, includeLinks));
         }
 
         /// <summary>
@@ -292,6 +300,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="inputObjectApiModel">The input object definition</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="201">Input object created.</response>
         /// <response code="400">Details included in response.</response>
@@ -300,7 +309,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpPost("{extensionId}/versions/{exVersionId}/objects/input")]
         [ProducesResponseType(typeof(ApiModelContainer<InputObjectApiModel>), 201)]
         public async Task<IActionResult> CreateInputObjectAsync([Required] string extensionId, [Required] string exVersionId, 
-                                                                [Required, FromBody] InputObjectApiModel inputObjectApiModel)
+                                                                [Required, FromBody] InputObjectApiModel inputObjectApiModel,
+                                                                [FromQuery] bool includeLinks=false)
         {
             // Validate the input object API model...
 
@@ -362,7 +372,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             return new CreatedResult(
                 GetGetInputObjectUrl(extensionId, exVersionId, inputObjectName),
-                ToApiModelContainer(inputObject, extensionId, exVersionId));
+                ToApiModelContainer(inputObject, extensionId, exVersionId, includeLinks));
         }
 
         /// <summary>
@@ -371,10 +381,11 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="objectName">The input object name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpDelete("{extensionId}/versions/{exVersionId}/objects/input/{objectName}")]
-        public async Task<IActionResult> DeleteInputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName)
+        public async Task<IActionResult> DeleteInputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName, [FromQuery] bool includeLinks=false)
         {
             // Try to find the extension, extension version, and input object...
 
@@ -403,12 +414,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Input object(s) returned.</response>
         /// <response code="404">Extension or extension version not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/objects/input")]
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<InputObjectApiModel>>), 200)]
-        public async Task<IActionResult> GetInputObjectsAsync([Required] string extensionId, [Required] string exVersionId)
+        public async Task<IActionResult> GetInputObjectsAsync([Required] string extensionId, [Required] string exVersionId, [FromQuery] bool includeLinks=false)
         {
             // Try to find the specified extension...
 
@@ -435,7 +447,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
             // Respond with [200 OK] + a list of all input objects...
             // TODO: May want to implement paging here in the future.
 
-            return Ok(exVersion.InputObjects.Select(io => ToApiModelContainer(io, extensionId, exVersionId)));
+            return Ok(exVersion.InputObjects.Select(io => ToApiModelContainer(io, extensionId, exVersionId, includeLinks)));
         }
 
         /// <summary>
@@ -444,12 +456,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="objectName">The input object name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Input object returned.</response>
         /// <response code="404">Extension, extension version, or input object not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/objects/input/{objectName}")]
         [ProducesResponseType(typeof(ApiModelContainer<InputObjectApiModel>), 200)]
-        public async Task<IActionResult> GetInputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName)
+        public async Task<IActionResult> GetInputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName, [FromQuery] bool includeLinks=false)
         {
             objectName = WebUtility.UrlDecode(objectName);
 
@@ -488,7 +501,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // Finally, if we did find the input object, respond with [200 OK] + the input object definition...
 
-            return Ok(ToApiModelContainer(inputObject, extensionId, exVersionId));
+            return Ok(ToApiModelContainer(inputObject, extensionId, exVersionId, includeLinks));
         }
 
         /// <summary>
@@ -497,6 +510,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="outputObjectApiModel">The output object definition</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="201">Output object created.</response>
         /// <response code="400">Details included in response.</response>
@@ -505,7 +519,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpPost("{extensionId}/versions/{exVersionId}/objects/output")]
         [ProducesResponseType(typeof(ApiModelContainer<OutputObjectApiModel>), 201)]
         public async Task<IActionResult> CreateOutputObjectAsync([Required] string extensionId, [Required] string exVersionId, 
-                                                                 [Required, FromBody] OutputObjectApiModel outputObjectApiModel)
+                                                                 [Required, FromBody] OutputObjectApiModel outputObjectApiModel,
+                                                                 [FromQuery] bool includeLinks=false)
         {
             // Validate the output object API model...
 
@@ -566,7 +581,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             return new CreatedResult(
                 GetGetOutputObjectUrl(extensionId, exVersionId, outputObjectName),
-                ToApiModelContainer(outputObject, extensionId, exVersionId));
+                ToApiModelContainer(outputObject, extensionId, exVersionId, includeLinks));
         }
 
         /// <summary>
@@ -575,10 +590,11 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="objectName">The output object name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpDelete("{extensionId}/versions/{exVersionId}/objects/output/{objectName}")]
-        public async Task<IActionResult> DeleteOutputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName)
+        public async Task<IActionResult> DeleteOutputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName, [FromQuery] bool includeLinks=false)
         {
             objectName = WebUtility.UrlDecode(objectName);
 
@@ -607,12 +623,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Output object(s) returned.</response>
         /// <response code="404">Extension or extension version not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/objects/output")]
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<OutputObjectApiModel>>), 200)]
-        public async Task<IActionResult> GetOutputObjectsAsync([Required] string extensionId, [Required] string exVersionId)
+        public async Task<IActionResult> GetOutputObjectsAsync([Required] string extensionId, [Required] string exVersionId, [FromQuery] bool includeLinks=false)
         {
             // Try to find the specified extension...
 
@@ -639,7 +656,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
             // Respond with [200 OK] + a list of the specified extension version's output objects...
             // TODO: May implement paging at some point in the future.
 
-            return Ok(exVersion.OutputObjects.Select(oo => ToApiModelContainer(oo, extensionId, exVersionId)));
+            return Ok(exVersion.OutputObjects.Select(oo => ToApiModelContainer(oo, extensionId, exVersionId, includeLinks)));
         }
 
         /// <summary>
@@ -648,12 +665,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="objectName">The output object name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Output object returned.</response>
         /// <response code="404">Extension, extension version, or output object not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/objects/output/{objectName}")]
         [ProducesResponseType(typeof(ApiModelContainer<OutputObjectApiModel>), 200)]
-        public async Task<IActionResult> GetOutputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName)
+        public async Task<IActionResult> GetOutputObjectAsync([Required] string extensionId, [Required] string exVersionId, [Required] string objectName, [FromQuery] bool includeLinks=false)
         {
             objectName = WebUtility.UrlDecode(objectName);
 
@@ -692,7 +710,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // If we found the output object, respond with [200 OK] + the output object definition...
 
-            return Ok(ToApiModelContainer(outputObject, extensionId, exVersionId));
+            return Ok(ToApiModelContainer(outputObject, extensionId, exVersionId, includeLinks));
         }
 
         /// <summary>
@@ -701,6 +719,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="execProfileApiModel">The execution profile definition</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="201">Execution profile created.</response>
         /// <response code="400">Details included in response.</response>
@@ -709,7 +728,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpPost("{extensionId}/versions/{exVersionId}/profiles")]
         [ProducesResponseType(typeof(ApiModelContainer<ExecutionProfileApiModel>), 201)]
         public async Task<IActionResult> CreateExecutionProfileAsync([Required] string extensionId, [Required] string exVersionId, 
-                                                                     [Required, FromBody] ExecutionProfileApiModel execProfileApiModel)
+                                                                     [Required, FromBody] ExecutionProfileApiModel execProfileApiModel,
+                                                                     [FromQuery] bool includeLinks=false)
         {
             // Validate the execution profile API model...
 
@@ -770,7 +790,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             return new CreatedResult(
                 GetGetExecutionProfileUrl(extensionId, exVersionId, execProfileName),
-                ToApiModelContainer(execProfile, extensionId, exVersionId));
+                ToApiModelContainer(execProfile, extensionId, exVersionId, includeLinks));
         }
 
         /// <summary>
@@ -779,10 +799,11 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="profileName">The execution profile name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpDelete("{extensionId}/versions/{exVersionId}/profiles/{profileName}")]
-        public async Task<IActionResult> DeleteExecutionProfileAsync([Required] string extensionId, [Required] string exVersionId, [Required] string profileName)
+        public async Task<IActionResult> DeleteExecutionProfileAsync([Required] string extensionId, [Required] string exVersionId, [Required] string profileName, [FromQuery] bool includeLinks=false)
         {
             profileName = WebUtility.UrlDecode(profileName);
 
@@ -811,12 +832,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Execution profile(s) returned.</response>
         /// <response code="404">Extension or extension version not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/profiles")]
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<ExecutionProfileApiModel>>), 200)]
-        public async Task<IActionResult> GetExecutionProfilesAsync([Required] string extensionId, [Required] string exVersionId)
+        public async Task<IActionResult> GetExecutionProfilesAsync([Required] string extensionId, [Required] string exVersionId, [FromQuery] bool includeLinks=false)
         {
             // Try to find the specified extension...
 
@@ -842,7 +864,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // Once we find the extension version, respond with [200 OK] + a list of all associated execution profiles...
 
-            return Ok(exVersion.ExecutionProfiles.Select(ep => ToApiModelContainer(ep, extensionId, exVersionId)));
+            return Ok(exVersion.ExecutionProfiles.Select(ep => ToApiModelContainer(ep, extensionId, exVersionId, includeLinks)));
         }
 
         /// <summary>
@@ -851,12 +873,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="profileName">The execution profile name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Execution profile returned.</response>
         /// <response code="404">Extension, extension version, or execution profile not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/profiles/{profileName}")]
         [ProducesResponseType(typeof(ApiModelContainer<ExecutionProfileApiModel>), 200)]
-        public async Task<IActionResult> GetExecutionProfileAsync([Required] string extensionId, [Required] string exVersionId, [Required] string profileName)
+        public async Task<IActionResult> GetExecutionProfileAsync([Required] string extensionId, [Required] string exVersionId, [Required] string profileName, [FromQuery] bool includeLinks=false)
         {
             profileName = WebUtility.UrlDecode(profileName);
 
@@ -895,7 +918,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // If we found the profile, respond with [200 OK] + the profile definition...
 
-            return Ok(ToApiModelContainer(execProfile, extensionId, exVersionId));
+            return Ok(ToApiModelContainer(execProfile, extensionId, exVersionId, includeLinks));
         }
 
         /// <summary>
@@ -904,6 +927,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="serviceApiModel">The extension service definition</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="201">Extension service created.</response>
         /// <response code="400">Details included in response.</response>
@@ -912,7 +936,8 @@ namespace Draco.ExtensionManagement.Api.Controllers
         [HttpPost("{extensionId}/versions/{exVersionId}/services")]
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionServiceApiModel>), 201)]
         public async Task<IActionResult> CreateExtensionServiceAsync([Required] string extensionId, [Required] string exVersionId, 
-                                                                     [Required, FromBody] ExtensionServiceApiModel serviceApiModel)
+                                                                     [Required, FromBody] ExtensionServiceApiModel serviceApiModel,
+                                                                     [FromQuery] bool includeLinks=false)
         {
             // Validate the extension service API model...
 
@@ -969,7 +994,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             return new CreatedResult(
                 GetGetServiceUrl(extensionId, exVersionId, serviceName),
-                ToApiModelContainer(extensionId, exVersionId, serviceName, exVersion.SupportedServices[serviceName]));
+                ToApiModelContainer(extensionId, exVersionId, serviceName, exVersion.SupportedServices[serviceName], includeLinks));
         }
 
         /// <summary>
@@ -977,12 +1002,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// </summary>
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Extension service(s) returned.</response>
         /// <response code="404">Extension or extension version not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/services")]
         [ProducesResponseType(typeof(IEnumerable<ApiModelContainer<ExtensionServiceApiModel>>), 200)]
-        public async Task<IActionResult> GetAllServicesAsync([Required] string extensionId, [Required] string exVersionId)
+        public async Task<IActionResult> GetAllServicesAsync([Required] string extensionId, [Required] string exVersionId, [FromQuery] bool includeLinks=false)
         {
             // Try to find the specified extension...
 
@@ -1008,7 +1034,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // If we do find the extension version, respond with [200 OK] + a list of all associated service definitions...
 
-            return Ok(exVersion.SupportedServices.Select(s => ToApiModelContainer(extensionId, exVersionId, s.Key, s.Value)));
+            return Ok(exVersion.SupportedServices.Select(s => ToApiModelContainer(extensionId, exVersionId, s.Key, s.Value, includeLinks)));
         }
 
         /// <summary>
@@ -1017,12 +1043,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="serviceName">The extension service name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200">Extension service returned.</response>
         /// <response code="404">Extension, extension version, or extension service not found.</response>
         [HttpGet("{extensionId}/versions/{exVersionId}/services/{serviceName}")]
         [ProducesResponseType(typeof(ApiModelContainer<ExtensionServiceApiModel>), 200)]
-        public async Task<IActionResult> GetServiceAsync([Required] string extensionId, [Required] string exVersionId, [Required] string serviceName)
+        public async Task<IActionResult> GetServiceAsync([Required] string extensionId, [Required] string exVersionId, [Required] string serviceName, [FromQuery] bool includeLinks=false)
         {
             serviceName = WebUtility.UrlDecode(serviceName.ToLower());
 
@@ -1057,7 +1084,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
 
             // If we do find the service definition, respond with [200 OK] + the service definition...
 
-            return Ok(ToApiModelContainer(extensionId, exVersionId, serviceName, exVersion.SupportedServices[serviceName]));
+            return Ok(ToApiModelContainer(extensionId, exVersionId, serviceName, exVersion.SupportedServices[serviceName], includeLinks));
         }
 
         /// <summary>
@@ -1066,10 +1093,11 @@ namespace Draco.ExtensionManagement.Api.Controllers
         /// <param name="extensionId">The extension ID</param>
         /// <param name="exVersionId">The extension version ID</param>
         /// <param name="serviceName">The extension service name</param>
+        /// <param name="includeLinks">Response will include URL links to available routes</param>
         /// <returns></returns>
         /// <response code="200"></response>
         [HttpDelete("{extensionId}/versions/{exVersionId}/services/{serviceName})")]
-        public async Task<IActionResult> DeleteServiceAsync([Required] string extensionId, [Required] string exVersionId, [Required] string serviceName)
+        public async Task<IActionResult> DeleteServiceAsync([Required] string extensionId, [Required] string exVersionId, [Required] string serviceName, [FromQuery] bool includeLinks=false)
         {
             serviceName = WebUtility.UrlDecode(serviceName.ToLower());
 
@@ -1320,20 +1348,20 @@ namespace Draco.ExtensionManagement.Api.Controllers
         private string GetDeleteServiceUrl(string extensionId, string exVersionId, string serviceName) =>
             (Request == null) ? (default) : $"{Request.Scheme}://{Request.Host}/extensions/{WebUtility.UrlEncode(extensionId)}/versions/{WebUtility.UrlEncode(exVersionId)}/services/{WebUtility.UrlEncode(serviceName)}";
 
-        private ApiModelContainer<ExtensionApiModel> ToApiModelContainer(Extension extension) =>
+        private ApiModelContainer<ExtensionApiModel> ToApiModelContainer(Extension extension, bool includeLinks) =>
             new ApiModelContainer<ExtensionApiModel>(extension.ToApiModel())
             {
-                Links = new Dictionary<string, string>
-                {
-                    ["getExtension"] = GetGetExtensionUrl(extension.ExtensionId),
-                    ["getExtensionVersions"] = GetGetExtensionVersionsUrl(extension.ExtensionId),
-                    ["deleteExtension"] = GetDeleteExtensionUrl(extension.ExtensionId),
-                    ["postNewExtension"] = GetPostExtensionUrl(),
-                    ["postNewExtensionVersion"] = GetPostExtensionVersionUrl(extension.ExtensionId)
-                }
+                    Links = includeLinks ? new Dictionary<string, string>
+                    {
+                        ["getExtension"] = GetGetExtensionUrl(extension.ExtensionId),
+                        ["getExtensionVersions"] = GetGetExtensionVersionsUrl(extension.ExtensionId),
+                        ["deleteExtension"] = GetDeleteExtensionUrl(extension.ExtensionId),
+                        ["postNewExtension"] = GetPostExtensionUrl(),
+                        ["postNewExtensionVersion"] = GetPostExtensionVersionUrl(extension.ExtensionId)
+                    } : null
             };
 
-        private ApiModelContainer<ExtensionServiceApiModel> ToApiModelContainer(string extensionId, string exVersionId, string serviceName, JObject serviceConfig) =>
+        private ApiModelContainer<ExtensionServiceApiModel> ToApiModelContainer(string extensionId, string exVersionId, string serviceName, JObject serviceConfig, bool includeLinks) =>
             new ApiModelContainer<ExtensionServiceApiModel>()
             {
                 Model = new ExtensionServiceApiModel
@@ -1343,7 +1371,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
                     Name = serviceName,
                     ServiceConfiguration = serviceConfig?.ToObject<Dictionary<string, string>>()
                 },
-                Links = new Dictionary<string, string>
+                Links = includeLinks ? new Dictionary<string, string>
                 {
                     ["getExtension"] = GetGetExtensionUrl(extensionId),
                     ["getExtensionVersion"] = GetGetExtensionVersionUrl(extensionId, exVersionId),
@@ -1356,13 +1384,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
                     ["postNewExtension"] = GetPostExtensionUrl(),
                     ["postNewExtensionVersion"] = GetPostExtensionVersionUrl(extensionId),
                     ["postNewService"] = GetPostServiceUrl(extensionId, exVersionId)
-                }
+                } : null
             };
 
-        private ApiModelContainer<ExtensionVersionApiModel> ToApiModelContainer(ExtensionVersion exVersion, string extensionId) =>
+        private ApiModelContainer<ExtensionVersionApiModel> ToApiModelContainer(ExtensionVersion exVersion, string extensionId, bool includeLinks) =>
            new ApiModelContainer<ExtensionVersionApiModel>(exVersion.ToApiModel(extensionId))
            {
-               Links = new Dictionary<string, string>
+               Links = includeLinks ? new Dictionary<string, string>
                {
                    ["getExtension"] = GetGetExtensionUrl(extensionId),
                    ["getExtensionVersion"] = GetGetExtensionVersionUrl(extensionId, exVersion.ExtensionVersionId),
@@ -1379,13 +1407,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
                    ["postNewInputObject"] = GetPostInputObjectUrl(extensionId, exVersion.ExtensionVersionId),
                    ["postNewOutputObject"] = GetPostOutputObjectUrl(extensionId, exVersion.ExtensionVersionId),
                    ["postNewService"] = GetPostServiceUrl(extensionId, exVersion.ExtensionVersionId)
-               }
+               } : null
            };
 
-        private ApiModelContainer<InputObjectApiModel> ToApiModelContainer(ExtensionInputObject inputObject, string extensionId, string exVersionId) =>
+        private ApiModelContainer<InputObjectApiModel> ToApiModelContainer(ExtensionInputObject inputObject, string extensionId, string exVersionId, bool includeLinks) =>
             new ApiModelContainer<InputObjectApiModel>(inputObject.ToApiModel(extensionId, exVersionId))
             {
-                Links = new Dictionary<string, string>
+                Links = includeLinks ? new Dictionary<string, string>
                 {
                     ["getExtension"] = GetGetExtensionUrl(extensionId),
                     ["getExtensionVersion"] = GetGetExtensionVersionUrl(extensionId, exVersionId),
@@ -1398,13 +1426,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
                     ["postNewExtension"] = GetPostExtensionUrl(),
                     ["postNewExtensionVersion"] = GetPostExtensionVersionUrl(extensionId),
                     ["postNewInputObject"] = GetPostInputObjectUrl(extensionId, exVersionId)
-                }
+                } : null
             };
 
-        private ApiModelContainer<OutputObjectApiModel> ToApiModelContainer(ExtensionOutputObject outputObject, string extensionId, string exVersionId) =>
+        private ApiModelContainer<OutputObjectApiModel> ToApiModelContainer(ExtensionOutputObject outputObject, string extensionId, string exVersionId, bool includeLinks) =>
             new ApiModelContainer<OutputObjectApiModel>(outputObject.ToApiModel(extensionId, exVersionId))
             {
-                Links = new Dictionary<string, string>
+                Links = includeLinks ? new Dictionary<string, string>
                 {
                     ["getExtension"] = GetGetExtensionUrl(extensionId),
                     ["getExtensionVersion"] = GetGetExtensionVersionUrl(extensionId, exVersionId),
@@ -1417,13 +1445,13 @@ namespace Draco.ExtensionManagement.Api.Controllers
                     ["postNewExtension"] = GetPostExtensionUrl(),
                     ["postNewExtensionVersion"] = GetPostExtensionVersionUrl(extensionId),
                     ["postNewOutputObject"] = GetPostOutputObjectUrl(extensionId, exVersionId)
-                }
+                } : null
             };
 
-        private ApiModelContainer<ExecutionProfileApiModel> ToApiModelContainer(ExecutionProfile execProfile, string extensionId, string exVersionId) =>
+        private ApiModelContainer<ExecutionProfileApiModel> ToApiModelContainer(ExecutionProfile execProfile, string extensionId, string exVersionId, bool includeLinks) =>
            new ApiModelContainer<ExecutionProfileApiModel>(execProfile.ToApiModel(extensionId, exVersionId))
            {
-               Links = new Dictionary<string, string>
+               Links = includeLinks ? new Dictionary<string, string>
                {
                    ["getExtension"] = GetGetExtensionUrl(extensionId),
                    ["getExtensionVersion"] = GetGetExtensionVersionUrl(extensionId, exVersionId),
@@ -1436,7 +1464,7 @@ namespace Draco.ExtensionManagement.Api.Controllers
                    ["postNewExtension"] = GetPostExtensionUrl(),
                    ["postNewExtensionVersion"] = GetPostExtensionVersionUrl(extensionId),
                    ["postNewExecutionProfile"] = GetPostExecutionProfileUrl(extensionId, exVersionId)
-               }
+               } : null
            };
     }
 }

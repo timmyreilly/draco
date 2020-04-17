@@ -23,18 +23,13 @@ The following instructions are how to register an extension on the Draco platfor
 
 ## Login to Azure Subscription
 
-> NOTE: This may launch a browser to validate your credentials.
+Use the following commands to authenticate to Azure and set the Azure subscription you deployed Draco in.
 
 ```bash
 az login
-```
 
-## Ensure correct Azure subscription/ Connected to the proper Kube instance is in use
-
-If you have more than one Azure subscription make sure you choose the correct subscription before running any of these commands.
-
-```bash
-az account list  
+# If you have multiple subscriptions, set the subscription to use for Draco.
+az account list 
 az account set --subscription "Name of Subscription"
 ```
 
@@ -44,11 +39,7 @@ az account set --subscription "Name of Subscription"
 
 ```bash
 DRACO_COMMON_RG_NAME="draco-common-rg"
-DRACO_PLATFORM_RG_NAME="draco-platform-rg"
-DRACO_REGION="eastus2"
-DRACO_AKS_CLUSTER=$(az aks list --resource-group $DRACO_PLATFORM_RG_NAME --query "[].name" --output tsv)
 ACR_NAME=$(az acr list --resource-group $DRACO_COMMON_RG_NAME --query "[].name" --output tsv)
-
 ```
 
 ## Build sample echo container image
@@ -75,7 +66,7 @@ docker push $ACR_NAME".azurecr.io/sample-echo"
 
 Using yaml file in the sample echo extension folder, deploy the echo extension into AKS.
 
-> NOTE: Kubectl will not do variable expansion from with a yaml file.  You MUST edit the yaml file below and replace the {{ACR_NAME}} string with your actual ACR_NAME.
+> NOTE: Kubectl will not do variable expansion from with a yaml file.  You MUST edit the yaml file (at or around line 27) below and replace the {{ACR_NAME}} string with your actual ACR_NAME. Also, make sure there are no trailing spaces on the image name.
 
 ```bash
 kubectl apply -f sample-echo.yaml
@@ -83,32 +74,17 @@ kubectl apply -f sample-echo.yaml
 
 ## Validate Extension service is running in AKS
 
-To validate you have the extension service running in AKS.  You should see the extension listed with Name, type, Cluster IP, External-IP, Ports, and age.
+To validate you have the extension service running in AKS, verify there is a pod running for the echo extension.
 
 ```bash
-kubectl get services
+kubectl get pods
 ```
-
-## Get the DNS/IP address for the Extension Management API
-
-Get the extension management api External IP address from the Kubectl get services call above.
-
-```bash
-NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-sample-echo             LoadBalancer   10.0.117.50    X.X.X.X   80:30424/TCP,443:30466/TCP   21h
-initial-catalogapi         LoadBalancer   10.0.119.97    X.X.X.X   80:32542/TCP,443:32275/TCP   22h
-initial-executionapi       LoadBalancer   10.0.246.229   X.X.X.X   80:30844/TCP,443:31053/TCP   22h
-initial-extensionmgmtapi   LoadBalancer   10.0.150.241   X.X.X.X   80:32743/TCP,443:32610/TCP   22h
-kubernetes                 ClusterIP      10.0.0.1       <none>    443/TCP                      22h
-```
-
-In the above example the **initial-extensionmgmtapi** EXTERNAL-IP is the value we need below.
 
 ## Register the echo extension container with the Draco platform
 
 Create a new extension registration for the echo service using the following rest calls.
 
-* Replace address with your DNS or IP address
+* Replace {{extmgmt_url}} with the extension management URL from the the setup scripts.  This will be `http://draco-***-apim.azure-api.net/extensions`
 * Replace ***ExtensionName*** with the name of your extension (sample-echo for this sample)
 
 ```json
@@ -146,31 +122,25 @@ The response from the service will include a new extension id that will be used 
 ```json
 API Response
 {
-    "links": {
-        "getExtension": "http://address/extensions/ExtensionID",
-        "getExtensionVersions": "http://address/extensions/ExtensionID",
-        "deleteExtension": "http://address/extensions/ExtensionID",
-        "postNewExtension": "http://address/extensions",
-        "postNewExtensionVersion": "http://address/extensions/ExtensionID/versions"
-    },
+    "links": null,
     "model": {
-                    "tags": [
-                        "echo",
-                        "sample"
-                    ],
-                    "id": "{{extension_id}}",
-                    "name": "ExtensionName",
-                    "category": "Sample",
-                    "subcategory": "Test Extensions",
-                    "coverImageUrl": null,
-                    "logoUrl": null,
-                    "description": "Sample echo extension for registration of an extension",
-                    "publisherName": "Microsoft",
-                    "copyrightNotice": "Copyright (c) Microsoft Corporation",
-                    "isActive": true,
-                    "additionalInformationUrls": {},
-                    "features": {}
-                }
+        "tags": [
+            "echo",
+            "sample"
+        ],
+        "id": "{{extension_id}}",
+        "name": "ExtensionName",
+        "category": "Sample",
+        "subcategory": "Test Extensions",
+        "coverImageUrl": null,
+        "logoUrl": null,
+        "description": "Sample echo extension for registration of an extension",
+        "publisherName": "Microsoft",
+        "copyrightNotice": "Copyright (c) Microsoft Corporation",
+        "isActive": true,
+        "additionalInformationUrls": {},
+        "features": {}
+    }
 }
 ```
 
@@ -180,7 +150,7 @@ API Response
 
 Register a new extension version using the following steps:
 
-* Replace address with your DNS or IP address.
+* Replace {{extmgmt_url}} with the extension management URL from the the setup scripts (sames as above).
 * Replace {{extension_id}} with the value from the previous step.
 * Replace **ExtensionName** with the name of the extension.
 * "version" should also be set to the version of the extension [x.xx format].
@@ -214,23 +184,7 @@ The platform service will return a new ExtensionVersionId used to uniquely ident
 ```json
 API response:
 {
-        "links": {
-            "getExtension": "http://address/extensions/ExtensionId",
-            "getExtensionVersion": "http://address/extensions/ExtensionId/versions/ExtensionVersionId",
-            "getAllExtensionVersions": "http://address/extensions/ExtensionId/versions",
-            "getAllExecutionProfiles": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/profiles",
-            "getAllInputObjects": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/objects/input",
-            "getAllOutputObjects": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/objects/output",
-            "getAllServices": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/services",
-            "deleteExtension": "http://address/extensions/ExtensionId",
-            "deleteExtensionVersion": "http://address/extensions/ExtensionId/versions/ExtensionVersionId",
-            "postNewExtension": "http://address/extensions",
-            "postNewExtensionVersion": "http://address/extensions/ExtensionId/versions",
-            "postNewExecutionProfile": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/profiles",
-            "postNewInputObject": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/objects/input",
-            "postNewOutputObject": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/objects/output",
-            "postNewService": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/services"
-        },
+        "links": null,
         "model": {
             "id": "{{extension_version_id}}",
             "extensionId": "ExtensionId",
@@ -249,18 +203,18 @@ API response:
 ```
 
 * Copy ***ExtensionVersionId*** from the *model* section
-* The ExtensionId and ExtensionName should be unchanged
 
 ## Create echo extension execution profile
 
-Each extension also need an execution profile to be set for the version.  For the echo extension, this will set a default execution model for the extention to be synchronous.
+Each extension also needs an execution profile to be set for each version of an extension.  For the echo extension, this will set a default execution model for the extention to be synchronous.
 
 **TODO** Replace with link to other execution models
 
-* Replace address with your DNS or IP address
+* Replace {{extmgmt_url}} with the extension management URL from the the setup scripts (sames as above).
 * Replace {{extension_id}}
 * Replace {{extension_version_id}}
-* Replace ***ExtensionExecutionUrl***  - This is your complete URL to call your extension.  In the case of this echo extension it should be http://**echo svc public ip**/echo.
+* Replace ***ExtensionIP*** as follows:
+  - Retrieve the `EXTERNAL-IP` value of the Echo extension using `kubectl get svc'.
 
 ```json
 API Request
@@ -284,7 +238,7 @@ Use this format:
         ],
         "extensionSettings":
         {
-            "executionUrl": "***ExtensionExecutionUrl***=(http://<<echo svc public ip>>/echo)"
+            "executionUrl": "http://***ExtensionIP***/echo"
         }
     }
 ```
@@ -294,19 +248,7 @@ The platform service will return success for registration.
 ```json
 API response:
 {
-    "links": {
-        "getExtension": "http://address/extensions/ExtensionId",
-        "getExtensionVersion": "http://address/extensions/ExtensionId/versions/ExtensionVersionId",
-        "getAllExtensionVersions": "http://address/extensions/ExtensionId/versions",
-        "getExecutionProfile": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/profiles/default",
-        "getAllExecutionProfiles": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/profiles",
-        "deleteExtension": "http://address/extensions/ExtensionId",
-        "deleteExtensionVersion": "http://address/extensions/ExtensionId/versions/ExtensionVersionId",
-        "deleteExecutionProfile": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/profiles/default",
-        "postNewExtension": "http://address/extensions",
-        "postNewExtensionVersion": "http://address/extensions/ExtensionId/versions",
-        "postNewExecutionProfile": "http://address/extensions/ExtensionId/versions/ExtensionVersionId/profiles"
-    },
+    "links": null,
     "model": {
         "name": "default",
         "extensionId": "{{extension_id}}",  # Matches value passed in

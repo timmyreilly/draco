@@ -2,12 +2,28 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.1",
   "parameters": {
+    "apimPublisherEmail": {
+      "metadata": {
+        "description": "The API Management publisher email."
+      },
+      "type": "string"
+    },
+    "apimPublisherName": {
+      "metadata": {
+        "description": "The API Management publisher name."
+      },
+      "type": "string",
+      "defaultValue": "Project Draco"
+    }
   },
   "variables": {
     "prefix": "draco",
     "uniqueId": "[uniqueString(resourceGroup().id)]",
     "acrName": "[take(concat(variables('prefix'), variables('uniqueId'), 'acr'), 50)]",
     "akvName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-akv'), 24)]",
+    "apiMgmtName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-apim')]",
+    "apimVnetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
+    "apimSubnetName": "gateway-subnet",
     "acrSku": "Basic",
     "akvSku": "Standard",
     "resourceTags": {
@@ -15,6 +31,56 @@
     }
   },
   "resources": [
+    {
+      "apiVersion": "2019-11-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('apimVnetName')]",
+      "tags": "[variables('resourceTags')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.11.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('apimSubnetName')]",
+            "properties": {
+              "addressPrefix": "10.11.1.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
+    },
+    {
+      "apiVersion": "2019-12-01-preview",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('apiMgmtName')]",
+      "tags": "[variables('resourceTags')]",
+      "dependsOn": [
+        "[variables('apimVnetName')]"
+      ],
+      "sku": {
+        "name": "Developer",
+        "capacity": 1
+      },
+      "properties": {
+        "publisherEmail": "[parameters('apimPublisherEmail')]",
+        "publisherName": "[parameters('apimPublisherName')]",
+        "virtualNetworkConfiguration": {
+          "subnetResourceId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('apimVnetName'), variables('apimSubnetName'))]"
+        },
+        "virtualNetworkType": "External"
+      }
+    },
     {
       "name": "[variables('acrName')]",
       "tags": "[variables('resourceTags')]",

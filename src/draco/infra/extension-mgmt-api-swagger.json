@@ -1,0 +1,1539 @@
+{
+    "properties": {
+        "path": "extensions",
+        "protocols": [
+            "http"
+        ],
+        "format": "openapi+json",
+        "subscriptionRequired": false,
+        "serviceUrl": "http://internal-load-balancer-ip-address",
+        "value": {
+            "openapi": "3.0.1",
+            "info": {
+                "title": "Extension Hubs Extension Management API",
+                "version": "v1"
+            },
+            "paths": {
+                "/extensions": {
+                    "post": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Creates a new extension",
+                        "requestBody": {
+                            "description": "The new extension definition",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Extension created.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}": {
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Success",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "delete": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Deletes the specified extension",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": ""
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions": {
+                    "post": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Creates a new extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "The new extension version definition",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionVersionApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionVersionApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionVersionApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionVersionApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Extension version created.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionVersionApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            },
+                            "404": {
+                                "description": "Extension not found."
+                            },
+                            "409": {
+                                "description": "Extension version already exists."
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets all versions of the specified extension",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Extension version(s) returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ExtensionVersionApiModelApiModelContainer"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}": {
+                    "delete": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Deletes the specified extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": ""
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets the specified extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Extension version returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionVersionApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/objects/input": {
+                    "post": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Creates a new extension version input object",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "The input object definition",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/InputObjectApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/InputObjectApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/InputObjectApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/InputObjectApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Input object created.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/InputObjectApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            },
+                            "409": {
+                                "description": "Input object already exists."
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets all input objects associated with the specified extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Input object(s) returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InputObjectApiModelApiModelContainer"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/objects/input/{objectName}": {
+                    "delete": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Deletes the specified input object",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "objectName",
+                                "in": "path",
+                                "description": "The input object name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": ""
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets the specified input object",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "objectName",
+                                "in": "path",
+                                "description": "The input object name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Input object returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/InputObjectApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension, extension version, or input object not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/objects/output": {
+                    "post": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Creates a new extension version output object",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "The output object definition",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/OutputObjectApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/OutputObjectApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/OutputObjectApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/OutputObjectApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Output object created.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/OutputObjectApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            },
+                            "409": {
+                                "description": "Output object already exists."
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets all output objects associated with the specified extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Output object(s) returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/OutputObjectApiModelApiModelContainer"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/objects/output/{objectName}": {
+                    "delete": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Deletes the specified output object",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "objectName",
+                                "in": "path",
+                                "description": "The output object name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": ""
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets the specified output object",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "objectName",
+                                "in": "path",
+                                "description": "The output object name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Output object returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/OutputObjectApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension, extension version, or output object not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/profiles": {
+                    "post": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Creates a new execution profile",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "The execution profile definition",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionProfileApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionProfileApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionProfileApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExecutionProfileApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Execution profile created.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExecutionProfileApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            },
+                            "409": {
+                                "description": "Execution profile already exists."
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets all execution profile(s) associated with the specified extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Execution profile(s) returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ExecutionProfileApiModelApiModelContainer"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/profiles/{profileName}": {
+                    "delete": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Deletes the specified execution profile",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "profileName",
+                                "in": "path",
+                                "description": "The execution profile name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": ""
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets the specified execution profile",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "profileName",
+                                "in": "path",
+                                "description": "The execution profile name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Execution profile returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExecutionProfileApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension, extension version, or execution profile not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/services": {
+                    "post": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Creates a new extension service",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "requestBody": {
+                            "description": "The extension service definition",
+                            "content": {
+                                "application/json-patch+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionServiceApiModel"
+                                    }
+                                },
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionServiceApiModel"
+                                    }
+                                },
+                                "text/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionServiceApiModel"
+                                    }
+                                },
+                                "application/*+json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/ExtensionServiceApiModel"
+                                    }
+                                }
+                            },
+                            "required": true
+                        },
+                        "responses": {
+                            "201": {
+                                "description": "Extension service created.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionServiceApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "Details included in response."
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            },
+                            "409": {
+                                "description": "Extension service already exists."
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets all services associated with the specified extension version",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Extension service(s) returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/ExtensionServiceApiModelApiModelContainer"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/services/{serviceName}": {
+                    "get": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Gets the specified extension service",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "serviceName",
+                                "in": "path",
+                                "description": "The extension service name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Extension service returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionServiceApiModelApiModelContainer"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension, extension version, or extension service not found."
+                            }
+                        }
+                    }
+                },
+                "/extensions/{extensionId}/versions/{exVersionId}/services/{serviceName})": {
+                    "delete": {
+                        "tags": [
+                            "Extension"
+                        ],
+                        "summary": "Deletes the specified extension service",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "serviceName",
+                                "in": "path",
+                                "description": "The extension service name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": ""
+                            }
+                        }
+                    }
+                }
+            },
+            "components": {
+                "schemas": {
+                    "ExtensionApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "id": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "category": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "subcategory": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "coverImageUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "logoUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "publisherName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "copyrightNotice": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isActive": {
+                                "type": "boolean"
+                            },
+                            "additionalInformationUrls": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "features": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionApiModelApiModelContainer": {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "model": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ExtensionApiModel"
+                                    }
+                                ],
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionVersionApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "releaseNotes": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "requestTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "responseTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "requestTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "responseTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "version": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isLongRunning": {
+                                "type": "boolean"
+                            },
+                            "isActive": {
+                                "type": "boolean"
+                            },
+                            "supportsValidation": {
+                                "type": "boolean"
+                            },
+                            "executionExpirationPeriod": {
+                                "type": "string",
+                                "format": "date-span",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionVersionApiModelApiModelContainer": {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "model": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ExtensionVersionApiModel"
+                                    }
+                                ],
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "InputObjectApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionVersionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isRequired": {
+                                "type": "boolean"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "InputObjectApiModelApiModelContainer": {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "model": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/InputObjectApiModel"
+                                    }
+                                ],
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "OutputObjectApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionVersionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "OutputObjectApiModelApiModelContainer": {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "model": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/OutputObjectApiModel"
+                                    }
+                                ],
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExecutionProfileApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionVersionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "executionModel": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectProvider": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "executionMode": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "directExecutionTokenDuration": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isActive": {
+                                "type": "boolean"
+                            },
+                            "supportedPriorities": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "clientConfiguration": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "extensionSettings": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExecutionProfileApiModelApiModelContainer": {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "model": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ExecutionProfileApiModel"
+                                    }
+                                ],
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionServiceApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionVersionId": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "configuration": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionServiceApiModelApiModelContainer": {
+                        "type": "object",
+                        "properties": {
+                            "links": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "model": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/ExtensionServiceApiModel"
+                                    }
+                                ],
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            }
+        }
+    }
+}

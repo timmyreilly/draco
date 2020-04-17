@@ -6,47 +6,18 @@ The following instructions are how to search for an extension on the Draco platf
 
 ## Pre-requisites
 
-* [Azure Kubernetes CLI / kubectl](https://docs.microsoft.com/en-us/cli/azure/aks?view=azure-cli-latest#az-aks-install-cli)
 * [Draco Environment Pre-Setup](https://github.com/microsoft/draco/blob/master/doc/setup/README.md)
-
-## Specific to MacOS
-
-* [Home Brew](https://brew.sh/) to install the following tools:
-* kubernetes-cli
-
-## Validate Extension service is running in AKS
-
-To validate you have the extension service running in AKS.  You should see the extension listed with Name, type, Cluster IP, External-IP, Ports, and age. The kubectl get services will display the services running and the information needed.
-
-```bash
-kubectl get services
-```
-
-## Get the DNS/IP address for the Catalog API
-
-Get the Catalog API External IP address from the Kubectl get services call above.
-
-```bash
-NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-extensionecho1             LoadBalancer   10.0.117.50    X.X.X.X   80:30424/TCP,443:30466/TCP   21h
-initial-catalogapi         LoadBalancer   10.0.119.97    X.X.X.X   80:32542/TCP,443:32275/TCP   22h
-initial-executionapi       LoadBalancer   10.0.246.229   X.X.X.X   80:30844/TCP,443:31053/TCP   22h
-initial-extensionmgmtapi   LoadBalancer   10.0.150.241   X.X.X.X   80:32743/TCP,443:32610/TCP   22h
-kubernetes                 ClusterIP      10.0.0.1       <none>    443/TCP                      22h
-```
-
-In the above example the **initial-catalogapi** EXTERNAL-IP is the value we need below.
 
 ## Search the Draco platform Catalog API for an extension
 
-* Replace address with your DNS or IP address from the catalogAPI - External IP above.
+* Replace {{catalog_url}} with the catalog URL from the setup scripts.  This will be `http://draco-***-apim.azure-api.net/catalog`.
 * Replace echo (sample extension name) with the search term or Extension Name of your Extension
 
 ```json
 API Request
 HTTP Verb and URL:  
     Set Verb to GET
-    Set URL to http://address/catalog/search/?q=echo
+    Set URL to http://{{catalog_url}}/catalog/search/?q=echo
 
 ```
 
@@ -82,14 +53,14 @@ API Response
 
 ## Search the Draco platform Catalog API for a category
 
-* Replace address with your DNS or IP address from the catalogAPI - External IP above.
+* Replace {{catalog_url}} with the catalog URL from the setup scripts.  This will be `http://draco-***-apim.azure-api.net/catalog`.
 * Replace Sample with the category term or Extension category of your Extension
 
 ```json
 API Request
 HTTP Verb and URL:  
     Set Verb to GET
-    Set URL to http://address/catalog/search/Sample
+    Set URL to http://{{catalog_url}}/catalog/search/Sample
 
 ```
 ```json
@@ -100,14 +71,14 @@ API Response
 
 ## Search the Draco platform Catalog API for a subcategory
 
-* Replace address with your DNS or IP address from the catalogAPI - External IP above.
+* Replace {{catalog_url}} with the catalog URL from the setup scripts.  This will be `http://draco-***-apim.azure-api.net/catalog`.
 * Replace .Net Core Samples with the subcategory term or Extension subcategory of your Extension
 
 ```json
 API Request
 HTTP Verb and URL:  
     Set Verb to GET
-    Set URL to http://address/catalog/search/Sample/.NET Core Samples
+    Set URL to http://{{catalog_url}}/catalog/search/Sample/.NET Core Samples
 ```
 
 ```json

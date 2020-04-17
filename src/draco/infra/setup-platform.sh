@@ -1,37 +1,25 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This script sets up all the platform Draco components in Azure.
 # For more information, see /doc/setup/README.md.
 
-usage() { echo "Usage: $0 <-l azure-location> <-a aks-sp-appid> <-k common-akv-name> <-r common-acr-name> <-s subscription-id> [-c common-rg-name] [-p platform-rg-name]"; }
+usage() { echo "Usage: $0 <-a aks-sp-appid> <-c common-rg-name> [-p platform-rg-name]"; }
 
 DRACO_DEPLOYMENT_NAME="deploy-platform-$(date -u +%m%d%Y-%H%M%S)"
-DRACO_COMMON_RG_NAME="draco-common-rg"
 DRACO_PLATFORM_RG_NAME="draco-platform-rg"
-DRACO_SPN_AKV_KEY_NAME="draco-akv-spn";
+DRACO_SPN_AKV_KEY_NAME="draco-akv-spn"
+DRACO_PLATFORM_TEMPLATE_PATH="./ArmTemplate/exthub/exthub-deploy.json"
 
-while getopts "l:a:s:p:c:k:r:" opt; do
+while getopts "a:p:c:" opt; do
     case $opt in
-        l)
-            LOCATION=$OPTARG # [Requried] -- Azure location to deploy platform to.
-        ;;
         a)
             AKS_SPN_APP_ID=$OPTARG # [Required] -- AKS service principal app ID. Created by ../common/setup-common.sh.
-        ;;
-        s)
-            SUBSCRIPTION_ID=$OPTARG # [Required]
         ;;
         p)
             DRACO_PLATFORM_RG_NAME=$OPTARG # [Optional] -- If not provided, we default to "draco-platform-rg".
         ;;
         c)
-            DRACO_COMMON_RG_NAME=$OPTARG # [Optional] -- If not provided, we default to "draco-common-rg".
-        ;;
-        k)
-            AKV_NAME=$OPTARG # [Required] -- The name of the common key vault. Created by ../common/setup-common.sh.
-        ;;
-        r)
-            ACR_NAME=$OPTARG # [Required] -- The name of the common ACR. Created by ../common/setup-common.sh.
+            DRACO_COMMON_RG_NAME=$OPTARG # [Required].
         ;;
         \?)
             usage
@@ -41,13 +29,7 @@ while getopts "l:a:s:p:c:k:r:" opt; do
 done
 
 # Check to make sure we have all the arguments that we need...
-[[ -z $LOCATION || -z $AKS_SPN_APP_ID || -z $ACR_NAME || -z $SUBSCRIPTION_ID ]] && { usage; exit 1; }
-
-# Make sure we're logged into Azure...
-[[ -z $(az account list --refresh --output tsv) ]] && az login
-
-# Switch to the specified subscription...
-az account set --subscription "$SUBSCRIPTION_ID"
+[[ -z $AKS_SPN_APP_ID || -z $DRACO_COMMON_RG_NAME ]] && { usage; exit 1; }
 
 # Check to make sure that the common resource group is there...
 if [[ -z $(az group list --query "[?name=='$DRACO_COMMON_RG_NAME']" --output tsv) ]]; then
@@ -56,6 +38,9 @@ if [[ -z $(az group list --query "[?name=='$DRACO_COMMON_RG_NAME']" --output tsv
 else
     echo -e "\nDraco common resource group [$DRACO_COMMON_RG_NAME] already exists."
 fi
+
+# Get the common infrastructure resource group location.
+LOCATION=$(az group show --name $DRACO_COMMON_RG_NAME --query location --output tsv)
 
 # Create the platform resource group if it doesn't already exist...
 if [[ -z $(az group list --query "[?name=='$DRACO_PLATFORM_RG_NAME']" --output tsv) ]]; then
@@ -67,21 +52,36 @@ fi
 
 # Get the latest version of K8S available in the specified region...
 LATEST_AKS_K8S_VERSION=$(az aks get-versions --location "$LOCATION" --query "orchestrators[?orchestratorType=='Kubernetes'].orchestratorVersion | sort(@) | [-2:-1:]" --output tsv)
-
 echo -e "\nLatest stable AKS Kubernetes version in [$LOCATION] is [$LATEST_AKS_K8S_VERSION]."
+
+# Get SPN secret from key vault instance in the common resource group.
+AKV_NAME=$(az keyvault list --resource-group $DRACO_COMMON_RG_NAME --query "[].name | [0]" --output tsv)
 echo -e "\nGetting AKS service principal [$AKS_SPN_APP_ID] password from key vault [$AKV_NAME]..."
+
+# Get the ASK SPN object Id from AAD
+AKS_SPN_OBJECTID=$(az ad sp show --id "$AKS_SPN_APP_ID" --query objectId --output tsv)
 
 # Get AKS SPN password from key vault...
 AKS_SPN_PASSWORD=$(az keyvault secret show --name "$DRACO_SPN_AKV_KEY_NAME" --vault-name "$AKV_NAME" --query value --output tsv)
 
 # Stand everything up...
-echo -e "\nDeploying Draco platform resources to resource group [$DRACO_PLATFORM_RG_NAME]. This can take up to 30 minutes...\n"
+echo -e "\nDeploying Draco platform resources to resource group [$DRACO_PLATFORM_RG_NAME]. This can take approximately 25 minutes...\n"
 
-az deployment group create --verbose --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$DRACO_DEPLOYMENT_NAME" --template-file "./exthub-deploy.json" --parameters aksK8sVersion="$LATEST_AKS_K8S_VERSION" aksServicePrincipalClientId="$AKS_SPN_APP_ID" aksServicePrincipalClientSecret="$AKS_SPN_PASSWORD"
+az deployment group create --verbose --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$DRACO_DEPLOYMENT_NAME" --template-file $DRACO_PLATFORM_TEMPLATE_PATH --parameters aksK8sVersion="$LATEST_AKS_K8S_VERSION" aksServicePrincipalClientId="$AKS_SPN_APP_ID" aksServicePrincipalObjectId="$AKS_SPN_OBJECTID" aksServicePrincipalClientSecret="$AKS_SPN_PASSWORD"
 
 DEPLOYMENT_PREFIX=$(az deployment group show --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$DRACO_DEPLOYMENT_NAME" --query properties.outputs.deploymentPrefix.value --output tsv)
 
 echo -e "\nDraco deployment [$DRACO_DEPLOYMENT_NAME] resource prefix is [$DEPLOYMENT_PREFIX]."
+
+# Configure VNET peering between the 'common' and 'platform' VNET's.
+echo "Configuring VNET peering between the `common` and `platform` virtual networks..."
+COMMON_VNET_RESOURCE_ID=$(az network vnet list --resource-group $DRACO_COMMON_RG_NAME --query "[].id | [0]" --output tsv)
+COMMON_VNET_NAME=$(echo ${COMMON_VNET_RESOURCE_ID##*/})
+PLATFORM_VNET_RESOURCE_ID=$(az network vnet list --resource-group $DRACO_PLATFORM_RG_NAME --query "[].id | [0]" --output tsv)
+PLATFORM_VNET_NAME=$(echo ${PLATFORM_VNET_RESOURCE_ID##*/})
+
+az network vnet peering create --name "common-to-platform-peering" --remote-vnet $PLATFORM_VNET_RESOURCE_ID --resource-group $DRACO_COMMON_RG_NAME --vnet-name $COMMON_VNET_NAME --allow-vnet-access 
+az network vnet peering create --name "platform-to-common-peering" --remote-vnet $COMMON_VNET_RESOURCE_ID --resource-group $DRACO_PLATFORM_RG_NAME --vnet-name $PLATFORM_VNET_NAME --allow-vnet-access 
 
 # Get Draco search configuration from ARM template output...
 echo -e "\nGetting Draco search configuration from deployment [$DRACO_DEPLOYMENT_NAME]..."
@@ -146,29 +146,32 @@ AKS_CLUSTER_NAME=$(az resource list --resource-group "$DRACO_PLATFORM_RG_NAME" -
 
 echo -e "\n\nConnecting to AKS cluster [$AKS_CLUSTER_NAME]...\n"
 
-az aks get-credentials --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$AKS_CLUSTER_NAME"
+az aks get-credentials --resource-group "$DRACO_PLATFORM_RG_NAME" --name "$AKS_CLUSTER_NAME" --overwrite-existing
+
+# Get ACR name from common resource group
+ACR_NAME=$(az acr list --resource-group $DRACO_COMMON_RG_NAME --query "[].name | [0]" --output tsv)
 
 # Build containers...
 echo -e "\nBuilding Draco catalog API Docker container...\n"
-docker build "../../../" --file "../../../api/Catalog.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-catalogapi:latest"
+docker build ".." --file "../api/Catalog.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-catalogapi:latest"
 
 echo -e "\nBuilding Draco execution API Docker container...\n"
-docker build "../../../" --file "../../../api/Execution.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-executionapi:latest"
+docker build ".." --file "../api/Execution.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-executionapi:latest"
 
 echo -e "\nBuilding Draco extension management API Docker container...\n"
-docker build "../../../" --file "../../../api/ExtensionManagement.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi:latest"
+docker build ".." --file "../api/ExtensionManagement.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-extensionmgmtapi:latest"
 
 echo -e "\nBuilding Draco execution adapter API Docker container...\n"
-docker build "../../../" --file "../../../api/ExecutionAdapter.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-executionadapterapi:latest"
+docker build ".." --file "../api/ExecutionAdapter.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-executionadapterapi:latest"
 
 echo -e "\nBuilding Draco extension service API Docker container...\n"
-docker build "../../../" --file "../../../api/ExtensionService.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-extensionserviceapi:latest"
+docker build ".." --file "../api/ExtensionService.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-extensionserviceapi:latest"
 
 echo -e "\nBuilding Draco object storage provider API Docker container...\n"
-docker build "../../../" --file "../../../api/ObjectStorageProvider.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-objectproviderapi:latest"
+docker build ".." --file "../api/ObjectStorageProvider.Api/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-objectproviderapi:latest"
 
 echo -e "\nBuilding Draco execution adapter API Docker container...\n"
-docker build "../../../" --file "../../../core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-executionconsole:latest"
+docker build ".." --file "../core/Agent/ExecutionAdapter.ConsoleHost/Dockerfile" --tag "$ACR_NAME.azurecr.io/xhub-executionconsole:latest"
 
 # Push containers...
 az acr login --name $ACR_NAME
@@ -206,15 +209,15 @@ docker rmi "$ACR_NAME.azurecr.io/xhub-objectproviderapi" >/dev/null
 
 echo -e "Deploying Draco Helm chart to AKS cluster [$AKS_CLUSTER_NAME]...\n"
 
-helm install initial "../../../helm/extension-hubs" --set configuration.storageConnectionString="$DRACO_PLATFORM_STOR_CONN_STR" --set images.repository="$ACR_NAME.azurecr.io" --set dnsPrefix="$DEPLOYMENT_PREFIX"
+helm install initial "../helm/extension-hubs" --set configuration.storageConnectionString="$DRACO_PLATFORM_STOR_CONN_STR" --set images.repository="$ACR_NAME.azurecr.io" --set dnsPrefix="$DEPLOYMENT_PREFIX"
 
-echo -e "\nAll done!\n" 
-
-echo -e "Run [kubectl get pods --watch] to monitor the deployment of Draco pods."
-echo -e "Run [kubectl get services --watch] to monitor the deployment of Draco services and load balancers.\n"
-
-echo -e "Once all of the service have been fully deployed, these will be your Draco API endpoints...\n"
-
-echo "Draco Catalog API:               [http://$DEPLOYMENT_PREFIX-catalogapi.$LOCATION.cloudapp.azure.com]"
-echo "Draco Execution API:             [http://$DEPLOYMENT_PREFIX-executionapi.$LOCATION.cloudapp.azure.com]"
-echo "Draco Extension Management API:  [http://$DEPLOYMENT_PREFIX-extensionmgmtapi.$LOCATION.cloudapp.azure.com]"
+echo ""
+echo "The Draco 'platform' infrastructure setup is complete!"
+echo ""
+echo "Run 'kubectl get pods' to monitor the deployment of Draco pods."
+echo "Run 'kubectl get services' to monitor the deployment of the internal load balancers of Draco services."
+echo ""
+echo "After the internal load balancers are ready, run the following command to configure the Draco API's in API Management:"
+echo ""
+echo "./setup-draco-apis.sh -c \"$DRACO_COMMON_RG_NAME\""
+echo ""

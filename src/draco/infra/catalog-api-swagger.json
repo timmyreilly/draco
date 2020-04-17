@@ -1,0 +1,594 @@
+{
+    "properties": {
+        "path": "catalog",
+        "protocols": [
+            "http"
+        ],
+        "format": "openapi+json",
+        "subscriptionRequired": false,
+        "serviceUrl": "http://internal-load-balancer-ip-address",
+        "value": {
+            "openapi": "3.0.1",
+            "info": {
+                "title": "Extension Hubs Catalog API",
+                "version": "v1"
+            },
+            "paths": {
+                "/Catalog/search": {
+                    "get": {
+                        "tags": [
+                            "Catalog"
+                        ],
+                        "summary": "Gets available extensions based on the provided full-text search criteria",
+                        "parameters": [
+                            {
+                                "name": "q",
+                                "in": "query",
+                                "description": "The full-text search criteria",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "pageIndex",
+                                "in": "query",
+                                "description": "The search results page index (first page is 0)",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "default": 0
+                                }
+                            },
+                            {
+                                "name": "pageSize",
+                                "in": "query",
+                                "description": "The search results page size",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "default": 10
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Search results returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/CatalogSearchResultsApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "See error text for more details."
+                            }
+                        }
+                    }
+                },
+                "/Catalog/search/{category}": {
+                    "get": {
+                        "tags": [
+                            "Catalog"
+                        ],
+                        "summary": "Gets available extensions based on the provided extension category and full-text search criteria",
+                        "parameters": [
+                            {
+                                "name": "category",
+                                "in": "path",
+                                "description": "The extension category name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "q",
+                                "in": "query",
+                                "description": "The full-text search criteria",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "pageIndex",
+                                "in": "query",
+                                "description": "The search results page index (first page is 0)",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "default": 0
+                                }
+                            },
+                            {
+                                "name": "pageSize",
+                                "in": "query",
+                                "description": "The search results page size",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "default": 10
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Search results returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/CatalogSearchResultsApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "See error text for more details."
+                            }
+                        }
+                    }
+                },
+                "/Catalog/search/{category}/{subcategory}": {
+                    "get": {
+                        "tags": [
+                            "Catalog"
+                        ],
+                        "summary": "Gets available extensions based on the provided extension category, subcategory, and full-text search criteria",
+                        "parameters": [
+                            {
+                                "name": "category",
+                                "in": "path",
+                                "description": "The extension category name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "subcategory",
+                                "in": "path",
+                                "description": "The extension subcategory name",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "q",
+                                "in": "query",
+                                "description": "The full-text search criteria",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "pageIndex",
+                                "in": "query",
+                                "description": "The search results page index (first page is 0)",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "default": 0
+                                }
+                            },
+                            {
+                                "name": "pageSize",
+                                "in": "query",
+                                "description": "The search results page size",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "default": 10
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Search results returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/CatalogSearchResultsApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "400": {
+                                "description": "See error text for more details."
+                            }
+                        }
+                    }
+                },
+                "/Catalog/extensions/{extensionId}": {
+                    "get": {
+                        "tags": [
+                            "Catalog"
+                        ],
+                        "summary": "Gets extension details including available versions and related links",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The unique extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "searchId",
+                                "in": "query",
+                                "description": "The unique search ID (returned in search results)",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "actionId",
+                                "in": "query",
+                                "description": "The unique search result ID (returned in search results)",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Extension detail returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionDetailApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension not found."
+                            }
+                        }
+                    }
+                },
+                "/Catalog/extensions/{extensionId}/versions/{exVersionId}": {
+                    "get": {
+                        "tags": [
+                            "Catalog"
+                        ],
+                        "summary": "Gets extension version details including supported execution profiles, input objects, and output objects, and related links",
+                        "parameters": [
+                            {
+                                "name": "extensionId",
+                                "in": "path",
+                                "description": "The unique extension ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "exVersionId",
+                                "in": "path",
+                                "description": "The unique extension version ID",
+                                "required": true,
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "Extension version detail returned.",
+                                "content": {
+                                    "application/json": {
+                                        "schema": {
+                                            "$ref": "#/components/schemas/ExtensionVersionDetailApiModel"
+                                        }
+                                    }
+                                }
+                            },
+                            "404": {
+                                "description": "Extension or extension version not found."
+                            }
+                        }
+                    }
+                }
+            },
+            "components": {
+                "schemas": {
+                    "CatalogSearchResultApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "publisherName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "category": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "subcategory": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "getExtensionDetailUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "CatalogSearchResultsApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "pageIndex": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "pageSize": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "totalPages": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "totalResults": {
+                                "type": "integer",
+                                "format": "int32"
+                            },
+                            "results": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CatalogSearchResultApiModel"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionVersionListItemModel": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "version": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "releaseNotes": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "getVersionDetailUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isCurrent": {
+                                "type": "boolean"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionDetailApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "name": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "publisherName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "copyrightNotice": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionLogoUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "extensionCoverImageUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "category": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "subcategory": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "additionalInformationUrls": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "tags": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "clientRequirements": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "availableVersions": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/ExtensionVersionListItemModel"
+                                },
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExecutionProfileApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "executionMode": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "supportedPriorities": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                },
+                                "nullable": true
+                            },
+                            "clientConfiguration": {
+                                "type": "object",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "InputObjectApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isRequired": {
+                                "type": "boolean"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "OutputObjectApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "description": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "objectTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "ExtensionVersionDetailApiModel": {
+                        "type": "object",
+                        "properties": {
+                            "executionProfiles": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "$ref": "#/components/schemas/ExecutionProfileApiModel"
+                                },
+                                "nullable": true
+                            },
+                            "inputObjects": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "$ref": "#/components/schemas/InputObjectApiModel"
+                                },
+                                "nullable": true
+                            },
+                            "outputObjects": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "$ref": "#/components/schemas/OutputObjectApiModel"
+                                },
+                                "nullable": true
+                            },
+                            "id": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "version": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "releaseNotes": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "requestTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "responseTypeName": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "getRequestTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "getResponseTypeUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "getExtensionDetailUrl": {
+                                "type": "string",
+                                "nullable": true
+                            },
+                            "isLongRunning": {
+                                "type": "boolean"
+                            },
+                            "supportsValidation": {
+                                "type": "boolean"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            }
+        }
+    }
+}

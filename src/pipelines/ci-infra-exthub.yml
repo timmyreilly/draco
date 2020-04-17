@@ -40,7 +40,7 @@ stages:
         location: $(location)
         templateLocation: 'Linked artifact'
         csmFile: 'src/draco/infra/ArmTemplate/exthub/exthub-deploy.json'
-        overrideParameters: '-aksK8sVersion $(aksK8sVersion) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalClientSecret $(aksClientSecret)'
+        overrideParameters: '-aksK8sVersion $(aksK8sVersion) -aksServicePrincipalClientId $(aksClientId) -aksServicePrincipalObjectId $(aksObjectId) -aksServicePrincipalClientSecret $(aksClientSecret)'
         deploymentMode: 'Validation'
     - task: AzureResourceManagerTemplateDeployment@3
       inputs:

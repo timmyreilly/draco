@@ -14,6 +14,12 @@
       },
       "type": "securestring"
     },
+    "aksServicePrincipalObjectId": {
+      "metadata": {
+        "description": "The AKS cluster service principal object ID in AAD."
+      },
+      "type": "string"
+    },
     "aksServicePrincipalClientSecret": {
       "metadata": {
         "description": "The AKS cluster service principal client secret. See https://docs.microsoft.com/en-us/azure/aks/kubernetes-service-principal#manually-create-a-service-principal for more details."
@@ -26,6 +32,8 @@
     "uniqueId": "[uniqueString(resourceGroup().id)]",
     "aksClusterName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
     "aksClusterDnsPrefix": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-aks'), 63)]",
+    "aksVnetName": "[concat(variables('prefix'), '-', variables('uniqueId'), '-vnet')]",
+    "aksSubnetName": "aks-subnet",
     "cosmosAccountName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-cdb'), 31)]",
     "eventGridTopicName": "[take(concat(variables('prefix'), '-', variables('uniqueId'), '-egt-execution'), 50)]",
     "storageAccountName": "[take(concat(variables('prefix'), variables('uniqueId'), 'stor'), 24)]",
@@ -71,26 +79,86 @@
   },
   "resources": [
     {
-        "type": "Microsoft.OperationalInsights/workspaces",
-        "name": "[variables('logWorkspaceName')]",
-        "apiVersion": "2015-11-01-preview",
-        "location": "[resourceGroup().location]",
-        "properties": {
-            "sku": {
-                "Name": "[variables('logSku')]"
-            },
-            "features": {
-                "searchVersion": 1
+      "apiVersion": "2019-11-01",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "name": "[variables('aksVnetName')]",
+      "tags": "[variables('resourceTags')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.12.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('aksSubnetName')]",
+            "properties": {
+              "addressPrefix": "10.12.1.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
             }
-        }
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false,
+        "enableVmProtection": false
+      }
     },
     {
-      "apiVersion": "2018-03-31",
+      "type": "Microsoft.Resources/deployments",
+      "name": "ClusterSubnetRoleAssignmentDeployment",
+      "apiVersion": "2019-10-01",
+      "resourceGroup": "[resourceGroup().name]",
+      "dependsOn": [
+        "[variables('aksVNetName')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "variables": {},
+          "resources": [
+            {
+              "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+              "apiVersion": "2019-04-01-preview",
+              "name": "[concat(variables('aksVNetName'), '/', variables('aksSubnetName'), '/Microsoft.Authorization/', guid(resourceGroup().id, deployment().name))]",
+              "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                "principalId": "[parameters('aksServicePrincipalObjectId')]",
+                "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVNetName'), variables('aksSubnetName'))]"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Microsoft.OperationalInsights/workspaces",
+      "name": "[variables('logWorkspaceName')]",
+      "apiVersion": "2015-11-01-preview",
+      "location": "[resourceGroup().location]",
+      "properties": {
+          "sku": {
+            "Name": "[variables('logSku')]"
+          },
+          "features": {
+            "searchVersion": 1
+          }
+      }
+    },
+    {
+      "apiVersion": "2020-02-01",
       "type": "Microsoft.ContainerService/managedClusters",
       "location": "[resourceGroup().location]",
       "name": "[variables('aksClusterName')]",
       "tags": "[variables('resourceTags')]",
       "dependsOn": [
+        "[variables('aksVnetName')]",
+        "ClusterSubnetRoleAssignmentDeployment",
         "[resourceId('Microsoft.OperationalInsights/workspaces', variables('logWorkspaceName'))]"
       ],
       "properties": {
@@ -103,12 +171,19 @@
             "count": "[variables('aksAgentCount')]",
             "vmSize": "[variables('aksAgentVmSize')]",
             "osType": "[variables('aksOsType')]",
-            "storageProfile": "ManagedDisks"
+            "storageProfile": "ManagedDisks",
+            "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('aksVnetName'), variables('aksSubnetName'))]",
+            "maxPods": 30,
+            "type": "VirtualMachineScaleSets"
           }
         ],
         "servicePrincipalProfile": {
           "clientId": "[parameters('aksServicePrincipalClientId')]",
           "Secret": "[parameters('aksServicePrincipalClientSecret')]"
+        },
+        "networkProfile": {
+          "networkPlugin": "azure",
+          "loadBalancerSku":"standard"
         },
         "addonProfiles": {
           "omsagent": {
