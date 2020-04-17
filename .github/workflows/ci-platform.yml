@@ -1,0 +1,114 @@
+name: ci-platform
+
+on:
+  pull_request:
+    branches: master
+    paths-ignore: 
+      - src/draco/infra/ArmTemplate/*
+      - src/extensions/*
+      - src/pipelines/*
+      - doc/*
+
+defaults:
+  run:    
+    working-directory: src/draco
+
+jobs:
+  build:
+    name: 'Build'
+    runs-on: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.101 
+      
+    - name: Install dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    
+    - name: Build and Push Catalog API
+      id: build_push_docker_catalog_api
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Credentials
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: jaearle.azurecr.io
+        repository: xhub-catalogapi
+        path: src/draco/ # optional, path to build context
+        dockerfile: src/draco/api/Catalog.Api/Dockerfile # optional, path to dockerfile
+        label: unique_label
+        tags: latest
+    
+    - name: Build and Push Execution API
+      id: build_push_docker_execution_api
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Credentials
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: jaearle.azurecr.io
+        repository: xhub-executionapi
+        path: src/draco/ # optional, path to build context
+        dockerfile: src/draco/api/Execution.Api/Dockerfile # optional, path to dockerfile
+        label: unique_label
+        tags: latest
+
+    - name: Build and Push Execution Adapter
+      id: build_push_docker_console_host
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Credentials
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: jaearle.azurecr.io
+        repository: xhub-executionconsole
+        path: src/draco/ # optional, path to build context
+        dockerfile: src/draco/api/ExecutionAdapter.Api/Dockerfile # optional, path to dockerfile
+        label: unique_label
+        tags: latest
+
+    - name: Build and Push Exension Management API
+      id: build_push_docker_extension_management_api
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Credentials
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: jaearle.azurecr.io
+        repository: xhub-extensionmgmtapi
+        path: src/draco/ # optional, path to build context
+        dockerfile: src/draco/api/ExtensionManagement.Api/Dockerfile # optional, path to dockerfile
+        tags: latest
+        
+    - name: Build and Push Extension Service
+      id: build_push_docker_extension_service_api
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Credentials
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: jaearle.azurecr.io
+        repository: xhub-extensionserviceapi
+        path: src/draco/ # optional, path to build context
+        dockerfile: src/draco/api/ExtensionService.Api/Dockerfile # optional, path to dockerfile
+        label: unique_label
+        tags: latest
+        
+    - name: Build and Push Object Provider API
+      id: build_push_docker_object_storage_provider_api
+      uses: docker/build-push-action@v1.0.1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Credentials
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: jaearle.azurecr.io
+        repository: xhub-objectproviderapi
+        path: src/draco/ # optional, path to build context
+        dockerfile: src/draco/api/ObjectStorageProvider.Api/Dockerfile # optional, path to dockerfile
+        label: unique_label
+        tags: latest
+  
+      
+      
