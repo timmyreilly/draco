@@ -40,7 +40,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }} # Credentials
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: jaearle.azurecr.io
-        repository: xhub-catalogapi
+        repository: draco-catalogapi
         path: src/draco/ # optional, path to build context
         dockerfile: src/draco/api/Catalog.Api/Dockerfile # optional, path to dockerfile
         label: unique_label
@@ -53,7 +53,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }} # Credentials
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: jaearle.azurecr.io
-        repository: xhub-executionapi
+        repository: draco-executionapi
         path: src/draco/ # optional, path to build context
         dockerfile: src/draco/api/Execution.Api/Dockerfile # optional, path to dockerfile
         label: unique_label
@@ -66,7 +66,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }} # Credentials
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: jaearle.azurecr.io
-        repository: xhub-executionconsole
+        repository: draco-executionconsole
         path: src/draco/ # optional, path to build context
         dockerfile: src/draco/api/ExecutionAdapter.Api/Dockerfile # optional, path to dockerfile
         label: unique_label
@@ -79,7 +79,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }} # Credentials
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: jaearle.azurecr.io
-        repository: xhub-extensionmgmtapi
+        repository: draco-extensionmgmtapi
         path: src/draco/ # optional, path to build context
         dockerfile: src/draco/api/ExtensionManagement.Api/Dockerfile # optional, path to dockerfile
         tags: latest
@@ -91,7 +91,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }} # Credentials
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: jaearle.azurecr.io
-        repository: xhub-extensionserviceapi
+        repository: draco-extensionserviceapi
         path: src/draco/ # optional, path to build context
         dockerfile: src/draco/api/ExtensionService.Api/Dockerfile # optional, path to dockerfile
         label: unique_label
@@ -104,7 +104,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }} # Credentials
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: jaearle.azurecr.io
-        repository: xhub-objectproviderapi
+        repository: draco-objectproviderapi
         path: src/draco/ # optional, path to build context
         dockerfile: src/draco/api/ObjectStorageProvider.Api/Dockerfile # optional, path to dockerfile
         label: unique_label
