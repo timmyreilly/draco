@@ -41,5 +41,6 @@ jobs:
         templateLocation: src/draco/infra/ArmTemplate/common/common-deploy.json
         deploymentMode: Incremental
         deploymentName: test-deployment
+        parameters: apimPublisherEmail=john@doe.com, apimPublisherName=JohnDoe # no spaces allowed
     - name: Delete Resource Group
       run: az group delete -n ${{ env.rgName }} -y --no-wait
